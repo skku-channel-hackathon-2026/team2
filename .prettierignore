@@ -4,3 +4,6 @@ pnpm-lock.yaml
 server/src/config.ts
 server/src/function-endpoint.ts
 server/src/function-endpoint.test.ts
+data/Kingo-info/
+data/knowledge/*.json
+data/knowledge/*.jsonl

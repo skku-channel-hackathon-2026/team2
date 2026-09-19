@@ -9,6 +9,13 @@
   },
   "scripts": {
     "build": "pnpm -r build",
+    "data:caption-wiki": "node data/script/caption-sopmu-images.mjs",
+    "data:collect": "node data/script/collect-skku.mjs",
+    "data:instagram": "node data/script/collect-instagram.mjs",
+    "data:prepare-wiki": "node data/script/prepare-sopmu-wiki.mjs",
+    "data:everytime": "node data/everytime/tool.mjs",
+    "knowledge:plan": "node --env-file-if-exists=.env.documents.local scripts/sync-channel-documents.mjs",
+    "knowledge:publish": "node --env-file-if-exists=.env.documents.local scripts/sync-channel-documents.mjs --publish",
     "test": "pnpm --filter @tutorial/shared build && pnpm --filter @tutorial/server test",
     "typecheck": "pnpm --filter @tutorial/shared build && pnpm -r typecheck",
     "lint": "pnpm --filter @tutorial/wam lint && pnpm --filter @tutorial/demo lint",

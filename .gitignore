@@ -13,3 +13,11 @@
 .dev.vars*
 cloudflare/static/
 cloudflare/bundle/
+
+# Local source datasets and generated analysis notes.
+/_ALF_RULE/
+/data/*
+
+# Keep only the normalized, reviewable RAG dataset in Git.
+!/data/knowledge/
+!/data/knowledge/**

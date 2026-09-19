@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-19T06:08:00.242Z",
+  "totals": {
+    "documents": 422,
+    "assets": 482,
+    "reviewQueue": 317,
+    "rejected": 3,
+    "conflicts": 0
+  },
+  "documentsByDataset": {
+    "everytime-brori": 38,
+    "everytime-fresh": 30,
+    "skku-food": 230,
+    "skku-official": 41,
+    "sopmu-wiki": 83
+  },
+  "documentsByAuthority": {
+    "community-anecdote": 68,
+    "curated-community": 83,
+    "official-archived": 11,
+    "official-current": 30,
+    "social-review": 230
+  },
+  "documentsByType": {
+    "calendar": 13,
+    "club": 12,
+    "community-qa": 68,
+    "course-review": 21,
+    "facility": 7,
+    "guide": 28,
+    "menu": 8,
+    "notice": 11,
+    "place-review": 230,
+    "policy": 9,
+    "research-lab": 15
+  },
+  "documentsByReviewStatus": {
+    "approved": 104,
+    "needs_review": 315,
+    "rejected": 3
+  },
+  "channel": {
+    "publishEligible": 96,
+    "publishReady": 56,
+    "requiresSplit": 2
+  },
+  "assets": {
+    "missingFiles": 0,
+    "imagesWithoutPublicUrl": 471,
+    "needsCaption": 249
+  },
+  "sourceSpecific": {
+    "sopmuWithoutObservedDate": 82,
+    "everytimeWithoutSourceUrl": 68,
+    "officialNoticesWithoutBody": 11,
+    "expiredMenus": 5
+  }
+}
