@@ -22,70 +22,183 @@ The starter ships a `/tutorial` desk command that opens a React WAM which sends
 a group-chat message either as the app bot (server function) or as the current
 manager (WAM native function). The Korean operations guide is `HACKATHON.ko.md`.
 
-## 2. Channel App mental model
+## 2. How Channel Talk apps work
 
 A Channel app is **my server, which Channel calls when something happens**.
-Channel provides the chat UI, login, customer/manager data, and context; the app
-provides logic.
+Channel owns the chat UI, login, customer/manager identity, and context; the app
+owns the logic. The app never polls Channel for work — AppStore pushes a signed
+RPC to the app's Function Endpoint, the app answers, and Channel renders the
+answer.
 
-| Piece                | What it is                                                                      |
-| -------------------- | ------------------------------------------------------------------------------- |
-| **Function**         | A typed operation the server performs (e.g. `waitlist.cancel`), Zod in/out.     |
-| **Extension**        | A named, versioned standard contract plugging Functions into a Channel feature. |
-| **WAM**              | The React UI that opens inside Channel, served from the WAM Endpoint.           |
-| **Native Functions** | Channel's API — how the app acts back inside Channel (e.g. send a message).     |
+### 2.1 The four pieces
 
-Request flow:
+| Piece               | What it is                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| **Function**        | A typed RPC the app server implements (e.g. `waitlist.cancel`), Zod-validated in/out.       |
+| **Extension**       | A named, system-versioned contract that plugs Functions into a standard Channel capability. |
+| **WAM**             | The React UI opened inside the Channel client, served from the WAM Endpoint. Not a server.  |
+| **Native Function** | The reverse direction — the app asking Channel to do something (e.g. send a group message). |
+
+### 2.2 Request flow
 
 ```
-User triggers (/command, widget/tab, ALF, workflow button, event, schedule)
-  → Channel sends a signed PUT to the Function Endpoint with context (channel, chat, caller)
+User triggers (/command, widget/tab, ALF, workflow button, event hook, schedule)
+  → AppStore sends a signed PUT to the Function Endpoint
+      { method, params, context, systemVersion }
+  → SignatureGuard verifies x-signature, SDK validates params against the input schema
   → Function runs logic (D1, external APIs, algorithms)
   → Function RESPONDS with one of:
       - text result (shown immediately)
-      - "open WAM <name> with args {...}" (Channel then loads the WAM)
-      - actions via Native Functions (e.g. send message as bot)
+      - an operation result
+      - "open WAM <name> with wamArgs {...}"  (Channel then loads the WAM)
+      - NeedsUserInput (ask follow-up questions, resume via continuationToken)
+      - a structured error
   → WAM buttons call Functions (useCallFunction) or Native Functions (useNativeFunction)
 ```
 
 Key rule: **opening a WAM is the Function's response**, not a separate API call.
 The user initiates; the server decides whether to open a WAM and what data it
-receives, and must pass only safe data (this repo signs a short-lived
-group-target token instead of trusting the browser).
+receives.
+
+### 2.3 Functions
+
+- **Wire envelope**: `method` (full Function name from discovery), `params`
+  (untrusted caller input), `context`, `systemVersion`. The reply is either
+  `result` or a structured `error`.
+- **Two kinds**: _standalone_ (`tutorial.open`, `orders.sync` — app-specific
+  business logic) and _extension_ (`extension.command.metadata.getCommands` —
+  standard contracts only). Keep business logic standalone.
+- **Context** may carry: `caller` (user | manager | system | app), `channel`,
+  `user`, `userChat`, `language`, `authToken` (decrypted provider OAuth token),
+  `config` (stored credentials/settings), `webhooks` (AppStore-issued callback
+  URLs). **Never assume an optional field exists** — validate what the Function
+  actually needs. AppStore may send `null` where you expect `undefined` (see
+  `CommandActionInputSchema` in `packages/shared`).
+- **Errors**: use stable, documented codes — `1` unprocessable input, `2` bad
+  request, `3` not found, `4` unauthorized, `-32601` method not found, `-32603`
+  internal. Never leak credentials or customer data in an error.
+- **Discovery/dispatch** is the SDK's job via
+  `extension.core.function.getFunctions`. Don't hand-roll routing.
+- **Versioning**: a breaking change to a standalone Function means a **new
+  name** (`orders.getV2`), never a bumped `systemVersion` or a new URL path.
+- **Mutating actions must be idempotent** — retries and duplicate triggers
+  happen.
+
+### 2.4 Extensions
+
+An extension = a **metadata/discovery Function** (e.g.
+`extension.command.metadata.getCommands`) + the runtime Functions it references
+by **exact full name**. Metadata pointing at a Function does not create it —
+every referenced Function must be implemented and registered.
+
+- `systemVersion` is the AppStore↔server platform contract version (`v1`),
+  **not** the app version. Never change it for a release.
+- Relative names inside an extension expand to
+  `extension.{extensionName}.{relativeName}`; metadata Functions follow
+  `extension.{family}.metadata.{operation}`.
+- TypeScript: `@Extension` declares family + version, `@Func` declares relative
+  names; register the decorated class as a NestJS provider and
+  `ChannelAppModule` auto-discovers it.
+- **Registration lifecycle**: the Function Endpoint must be deployed and
+  reachable _before_ registration, because AppStore may call discovery
+  immediately. Auto-registration waits for the server to listen, gets a cached
+  app token, calls `registerExtension` per discovered extension, and retries
+  transient failures with bounded exponential backoff. Re-register after any
+  Function-name or schema change. `unregisterExtension` only when deliberately
+  removing a capability.
 
 Extension families:
 
-- **Trigger-type**: `command` (desk/customer slash commands), `hook`
-  (event-driven), `polling` (scheduled), `widget`, `customtab`.
-- **Setup-type**: `config` (API keys / client credentials), `oauth`
-  (Authorization Code flow; token injected as `ctx.authToken`).
-- **Domain-type**: `calendar`, `commerce`, `wms`, `store`, `dataSource`,
-  `messaging`, `alfTask`, `notebook`, `mailRelay`.
-- ALF (Channel's AI agent) can recommend/run commands; workflows can embed
-  command buttons in messages. These are ways a command runs, not separate
-  extensions.
+| Family                       | Purpose                                             |
+| ---------------------------- | --------------------------------------------------- |
+| `command`                    | Desk/front commands returning text or opening a WAM |
+| `hook`                       | Event-driven, **idempotent** handlers               |
+| `polling`                    | Scheduled pollers iterating over targets            |
+| `widget`                     | Contextual widgets on a surface                     |
+| `customtab`                  | App-owned tab with interactive content              |
+| `config`                     | Stored API keys, credentials, scoped settings       |
+| `oauth`                      | Provider Authorization Code flow → `ctx.authToken`  |
+| `calendar`                   | Calendars, availability, bookings                   |
+| `commerce` / `wms` / `store` | Orders, buyer info, warehouse/shop metadata         |
+| `dataSource`                 | Read-only catalog queries over gRPC                 |
+| `messaging`                  | Inbox, prebuilt messaging, integrations             |
+| `alfTask` / `notebook`       | Versioned automation tasks / notebook definitions   |
+| `mailRelay`                  | Normalized mail events via webhook                  |
 
-Each extension = a metadata/discovery Function (e.g.
-`extension.command.metadata.getCommands`) + runtime Functions it references by
-**exact full name**. Metadata pointing at a Function does not create it — every
-referenced Function must be implemented and registered.
+ALF (Channel's AI agent) can recommend/run commands, and workflows can embed
+command buttons in messages. These are _ways a command runs_, not separate
+extensions.
 
-- `systemVersion` is Channel's platform contract version (`v1`), **not** the app
-  version. Never change it.
-- Relative names inside an extension become
-  `extension.{extensionName}.{relativeName}`.
-- App-specific business logic belongs in **standalone Functions**; only standard
-  contracts use the extension namespace.
+### 2.5 Command extension specifics
 
-Auth is handled by the SDK — do not reimplement:
+`extension.command.metadata.getCommands` returns the command definitions. Each
+definition references an `actionFunctionName` (required) and optionally an
+`autoCompleteFunctionName` for parameter suggestions.
 
-- `SignatureGuard` verifies inbound HMAC signatures (`x-signature`).
-- `TokenManager` caches/refreshes app and channel tokens. Never issue a new
-  token per request.
-- Manager authorization belongs to the WAM host (`useNativeFunction` acts as the
-  logged-in manager).
+Hard limits from the contract:
+
+- ≤ **30** command definitions per extension.
+- `name`: 1–30 chars, and it is the **stable identifier** — renaming breaks
+  callers.
+- `scope`: `desk` (managers) or `front` (customers).
+- `description`: optional, ≤ 100 chars.
+- `parameters`: ≤ 10, each typed `string` | `float` | `int` | `bool`, name 1–20
+  chars, optional ≤ 10 static choices.
+- `alfMode`: `disable` | `recommend` (required); optional `alfDescription` ≤
+  1500 chars.
+
+The action Function receives chat context (type + id), validated parameters,
+trigger info, and the caller's language. It returns text, an operation result,
+or a WAM. Autocomplete Functions must tolerate timeouts and return empty results
+gracefully.
+
+### 2.6 WAM specifics
+
+- The client loads `${WAM_ENDPOINT}/${name}`; `appId` is public and `name` is
+  the route selector. Register only the **root** in the portal — no `/v1`, no
+  WAM name appended.
+- Wrap the React root in `WamProvider`. The bundle is a single-page app, so it
+  must survive direct URL navigation and a missing host bridge.
+- Hooks: `useWamData` / `useTypedWamData` (host context: appId, channelId,
+  managerId, chatId, `wamArgs`), `useCallFunction` (app Functions — server-side
+  authority), `useNativeFunction` (acts **as the logged-in manager/user**; the
+  host authorizes by role), `useWamSize`, `useWamClose`.
+- **`wamArgs` is browser-readable.** Put only a minimal public identifier in it
+  and re-check business authorization server-side. This repo instead mints an
+  HMAC-signed, short-lived group-target token in `tutorial.open` and re-verifies
+  it in `sendAsBot` — the WAM never picks its own send target.
+- Validate every optional host field against a schema before use.
+- When closing after an action, **await the call first** or the user never sees
+  the error.
+
+### 2.7 Auth, tokens, endpoints
+
+| Value                | Meaning                                | Where it lives              |
+| -------------------- | -------------------------------------- | --------------------------- |
+| App ID               | Public identifier                      | Server and WAM              |
+| App Secret           | Issues token pairs                     | Server secret manager       |
+| Signing Key          | Verifies `x-signature`                 | Server secret manager       |
+| App token            | Extension registration, app-scoped ops | Server cache                |
+| Channel token        | Channel-scoped ops                     | Server cache, per channel   |
+| Provider OAuth token | External service calls                 | Injected as `ctx.authToken` |
+
+- **Inbound**: `SignatureGuard` verifies HMAC-SHA256 `x-signature` over the
+  **raw body** using the hex-decoded Signing Key.
+- **Outbound**: `TokenManager` issues and caches token pairs (`accessToken`,
+  `refreshToken`, `expiresIn`) from the App Secret and refreshes before expiry.
+  `issueToken`/`refreshToken` are rate-limited to **10 calls per 30 minutes per
+  app** — never issue a token per request. Omitting `channelId` yields an app
+  token; including it yields a channel token for that installed channel. Native
+  Function calls send it as `x-access-token`.
+- Multiple replicas must share the token cache (Redis/DB) via the SDK cache
+  interface, or they burn the rate limit.
+- **WAM requests**: manager/user authorization belongs to the host runtime; the
+  app server's `TokenManager` does not mint it.
+- Endpoints registered in the portal are **roots**: Function Endpoint
+  `…/functions` (actual call is `PUT …/functions/v1`), WAM Endpoint
+  `…/resource/wam` (actual UI is `…/resource/wam/{name}`).
 - **Never** put App Secret, Signing Key, tokens, or provider credentials in WAM
-  code, Git, logs, issues, or README.
+  code, Git, logs, issues, or README. Audit the WAM bundle for leaks.
 - Never set `SKIP_SIGNATURE_VERIFICATION=true` outside isolated local debugging
   (`config.ts` hard-fails on it in hosted runtimes).
 
@@ -331,4 +444,15 @@ This section gets updated with the chosen design once the topic is fixed.
     WAM, extensions/command)
 - In this repo: `HACKATHON.ko.md`, `TEAM.md`, `docs/desk-qa.md` (team1 pilot
   record)
-- Channel developer docs: https://developers.channel.io/ko
+- Channel developer docs (EN), the source for section 2:
+  - Build Your First Channel App:
+    https://developers.channel.io/en/articles/Build-Your-First-Channel-App-516161ed
+  - Concepts: https://developers.channel.io/en/articles/Concepts-e7c2fb6f
+  - Function Registration:
+    https://developers.channel.io/en/articles/Function-Registration-77250b17
+  - Command Guide:
+    https://developers.channel.io/en/articles/Command-Guide-b3d200dc
+  - WAM Guide: https://developers.channel.io/en/articles/WAM-Guide-059680de
+  - Extension Guide:
+    https://developers.channel.io/en/articles/Extension-Guide-bbe1a8a9
+- Channel developer docs (KO): https://developers.channel.io/ko
