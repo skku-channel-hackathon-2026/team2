@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export * from "./hubaego.js";
+
 export const TUTORIAL_WAM_NAME = "tutorial";
 
 export const TUTORIAL_FUNCTIONS = {

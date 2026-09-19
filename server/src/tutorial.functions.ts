@@ -13,11 +13,9 @@ import {
   CommandResultSchema,
   Ctx,
   Description,
-  Extension,
   Func,
   FunctionCallError,
   FunctionCallErrorCode,
-  GetCommandsOutputSchema,
   Input,
   InputSchema,
   NativeFunctionClient,
@@ -33,28 +31,6 @@ import {
 
 const tutorialMessage = "This is a test message sent by a manager.";
 const botMessage = "This is a test message sent by a bot.";
-
-@Extension({ name: "command", systemVersion: "v1" })
-export class CommandExtension {
-  @Func("metadata.getCommands")
-  @Description("Return the tutorial command definition")
-  @InputSchema(z.object({}))
-  @OutputSchema(GetCommandsOutputSchema)
-  getCommands(): z.infer<typeof GetCommandsOutputSchema> {
-    return {
-      commands: [
-        {
-          name: "tutorial",
-          scope: "desk",
-          description: "Open the Channel App SDK tutorial WAM",
-          actionFunctionName: TUTORIAL_FUNCTIONS.open,
-          alfMode: "disable",
-          enabledByDefault: true,
-        },
-      ],
-    };
-  }
-}
 
 @Injectable()
 export class TutorialFunctions {
