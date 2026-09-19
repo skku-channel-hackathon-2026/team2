@@ -476,6 +476,17 @@ function apiClient(accessKey, accessSecret) {
         continue;
       }
 
+      if (response.status === 401) {
+        throw new Error(
+          [
+            `${options.method || "GET"} ${path} 인증 실패 (401).`,
+            "채널 설정의 일반 API 키나 Channel App secret은 Documents API에서 사용할 수 없습니다.",
+            "대상 Documents Space → 스페이스 설정 → 연동 → API 인증 키 관리에서",
+            "새 키를 발급하고 Access Key와 Access Secret을 같은 키 쌍으로 입력하세요.",
+          ].join(" "),
+        );
+      }
+
       throw new Error(
         `${options.method || "GET"} ${path} 실패 (${response.status}): ${text.slice(0, 800)}`,
       );

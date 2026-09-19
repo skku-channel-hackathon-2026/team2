@@ -1,0 +1,859 @@
+{
+  "schemaVersion": 1,
+  "space": {
+    "id": "21986",
+    "name": "팀2"
+  },
+  "documents": {
+    "sopmu:0096d7d9321d822da775010f827533d7": {
+      "sourceId": "sopmu:0096d7d9321d822da775010f827533d7",
+      "articleId": "1049913",
+      "revisionId": "2157737",
+      "contentHash": "336081b1ee61a9ff6772734d3c107d18e9bb4b2146c3ec55f8f418de88c0d0fa",
+      "status": "published",
+      "title": "리눅스 명령어 정리(w Vim)",
+      "updatedAt": "2026-09-19T07:23:49.624Z",
+      "publishedAt": "2026-09-19T07:23:49.804Z"
+    },
+    "sopmu:0336d7d9321d82209a270174beaedaa5": {
+      "sourceId": "sopmu:0336d7d9321d82209a270174beaedaa5",
+      "articleId": "1049914",
+      "revisionId": "2157738",
+      "contentHash": "0e03ff9b58453a7fa0b3cd57ddd864a6a8b2ed16b35dbbc5f3e4b9a572f8a703",
+      "status": "published",
+      "title": "VS code 활용 팁",
+      "updatedAt": "2026-09-19T07:23:49.898Z",
+      "publishedAt": "2026-09-19T07:23:49.986Z"
+    },
+    "sopmu:0566d7d9321d827c8f5381ef93429a59": {
+      "sourceId": "sopmu:0566d7d9321d827c8f5381ef93429a59",
+      "articleId": "1049915",
+      "revisionId": "2157739",
+      "contentHash": "d6b9986ac8f1b70d78c939a310c3f04182787cd5ae858eccae1182188b09ed5d",
+      "status": "published",
+      "title": "구형준 교수님",
+      "updatedAt": "2026-09-19T07:23:50.070Z",
+      "publishedAt": "2026-09-19T07:23:50.138Z"
+    },
+    "sopmu:0e56d7d9321d82e099b58120dfb806fb": {
+      "sourceId": "sopmu:0e56d7d9321d82e099b58120dfb806fb",
+      "articleId": "1049916",
+      "revisionId": "2157740",
+      "contentHash": "6d207ad7d5f51e3b6f56cfd2af8d9a734a3d08bfbe427d4fc4d9329a02ddf130",
+      "status": "published",
+      "title": "시스템 과목 추천 로드맵",
+      "updatedAt": "2026-09-19T07:23:50.230Z",
+      "publishedAt": "2026-09-19T07:23:50.390Z"
+    },
+    "sopmu:1826d7d9321d838d962981b64aa974ef": {
+      "sourceId": "sopmu:1826d7d9321d838d962981b64aa974ef",
+      "articleId": "1049917",
+      "revisionId": "2157741",
+      "contentHash": "c0099ace75874195b0eae36e55a1782114d82b9fb969fefca6fc022f24c9a363",
+      "status": "published",
+      "title": "시스템프로그래밍실습",
+      "updatedAt": "2026-09-19T07:23:50.453Z",
+      "publishedAt": "2026-09-19T07:23:50.517Z"
+    },
+    "sopmu:1886d7d9321d828cabc6811053d041c1": {
+      "sourceId": "sopmu:1886d7d9321d828cabc6811053d041c1",
+      "articleId": "1049918",
+      "revisionId": "2157742",
+      "contentHash": "bfbc0222df961a26369cba765acc96bcc0765c60e0009ed2cb11ae62a07bdf07",
+      "status": "published",
+      "title": "정윤경 교수님",
+      "updatedAt": "2026-09-19T07:23:50.596Z",
+      "publishedAt": "2026-09-19T07:23:50.687Z"
+    },
+    "sopmu:1c26d7d9321d823b95f9818ec3828948": {
+      "sourceId": "sopmu:1c26d7d9321d823b95f9818ec3828948",
+      "articleId": "1049919",
+      "revisionId": "2157743",
+      "contentHash": "7cbac59c8af2c1bd5e27b4a4d28ba3db6a1be456c5814a12393f0031c6ba2cee",
+      "status": "published",
+      "title": "한환수 교수님",
+      "updatedAt": "2026-09-19T07:23:50.752Z",
+      "publishedAt": "2026-09-19T07:23:50.850Z"
+    },
+    "sopmu:1cf6d7d9321d82e2ac2001366693a09a": {
+      "sourceId": "sopmu:1cf6d7d9321d82e2ac2001366693a09a",
+      "articleId": "1049920",
+      "revisionId": "2157744",
+      "contentHash": "e99e98ae12d00343d7cce12c6e2382a9bf130ca5da51ff4309e652e12e707466",
+      "status": "published",
+      "title": "교수님께 메일드리는 법",
+      "updatedAt": "2026-09-19T07:23:50.915Z",
+      "publishedAt": "2026-09-19T07:23:52.002Z"
+    },
+    "sopmu:1e36d7d9321d8202a984016b145c2690": {
+      "sourceId": "sopmu:1e36d7d9321d8202a984016b145c2690",
+      "articleId": "1049921",
+      "revisionId": "2157745",
+      "contentHash": "b8f2f14ce784a1a44d9415b032bd096a302414924b33f05c69a8b0e16d6c35e6",
+      "status": "published",
+      "title": "심층신경망개론",
+      "updatedAt": "2026-09-19T07:23:52.061Z",
+      "publishedAt": "2026-09-19T07:23:52.123Z"
+    },
+    "sopmu:25d6d7d9321d8327b9ba813448ba3a9d": {
+      "sourceId": "sopmu:25d6d7d9321d8327b9ba813448ba3a9d",
+      "articleId": "1049922",
+      "revisionId": "2157746",
+      "contentHash": "94858b7e87084ff4d956ddfa1facd5679788ebb7bb050999e130e768e0dd8483",
+      "status": "published",
+      "title": "기계학습원론",
+      "updatedAt": "2026-09-19T07:23:52.180Z",
+      "publishedAt": "2026-09-19T07:23:52.245Z"
+    },
+    "sopmu:26a6d7d9321d82f6953e0177fcce62f3": {
+      "sourceId": "sopmu:26a6d7d9321d82f6953e0177fcce62f3",
+      "articleId": "1049923",
+      "revisionId": "2157747",
+      "contentHash": "ed238b6f5f740fd9c090e26c8b7ad82d13845ce002ed9c03e0042e4d3375dbd8",
+      "status": "published",
+      "title": "교내 편의점",
+      "updatedAt": "2026-09-19T07:23:52.311Z",
+      "publishedAt": "2026-09-19T07:23:52.402Z"
+    },
+    "sopmu:26a6d7d9321d83488bec018427f3ea81": {
+      "sourceId": "sopmu:26a6d7d9321d83488bec018427f3ea81",
+      "articleId": "1049924",
+      "revisionId": "2157748",
+      "contentHash": "efc9d58c97f7c545cb969142f9b69e46618a907e94e0aff122142911422869da",
+      "status": "published",
+      "title": "학교 주요 행사 모음",
+      "updatedAt": "2026-09-19T07:23:52.487Z",
+      "publishedAt": "2026-09-19T07:23:52.577Z"
+    },
+    "sopmu:2e76d7d9321d83e38e3f81bb487458db": {
+      "sourceId": "sopmu:2e76d7d9321d83e38e3f81bb487458db",
+      "articleId": "1049925",
+      "revisionId": "2157749",
+      "contentHash": "9cf436a0e200995e18a778011722f9337fd242b8e5e3776010cb184700534928",
+      "status": "published",
+      "title": "이호준 교수님",
+      "updatedAt": "2026-09-19T07:23:52.642Z",
+      "publishedAt": "2026-09-19T07:23:52.716Z"
+    },
+    "sopmu:31a6d7d9321d83d1a0e68166f06db8f0": {
+      "sourceId": "sopmu:31a6d7d9321d83d1a0e68166f06db8f0",
+      "articleId": "1049926",
+      "revisionId": "2157750",
+      "contentHash": "88e781ad12409af20cb4e19bfccd2d9377b77a7835baa443f326e2d139d19ce4",
+      "status": "published",
+      "title": "시계열데이터처리개론",
+      "updatedAt": "2026-09-19T07:23:53.813Z",
+      "publishedAt": "2026-09-19T07:23:53.885Z"
+    },
+    "sopmu:32b6d7d9321d82b9b8a2817d35d4f415": {
+      "sourceId": "sopmu:32b6d7d9321d82b9b8a2817d35d4f415",
+      "articleId": "1049927",
+      "revisionId": "2157751",
+      "contentHash": "80e2fb7985a1b3faaf7b967aae921762dad95e93c3a34b5fbbd360a43adbc367",
+      "status": "published",
+      "title": "진정한 프로그래머들을 위한 숨겨진 대회 소개",
+      "updatedAt": "2026-09-19T07:23:53.962Z",
+      "publishedAt": "2026-09-19T07:23:54.053Z"
+    },
+    "sopmu:32d6d7d9321d83d2bcd90100a635a98c": {
+      "sourceId": "sopmu:32d6d7d9321d83d2bcd90100a635a98c",
+      "articleId": "1049928",
+      "revisionId": "2157752",
+      "contentHash": "772a3580be1be296f20b988997a50910926921ada43883e01506c721e0e58a2d",
+      "status": "published",
+      "title": "소프트웨어공학개론",
+      "updatedAt": "2026-09-19T07:23:54.127Z",
+      "publishedAt": "2026-09-19T07:23:54.200Z"
+    },
+    "sopmu:32f6d7d9321d820487a901364bd3bc5a": {
+      "sourceId": "sopmu:32f6d7d9321d820487a901364bd3bc5a",
+      "articleId": "1049929",
+      "revisionId": "2157753",
+      "contentHash": "a1c4b3bd71c9edc563d0efe4b675582c9f1b035fb91e0334062033149c9441cb",
+      "status": "published",
+      "title": "알고리즘개론",
+      "updatedAt": "2026-09-19T07:23:54.283Z",
+      "publishedAt": "2026-09-19T07:23:54.376Z"
+    },
+    "sopmu:36b6d7d9321d83e4ba6c01dc7fe7d588": {
+      "sourceId": "sopmu:36b6d7d9321d83e4ba6c01dc7fe7d588",
+      "articleId": "1049930",
+      "revisionId": "2157754",
+      "contentHash": "79e838220ac36aca9f5f5800308f915521b99f847bb2bf10064a92a7a9c2c118",
+      "status": "published",
+      "title": "삼성 SW 멤버십",
+      "updatedAt": "2026-09-19T07:23:54.442Z",
+      "publishedAt": "2026-09-19T07:23:54.523Z"
+    },
+    "sopmu:4016d7d9321d82da8a768144998ef778": {
+      "sourceId": "sopmu:4016d7d9321d82da8a768144998ef778",
+      "articleId": "1049931",
+      "revisionId": "2157755",
+      "contentHash": "0839d6da4dbd6b17f4c74170bf6afbf77640bc0a14bbeaf000a49e7be1f67edc",
+      "status": "published",
+      "title": "SWIFT",
+      "updatedAt": "2026-09-19T07:23:54.606Z",
+      "publishedAt": "2026-09-19T07:23:54.680Z"
+    },
+    "sopmu:4506d7d9321d820b8b0001f0c0e8f2fe": {
+      "sourceId": "sopmu:4506d7d9321d820b8b0001f0c0e8f2fe",
+      "articleId": "1049932",
+      "revisionId": "2157756",
+      "contentHash": "a8b0634f8850f36a66329b2b2db5c11fdab4a5cef24a35ad50f1055f4f4d9f07",
+      "status": "published",
+      "title": "SCG",
+      "updatedAt": "2026-09-19T07:23:54.760Z",
+      "publishedAt": "2026-09-19T07:23:54.835Z"
+    },
+    "sopmu:4ac6d7d9321d822a95e001507d47e77c": {
+      "sourceId": "sopmu:4ac6d7d9321d822a95e001507d47e77c",
+      "articleId": "1049933",
+      "revisionId": "2157757",
+      "contentHash": "7a143ccd1474660e18fd3b48882c66e4c9dfb037d7e5618f3c7b60b31fef3ad9",
+      "status": "published",
+      "title": "성균관대학교 오거서",
+      "updatedAt": "2026-09-19T07:23:55.933Z",
+      "publishedAt": "2026-09-19T07:23:56.026Z"
+    },
+    "sopmu:4af6d7d9321d831abc0281f90616a978": {
+      "sourceId": "sopmu:4af6d7d9321d831abc0281f90616a978",
+      "articleId": "1049934",
+      "revisionId": "2157758",
+      "contentHash": "4cf2d1a8f289976b759713239f5d8add71fe77a7f6acc51508cea75780cb3bda",
+      "status": "published",
+      "title": "러닝 코스 추천",
+      "updatedAt": "2026-09-19T07:23:56.109Z",
+      "publishedAt": "2026-09-19T07:23:56.208Z"
+    },
+    "sopmu:54c6d7d9321d8234bd990179c434d6a6": {
+      "sourceId": "sopmu:54c6d7d9321d8234bd990179c434d6a6",
+      "articleId": "1049935",
+      "revisionId": "2157759",
+      "contentHash": "11345a4c1e268b881b372a0f6aed1557382f01256da16c7294dea8ea04ae0d11",
+      "status": "published",
+      "title": "서의성 교수님",
+      "updatedAt": "2026-09-19T07:23:56.272Z",
+      "publishedAt": "2026-09-19T07:23:56.362Z"
+    },
+    "sopmu:5796d7d9321d83ddb0d501486fed4eea": {
+      "sourceId": "sopmu:5796d7d9321d83ddb0d501486fed4eea",
+      "articleId": "1049936",
+      "revisionId": "2157760",
+      "contentHash": "5b0d11780192e310cfd723946439e52ec9f6674772809cef72715bb59d5ab630",
+      "status": "published",
+      "title": "차세대반도체공학연계전공",
+      "updatedAt": "2026-09-19T07:23:56.492Z",
+      "publishedAt": "2026-09-19T07:23:56.626Z"
+    },
+    "sopmu:5806d7d9321d82f8bb4c01286a9788db": {
+      "sourceId": "sopmu:5806d7d9321d82f8bb4c01286a9788db",
+      "articleId": "1049937",
+      "revisionId": "2157761",
+      "contentHash": "022e2c7fbfbdfb0f04bda622710a2608448bea0e4df235c26dc0b52b30fff984",
+      "status": "published",
+      "title": "NPC",
+      "updatedAt": "2026-09-19T07:23:56.699Z",
+      "publishedAt": "2026-09-19T07:23:56.775Z"
+    },
+    "sopmu:5cd6d7d9321d8317a71d81b9bad49949": {
+      "sourceId": "sopmu:5cd6d7d9321d8317a71d81b9bad49949",
+      "articleId": "1049938",
+      "revisionId": "2157762",
+      "contentHash": "18a027143faafe6424acb2e30c76cc5b875406a7028e9e8b757c5cc604a7de9a",
+      "status": "published",
+      "title": "스마트카공학개론",
+      "updatedAt": "2026-09-19T07:23:56.835Z",
+      "publishedAt": "2026-09-19T07:23:56.928Z"
+    },
+    "sopmu:60f6d7d9321d8315a3dc8155a371cf08": {
+      "sourceId": "sopmu:60f6d7d9321d8315a3dc8155a371cf08",
+      "articleId": "1049939",
+      "revisionId": "2157763",
+      "contentHash": "104e43be2b0bd495cf8a98165279364169c81cb40b5d87d5c79c5c824cca9df3",
+      "status": "published",
+      "title": "운영체제",
+      "updatedAt": "2026-09-19T07:23:58.021Z",
+      "publishedAt": "2026-09-19T07:23:58.097Z"
+    },
+    "sopmu:61a6d7d9321d82498b89018fdc7a9bab": {
+      "sourceId": "sopmu:61a6d7d9321d82498b89018fdc7a9bab",
+      "articleId": "1049940",
+      "revisionId": "2157764",
+      "contentHash": "f2e3fa7fd474bb16c0c350c0b2a2a15b6bf5ac71359f15c9f31f3f81acda6154",
+      "status": "published",
+      "title": "차수영 교수님",
+      "updatedAt": "2026-09-19T07:23:58.169Z",
+      "publishedAt": "2026-09-19T07:23:58.234Z"
+    },
+    "sopmu:6266d7d9321d83228a2301672c6814aa": {
+      "sourceId": "sopmu:6266d7d9321d83228a2301672c6814aa",
+      "articleId": "1049941",
+      "revisionId": "2157765",
+      "contentHash": "a975eb9d4d55267a3cd31363bc4c929a17402a04136782abd0a683304cdc603e",
+      "status": "published",
+      "title": "웹워크 꿀팁",
+      "updatedAt": "2026-09-19T07:23:58.300Z",
+      "publishedAt": "2026-09-19T07:23:58.373Z"
+    },
+    "sopmu:6296d7d9321d82ada20181322945066f": {
+      "sourceId": "sopmu:6296d7d9321d82ada20181322945066f",
+      "articleId": "1049942",
+      "revisionId": "2157766",
+      "contentHash": "8be0c42b3aae6c5a20e3f9023ef104981e54848f25cf12f707ce095146f4abe2",
+      "status": "published",
+      "title": "우사이먼성일 교수님",
+      "updatedAt": "2026-09-19T07:23:58.457Z",
+      "publishedAt": "2026-09-19T07:23:58.560Z"
+    },
+    "sopmu:6346d7d9321d82deba67010ee8233952": {
+      "sourceId": "sopmu:6346d7d9321d82deba67010ee8233952",
+      "articleId": "1049943",
+      "revisionId": "2157767",
+      "contentHash": "db24f79218c9e8087004aae756887f97a71ad2ad92b143251182ec77c0145e2f",
+      "status": "published",
+      "title": "박진영 교수님",
+      "updatedAt": "2026-09-19T07:23:58.625Z",
+      "publishedAt": "2026-09-19T07:23:58.791Z"
+    },
+    "sopmu:6686d7d9321d825ba72581e8b6c356ac": {
+      "sourceId": "sopmu:6686d7d9321d825ba72581e8b6c356ac",
+      "articleId": "1049944",
+      "revisionId": "2157768",
+      "contentHash": "d742ca4423797ea8ab73f482f3f95015fa85941169c4821abdaed7729a7f54df",
+      "status": "published",
+      "title": "교내 카페",
+      "updatedAt": "2026-09-19T07:23:58.855Z",
+      "publishedAt": "2026-09-19T07:23:59.959Z"
+    },
+    "sopmu:6826d7d9321d8313b300817a0757e7bd": {
+      "sourceId": "sopmu:6826d7d9321d8313b300817a0757e7bd",
+      "articleId": "1049945",
+      "revisionId": "2157769",
+      "contentHash": "1b42fdace1915e6c0e9ba33c40da9fe0a5e19efe19b26a039ebef4754cd2293c",
+      "status": "published",
+      "title": "기계학습수학",
+      "updatedAt": "2026-09-19T07:24:00.030Z",
+      "publishedAt": "2026-09-19T07:24:00.097Z"
+    },
+    "sopmu:6a76d7d9321d83c1b6d201cd511e4ba0": {
+      "sourceId": "sopmu:6a76d7d9321d83c1b6d201cd511e4ba0",
+      "articleId": "1049946",
+      "revisionId": "2157770",
+      "contentHash": "8a29c98e0fb8d8e33b0f3d178d178e23d038898df4214608b38a444034f06c9b",
+      "status": "published",
+      "title": "SSH 자동 로그인 하는 법",
+      "updatedAt": "2026-09-19T07:24:00.151Z",
+      "publishedAt": "2026-09-19T07:24:00.238Z"
+    },
+    "sopmu:6d36d7d9321d83b8ba8d01ede136e1c4": {
+      "sourceId": "sopmu:6d36d7d9321d83b8ba8d01ede136e1c4",
+      "articleId": "1049947",
+      "revisionId": "2157771",
+      "contentHash": "b40272c64824beddcc278ba64d5c58b20df5d5fe6989b0deaf070bba82948932",
+      "status": "published",
+      "title": "각종 공모전 및 대회",
+      "updatedAt": "2026-09-19T07:24:00.333Z",
+      "publishedAt": "2026-09-19T07:24:00.466Z"
+    },
+    "sopmu:7596d7d9321d820e86e301f00871a7e6": {
+      "sourceId": "sopmu:7596d7d9321d820e86e301f00871a7e6",
+      "articleId": "1049948",
+      "revisionId": "2157772",
+      "contentHash": "a607e3dcd5d951d549c1c7dc906fbbd827b6200d460d5fb77f89f217f7284f15",
+      "status": "published",
+      "title": "묵묵캠프 후기",
+      "updatedAt": "2026-09-19T07:24:00.544Z",
+      "publishedAt": "2026-09-19T07:24:00.682Z"
+    },
+    "sopmu:7656d7d9321d830aa32181b1b77c7b33": {
+      "sourceId": "sopmu:7656d7d9321d830aa32181b1b77c7b33",
+      "articleId": "1049949",
+      "revisionId": "2157773",
+      "contentHash": "673e6be52cda7445060bfd9e0e19e292112de94dcd20de37ea607b5734d0bc5a",
+      "status": "published",
+      "title": "마이크로디그리",
+      "updatedAt": "2026-09-19T07:24:00.774Z",
+      "publishedAt": "2026-09-19T07:24:00.877Z"
+    },
+    "sopmu:79b6d7d9321d83dea61a81af258792e6": {
+      "sourceId": "sopmu:79b6d7d9321d83dea61a81af258792e6",
+      "articleId": "1049950",
+      "revisionId": "2157774",
+      "contentHash": "ce3e6fb516619e6511e7814ddd95f05775cca5e73ce4949e4bc738edbce5d7d9",
+      "status": "published",
+      "title": "허재필 교수님",
+      "updatedAt": "2026-09-19T07:24:00.951Z",
+      "publishedAt": "2026-09-19T07:24:02.038Z"
+    },
+    "sopmu:7a46d7d9321d82f18ecd810ac9cc2e8d": {
+      "sourceId": "sopmu:7a46d7d9321d82f18ecd810ac9cc2e8d",
+      "articleId": "1049951",
+      "revisionId": "2157775",
+      "contentHash": "b5a2e440ae6f0e2e70c31870f73ce581d618d285ec24fee60bf65b93cf900453",
+      "status": "published",
+      "title": "컴퓨터네트워크개론",
+      "updatedAt": "2026-09-19T07:24:02.110Z",
+      "publishedAt": "2026-09-19T07:24:02.198Z"
+    },
+    "sopmu:7a96d7d9321d83d383f5815b6fc35312": {
+      "sourceId": "sopmu:7a96d7d9321d83d383f5815b6fc35312",
+      "articleId": "1049952",
+      "revisionId": "2157776",
+      "contentHash": "83c2d400cb5099362d35d83b6707794bcfac10a9d5a8d3ff4c4889d6f7124911",
+      "status": "published",
+      "title": "성균관대 거주 정보 (기숙사, 자취, 쉐어하우스)",
+      "updatedAt": "2026-09-19T07:24:02.341Z",
+      "publishedAt": "2026-09-19T07:24:02.494Z"
+    },
+    "sopmu:7e76d7d9321d821bab0781c298371880": {
+      "sourceId": "sopmu:7e76d7d9321d821bab0781c298371880",
+      "articleId": "1049953",
+      "revisionId": "2157777",
+      "contentHash": "6eda269f6ed36f81ccd1c30fca6b0d93adae2aeff11262f2da7ffa37c2f60d01",
+      "status": "published",
+      "title": "영어 메일 쓰는 법",
+      "updatedAt": "2026-09-19T07:24:02.571Z",
+      "publishedAt": "2026-09-19T07:24:02.652Z"
+    },
+    "sopmu:84d6d7d9321d821093b9811b00850dee": {
+      "sourceId": "sopmu:84d6d7d9321d821093b9811b00850dee",
+      "articleId": "1049954",
+      "revisionId": "2157778",
+      "contentHash": "2852ce1db110289a1425dc0485833575bfee2ea561dfc8ac63b0c52b3febf3ca",
+      "status": "published",
+      "title": "김형식 교수님",
+      "updatedAt": "2026-09-19T07:24:02.714Z",
+      "publishedAt": "2026-09-19T07:24:02.781Z"
+    },
+    "sopmu:8766d7d9321d82109244010ad53bb8e5": {
+      "sourceId": "sopmu:8766d7d9321d82109244010ad53bb8e5",
+      "articleId": "1049955",
+      "revisionId": "2157779",
+      "contentHash": "449fb076c09974435386fde5758e014a95dd5056d9b6f3349842b95bf7c790ce",
+      "status": "published",
+      "title": "교환학생 팁&후기",
+      "updatedAt": "2026-09-19T07:24:02.903Z",
+      "publishedAt": "2026-09-19T07:24:03.011Z"
+    },
+    "sopmu:8be6d7d9321d8381a41e014bed8e4580": {
+      "sourceId": "sopmu:8be6d7d9321d8381a41e014bed8e4580",
+      "articleId": "1049956",
+      "revisionId": "2157780",
+      "contentHash": "a57de9e0dbc2d90c9ed4878bfb4a6124ea444415fa3f35d098df1d5cd2f374dd",
+      "status": "published",
+      "title": "HCI개론",
+      "updatedAt": "2026-09-19T07:24:03.069Z",
+      "publishedAt": "2026-09-19T07:24:03.151Z"
+    },
+    "sopmu:8c36d7d9321d8323afcf81b7769c4592": {
+      "sourceId": "sopmu:8c36d7d9321d8323afcf81b7769c4592",
+      "articleId": "1049957",
+      "revisionId": "2157781",
+      "contentHash": "9de523e0d4194783567a899fd9d431badb2c5aa8d7d21434213d540ca819e128",
+      "status": "published",
+      "title": "SIOR",
+      "updatedAt": "2026-09-19T07:24:03.220Z",
+      "publishedAt": "2026-09-19T07:24:03.291Z"
+    },
+    "sopmu:8e06d7d9321d83fbb64581e53e9240db": {
+      "sourceId": "sopmu:8e06d7d9321d83fbb64581e53e9240db",
+      "articleId": "1049958",
+      "revisionId": "2157782",
+      "contentHash": "4c462f49a7fd5f7480ff7970d909a74807e91a81793a06fa56a901b109ef7ab5",
+      "status": "published",
+      "title": "ALIMI",
+      "updatedAt": "2026-09-19T07:24:03.356Z",
+      "publishedAt": "2026-09-19T07:24:03.429Z"
+    },
+    "sopmu:92b6d7d9321d83a2bf7e814dbef9b85c": {
+      "sourceId": "sopmu:92b6d7d9321d83a2bf7e814dbef9b85c",
+      "articleId": "1049959",
+      "revisionId": "2157783",
+      "contentHash": "beab5e9f1751604f7551fd495dee20eac3ebe8021abf9081017600da9a68cb59",
+      "status": "published",
+      "title": "졸업요건 충족하기",
+      "updatedAt": "2026-09-19T07:24:03.501Z",
+      "publishedAt": "2026-09-19T07:24:03.607Z"
+    },
+    "sopmu:93d6d7d9321d8295b1ab81cc65cb4740": {
+      "sourceId": "sopmu:93d6d7d9321d8295b1ab81cc65cb4740",
+      "articleId": "1049960",
+      "revisionId": "2157784",
+      "contentHash": "e5b3ea73c955e52143d9f887f80b5ebaef568a957840e71e30e4c10bf4d1c6a4",
+      "status": "published",
+      "title": "컴퓨터구조개론",
+      "updatedAt": "2026-09-19T07:24:03.672Z",
+      "publishedAt": "2026-09-19T07:24:03.763Z"
+    },
+    "sopmu:94f6d7d9321d83f3b0970163bb6e410d": {
+      "sourceId": "sopmu:94f6d7d9321d83f3b0970163bb6e410d",
+      "articleId": "1049961",
+      "revisionId": "2157785",
+      "contentHash": "b404925291447506eaa89014160742b6fe3cd7ca830eaa42c841d565168e57bb",
+      "status": "published",
+      "title": "숨통 트여주는 전공/교양 과목 추천",
+      "updatedAt": "2026-09-19T07:24:04.872Z",
+      "publishedAt": "2026-09-19T07:24:04.974Z"
+    },
+    "sopmu:9516d7d9321d823a967a8119290dc2fb": {
+      "sourceId": "sopmu:9516d7d9321d823a967a8119290dc2fb",
+      "articleId": "1049962",
+      "revisionId": "2157786",
+      "contentHash": "1e47fc22638583f410a7ce2f0262f28321ff3e3ab523f53a189bd8bee257f7f2",
+      "status": "published",
+      "title": "G:LOL!",
+      "updatedAt": "2026-09-19T07:24:05.038Z",
+      "publishedAt": "2026-09-19T07:24:05.130Z"
+    },
+    "sopmu:96a6d7d9321d830287b581d465f60900": {
+      "sourceId": "sopmu:96a6d7d9321d830287b581d465f60900",
+      "articleId": "1049963",
+      "revisionId": "2157787",
+      "contentHash": "55d2c1938b8059ecdccb0f05673f6b2c78d4ecb03b759cef76aa5e29280ddd4b",
+      "status": "published",
+      "title": "교내 프린트기 위치",
+      "updatedAt": "2026-09-19T07:24:05.222Z",
+      "publishedAt": "2026-09-19T07:24:05.319Z"
+    },
+    "sopmu:9816d7d9321d8273bad701d800ae63a2": {
+      "sourceId": "sopmu:9816d7d9321d8273bad701d800ae63a2",
+      "articleId": "1049964",
+      "revisionId": "2157788",
+      "contentHash": "c6a5ff71f954ce996517bdbee131cf3fb29b1fd47592cbd2032f037f139e6dc5",
+      "status": "published",
+      "title": "인공지능 과목 추천 로드맵",
+      "updatedAt": "2026-09-19T07:24:05.415Z",
+      "publishedAt": "2026-09-19T07:24:05.509Z"
+    },
+    "sopmu:9856d7d9321d8222ad1201f9a8a01db0": {
+      "sourceId": "sopmu:9856d7d9321d8222ad1201f9a8a01db0",
+      "articleId": "1049965",
+      "revisionId": "2157789",
+      "contentHash": "cb4a22c2ecf519b48386db6b4f9533fbe957301c22708348c9ebd44ee796b7bf",
+      "status": "published",
+      "title": "자료구조개론",
+      "updatedAt": "2026-09-19T07:24:05.568Z",
+      "publishedAt": "2026-09-19T07:24:05.661Z"
+    },
+    "sopmu:9966d7d9321d837cb61c01d1e74a60d2": {
+      "sourceId": "sopmu:9966d7d9321d837cb61c01d1e74a60d2",
+      "articleId": "1049966",
+      "revisionId": "2157790",
+      "contentHash": "c2ad61f4f19524afd55d5b351db751c5e2bc17c024118ed8262ce6f044d5b1bb",
+      "status": "published",
+      "title": "교내 근로/아르바이트",
+      "updatedAt": "2026-09-19T07:24:05.762Z",
+      "publishedAt": "2026-09-19T07:24:05.878Z"
+    },
+    "sopmu:9d36d7d9321d8316ab4a018e7144eab3": {
+      "sourceId": "sopmu:9d36d7d9321d8316ab4a018e7144eab3",
+      "articleId": "1049967",
+      "revisionId": "2157791",
+      "contentHash": "092ec5d82cfdf1e8c26ffb88906666cfde876e1f0154ccf33c3897622995c8b1",
+      "status": "published",
+      "title": "학생회 대여물품",
+      "updatedAt": "2026-09-19T07:24:05.958Z",
+      "publishedAt": "2026-09-19T07:24:07.073Z"
+    },
+    "sopmu:9d76d7d9321d823f944481b60bc21178": {
+      "sourceId": "sopmu:9d76d7d9321d823f944481b60bc21178",
+      "articleId": "1049968",
+      "revisionId": "2157792",
+      "contentHash": "3f8b2d6657577fdf48cedd226427ee771d27352de12773fb4f6b48b9185f6fc4",
+      "status": "published",
+      "title": "복지회관 시설",
+      "updatedAt": "2026-09-19T07:24:07.153Z",
+      "publishedAt": "2026-09-19T07:24:07.255Z"
+    },
+    "sopmu:9e36d7d9321d8315904381e47ed5767e": {
+      "sourceId": "sopmu:9e36d7d9321d8315904381e47ed5767e",
+      "articleId": "1049969",
+      "revisionId": "2157793",
+      "contentHash": "79dd4e5ceb3f6d6e69ea080c5eef11f4de0bd0b7bee4bc527d3fdc938caa8582",
+      "status": "published",
+      "title": "SST",
+      "updatedAt": "2026-09-19T07:24:07.320Z",
+      "publishedAt": "2026-09-19T07:24:07.404Z"
+    },
+    "sopmu:9e86d7d9321d8378af9e811ea5576fc8:food": {
+      "sourceId": "sopmu:9e86d7d9321d8378af9e811ea5576fc8",
+      "articleId": "1049970",
+      "revisionId": "2157794",
+      "contentHash": "433cfa1457979f7d0bb1e38ad0bab950b6c58231f635b872b5a1c67be3ab97e4",
+      "status": "published",
+      "title": "학교 근처 맛집",
+      "updatedAt": "2026-09-19T07:24:07.677Z",
+      "publishedAt": "2026-09-19T07:24:07.965Z"
+    },
+    "sopmu:9e86d7d9321d8378af9e811ea5576fc8:activities": {
+      "sourceId": "sopmu:9e86d7d9321d8378af9e811ea5576fc8",
+      "articleId": "1049971",
+      "revisionId": "2157795",
+      "contentHash": "95d996a4e6ce547847a8acd6b2f0b48deda04001af95454b34feb9a9ee0dbd14",
+      "status": "published",
+      "title": "학교 근처 놀거리",
+      "updatedAt": "2026-09-19T07:24:08.066Z",
+      "publishedAt": "2026-09-19T07:24:08.199Z"
+    },
+    "sopmu:a0d6d7d9321d83ee8cf601ef023ef0a3": {
+      "sourceId": "sopmu:a0d6d7d9321d83ee8cf601ef023ef0a3",
+      "articleId": "1049972",
+      "revisionId": "2157796",
+      "contentHash": "74555cac686a05030dd170aa6035d6f1c0827952ea965b40ece61b6ebd119ba6",
+      "status": "published",
+      "title": "HIT",
+      "updatedAt": "2026-09-19T07:24:08.256Z",
+      "publishedAt": "2026-09-19T07:24:08.343Z"
+    },
+    "sopmu:aaf6d7d9321d82db8e5b01dd96bf02e3": {
+      "sourceId": "sopmu:aaf6d7d9321d82db8e5b01dd96bf02e3",
+      "articleId": "1049973",
+      "revisionId": "2157797",
+      "contentHash": "ccb0fa5cdff9040995dafcac828db725fac2128b99b17293e2433b41db87750f",
+      "status": "published",
+      "title": "컴퓨터개론",
+      "updatedAt": "2026-09-19T07:24:08.407Z",
+      "publishedAt": "2026-09-19T07:24:08.487Z"
+    },
+    "sopmu:acc6d7d9321d83f9a86a014b9513d044": {
+      "sourceId": "sopmu:acc6d7d9321d83f9a86a014b9513d044",
+      "articleId": "1049974",
+      "revisionId": "2157798",
+      "contentHash": "2031793d2ac4aadb2868db16ecf3dc7c019c49ce67042e5823a550b23233be40",
+      "status": "published",
+      "title": "인공지능개론",
+      "updatedAt": "2026-09-19T07:24:08.546Z",
+      "publishedAt": "2026-09-19T07:24:08.613Z"
+    },
+    "sopmu:b056d7d9321d82dcb2a501c559b0e498": {
+      "sourceId": "sopmu:b056d7d9321d82dcb2a501c559b0e498",
+      "articleId": "1049975",
+      "revisionId": "2157799",
+      "contentHash": "003d31ba8adb39b75c2edfa019ba81380e2452e9e7e5db4a3cfd90dcb422f825",
+      "status": "published",
+      "title": "오픈소스소프트웨어실습",
+      "updatedAt": "2026-09-19T07:24:08.698Z",
+      "publishedAt": "2026-09-19T07:24:08.761Z"
+    },
+    "sopmu:b506d7d9321d8210879601f828c1462a": {
+      "sourceId": "sopmu:b506d7d9321d8210879601f828c1462a",
+      "articleId": "1049976",
+      "revisionId": "2157800",
+      "contentHash": "8021813bd33a5129793921f565c479d353f8551104df047b6bbe4a5b63538764",
+      "status": "published",
+      "title": "등록금 뽕 뽑는 꿀팁",
+      "updatedAt": "2026-09-19T07:24:08.892Z",
+      "publishedAt": "2026-09-19T07:24:10.068Z"
+    },
+    "sopmu:b666d7d9321d837cb96e814e0845385c": {
+      "sourceId": "sopmu:b666d7d9321d837cb96e814e0845385c",
+      "articleId": "1049977",
+      "revisionId": "2157801",
+      "contentHash": "d1b76b3ad759eeabbcd13d2f7101681fd1e5856371c71a3c8e06881919f08762",
+      "status": "published",
+      "title": "G:G",
+      "updatedAt": "2026-09-19T07:24:10.132Z",
+      "publishedAt": "2026-09-19T07:24:10.201Z"
+    },
+    "sopmu:b726d7d9321d8343b089815ad765330e": {
+      "sourceId": "sopmu:b726d7d9321d8343b089815ad765330e",
+      "articleId": "1049978",
+      "revisionId": "2157802",
+      "contentHash": "1229c173d9ddb16d4f33356d87f24dd23049dd2591408cbbca44d4729158d7a9",
+      "status": "published",
+      "title": "기술경영개론",
+      "updatedAt": "2026-09-19T07:24:10.257Z",
+      "publishedAt": "2026-09-19T07:24:10.339Z"
+    },
+    "sopmu:ba66d7d9321d82af9cc78199dbe9c40f": {
+      "sourceId": "sopmu:ba66d7d9321d82af9cc78199dbe9c40f",
+      "articleId": "1049979",
+      "revisionId": "2157803",
+      "contentHash": "6d73c8423e9a2ffd1f1de84431f56478b3516d15d598765c315ab405b454db39",
+      "status": "published",
+      "title": "고영중 교수님",
+      "updatedAt": "2026-09-19T07:24:10.423Z",
+      "publishedAt": "2026-09-19T07:24:10.496Z"
+    },
+    "sopmu:be56d7d9321d82cd955281886fc856f4": {
+      "sourceId": "sopmu:be56d7d9321d82cd955281886fc856f4",
+      "articleId": "1049980",
+      "revisionId": "2157804",
+      "contentHash": "9aaf6b4ac4c5944da0353dadf11d973929c31865017127fbfb6261e719d86183",
+      "status": "published",
+      "title": "민동문 교수님",
+      "updatedAt": "2026-09-19T07:24:10.562Z",
+      "publishedAt": "2026-09-19T07:24:10.655Z"
+    },
+    "sopmu:c0b6d7d9321d83a183d7810658607562": {
+      "sourceId": "sopmu:c0b6d7d9321d83a183d7810658607562",
+      "articleId": "1049981",
+      "revisionId": "2157805",
+      "contentHash": "9ceffba42dfb4a64f05278d9db605a360da8b699de436f85444f9e573ca199b9",
+      "status": "published",
+      "title": "글로벌챌린지 참여 후기",
+      "updatedAt": "2026-09-19T07:24:10.766Z",
+      "publishedAt": "2026-09-19T07:24:10.882Z"
+    },
+    "sopmu:c1c6d7d9321d82afaec4012636513b90": {
+      "sourceId": "sopmu:c1c6d7d9321d82afaec4012636513b90",
+      "articleId": "1049982",
+      "revisionId": "2157806",
+      "contentHash": "06ed6bc1b66a01da8e153cda4380dd584038fc546fc891177cd43aef08fd200b",
+      "status": "published",
+      "title": "신동군 교수님",
+      "updatedAt": "2026-09-19T07:24:11.973Z",
+      "publishedAt": "2026-09-19T07:24:12.042Z"
+    },
+    "sopmu:c2e6d7d9321d83ce80690179b0ad2151:campus": {
+      "sourceId": "sopmu:c2e6d7d9321d83ce80690179b0ad2151",
+      "articleId": "1049983",
+      "revisionId": "2157807",
+      "contentHash": "82d783e07b0a6c05829bfdacdd7b037fbf92b78df4b85cc440ae8e7ba5671152",
+      "status": "published",
+      "title": "교내 학습 공간",
+      "updatedAt": "2026-09-19T07:24:12.152Z",
+      "publishedAt": "2026-09-19T07:24:12.265Z"
+    },
+    "sopmu:c2e6d7d9321d83ce80690179b0ad2151:outside": {
+      "sourceId": "sopmu:c2e6d7d9321d83ce80690179b0ad2151",
+      "articleId": "1049984",
+      "revisionId": "2157808",
+      "contentHash": "6c62f86bbe3eb553848dfdfd10a6d8b165530135565e8c10b2d184e993be1841",
+      "status": "published",
+      "title": "교외 24시간 학습 공간 및 늦게까지 하는 카페",
+      "updatedAt": "2026-09-19T07:24:12.353Z",
+      "publishedAt": "2026-09-19T07:24:12.438Z"
+    },
+    "sopmu:cc86d7d9321d826bb0cd01c85c19e579": {
+      "sourceId": "sopmu:cc86d7d9321d826bb0cd01c85c19e579",
+      "articleId": "1049985",
+      "revisionId": "2157809",
+      "contentHash": "35ac327682e32e8311da12feb7a538690b881069f47c6f1e46c1033f08a9d2c8",
+      "status": "published",
+      "title": "시스템프로그램",
+      "updatedAt": "2026-09-19T07:24:12.521Z",
+      "publishedAt": "2026-09-19T07:24:12.608Z"
+    },
+    "sopmu:db06d7d9321d83a0851101c6cfeb6147": {
+      "sourceId": "sopmu:db06d7d9321d83a0851101c6cfeb6147",
+      "articleId": "1049986",
+      "revisionId": "2157810",
+      "contentHash": "c40677c3285c3e36319240f8e2037095edef0ff255f42ed29c725d278b0e4e2d",
+      "status": "published",
+      "title": "데이터마이닝",
+      "updatedAt": "2026-09-19T07:24:12.677Z",
+      "publishedAt": "2026-09-19T07:24:12.768Z"
+    },
+    "sopmu:e476d7d9321d82419879818a07f8ebb0": {
+      "sourceId": "sopmu:e476d7d9321d82419879818a07f8ebb0",
+      "articleId": "1049987",
+      "revisionId": "2157811",
+      "contentHash": "75f5193150bfa60a19281fe8a89a566d8dfd8aaea2fbc71664b0cfcfbc1cfa23",
+      "status": "published",
+      "title": "AMANG",
+      "updatedAt": "2026-09-19T07:24:12.837Z",
+      "publishedAt": "2026-09-19T07:24:12.912Z"
+    },
+    "sopmu:eb16d7d9321d822aabc101a0e8fbed66": {
+      "sourceId": "sopmu:eb16d7d9321d822aabc101a0e8fbed66",
+      "articleId": "1049988",
+      "revisionId": "2157812",
+      "contentHash": "2a50b0f82ab1b3d467ce21b3b345bbd6f8e56fbffa7c7f7bb433b4171d645887",
+      "status": "published",
+      "title": "SKKUDING",
+      "updatedAt": "2026-09-19T07:24:13.998Z",
+      "publishedAt": "2026-09-19T07:24:14.100Z"
+    },
+    "sopmu:ef76d7d9321d82208ebf817410002f96": {
+      "sourceId": "sopmu:ef76d7d9321d82208ebf817410002f96",
+      "articleId": "1049989",
+      "revisionId": "2157813",
+      "contentHash": "f2cb56a16df1bca80f543ad7c2f79fe90f9614a154b7601441850ddbdd2c4090",
+      "status": "published",
+      "title": "인의예지 클러스터 사용법",
+      "updatedAt": "2026-09-19T07:24:14.167Z",
+      "publishedAt": "2026-09-19T07:24:14.260Z"
+    },
+    "sopmu:f0d6d7d9321d8210bbc881bd4f1e6c49": {
+      "sourceId": "sopmu:f0d6d7d9321d8210bbc881bd4f1e6c49",
+      "articleId": "1049990",
+      "revisionId": "2157814",
+      "contentHash": "981986aedf841b91b0ae8a7edac989ce82ed565ff1084237af79a8773a252ac3",
+      "status": "published",
+      "title": "교내 휴게실 위치",
+      "updatedAt": "2026-09-19T07:24:14.325Z",
+      "publishedAt": "2026-09-19T07:24:14.418Z"
+    },
+    "sopmu:f166d7d9321d83438e4e819fda9422d9": {
+      "sourceId": "sopmu:f166d7d9321d83438e4e819fda9422d9",
+      "articleId": "1049991",
+      "revisionId": "2157815",
+      "contentHash": "78245add67b30c619fbf53fb6b5dd8552881c04df74a9eb635044a6e1246e129",
+      "status": "published",
+      "title": "MAV",
+      "updatedAt": "2026-09-19T07:24:14.484Z",
+      "publishedAt": "2026-09-19T07:24:14.561Z"
+    },
+    "sopmu:f176d7d9321d831f87c1813ebf3cfbe7": {
+      "sourceId": "sopmu:f176d7d9321d831f87c1813ebf3cfbe7",
+      "articleId": "1049992",
+      "revisionId": "2157816",
+      "contentHash": "7147316b18ff114b3b8f36129488bacb9df338da129190840bf62bfdc610a9dc",
+      "status": "published",
+      "title": "김유성 교수님",
+      "updatedAt": "2026-09-19T07:24:14.642Z",
+      "publishedAt": "2026-09-19T07:24:14.717Z"
+    },
+    "sopmu:f4c6d7d9321d83a7b36781a6abba3596": {
+      "sourceId": "sopmu:f4c6d7d9321d83a7b36781a6abba3596",
+      "articleId": "1049993",
+      "revisionId": "2157817",
+      "contentHash": "644ed92a9d4420b3c6dd6dcf7f4add0a1748367e958c7e2d944961d30e6c8277",
+      "status": "published",
+      "title": "학술정보관 이용 팁",
+      "updatedAt": "2026-09-19T07:24:14.823Z",
+      "publishedAt": "2026-09-19T07:24:15.960Z"
+    },
+    "sopmu:f4f6d7d9321d823192ad81259f8e66d3": {
+      "sourceId": "sopmu:f4f6d7d9321d823192ad81259f8e66d3",
+      "articleId": "1049994",
+      "revisionId": "2157818",
+      "contentHash": "8044442fdc84f6a6c7f0327409bfe0427f724efa3145793b7937fb81ce395ade",
+      "status": "published",
+      "title": "자바프로그래밍실습",
+      "updatedAt": "2026-09-19T07:24:16.019Z",
+      "publishedAt": "2026-09-19T07:24:16.105Z"
+    },
+    "sopmu:f766d7d9321d82f784ba01a3869d94d8": {
+      "sourceId": "sopmu:f766d7d9321d82f784ba01a3869d94d8",
+      "articleId": "1049995",
+      "revisionId": "2157819",
+      "contentHash": "11fd50f32ae9d670eb59d453c2099b311f95ace656457b36c4d591a2c127a96f",
+      "status": "published",
+      "title": "이종욱 교수님",
+      "updatedAt": "2026-09-19T07:24:16.179Z",
+      "publishedAt": "2026-09-19T07:24:16.270Z"
+    },
+    "sopmu:f7f6d7d9321d82398c57010524d871da": {
+      "sourceId": "sopmu:f7f6d7d9321d82398c57010524d871da",
+      "articleId": "1049996",
+      "revisionId": "2157820",
+      "contentHash": "3aa23f12f4d1dcf4d5626c4090000cf7c33d32ccc9c8ab8ba19be1e003acfc89",
+      "status": "published",
+      "title": "Mac(Apple Silicon)으로 Ubuntu Linux 이용",
+      "updatedAt": "2026-09-19T07:24:16.359Z",
+      "publishedAt": "2026-09-19T07:24:16.450Z"
+    },
+    "sopmu:fbe6d7d9321d825cb1d581ff7ff4cafb": {
+      "sourceId": "sopmu:fbe6d7d9321d825cb1d581ff7ff4cafb",
+      "articleId": "1049997",
+      "revisionId": "2157821",
+      "contentHash": "5cf22cbc05bfc054755c99a6be8d0aeb7c32520225c548f8659222e8355d21a5",
+      "status": "published",
+      "title": "문제해결",
+      "updatedAt": "2026-09-19T07:24:16.532Z",
+      "publishedAt": "2026-09-19T07:24:16.625Z"
+    }
+  }
+}
