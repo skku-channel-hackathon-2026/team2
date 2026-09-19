@@ -9,6 +9,7 @@ export const SCREENS = [
   "upgrade",
   "link",
   "senior",
+  "availability",
   "ops",
   "opsconfig",
   "rundue",
@@ -26,6 +27,10 @@ export const FUNCTIONS = {
   upgradeDecide: "upgrade.decide",
   seniorGetProfile: "senior.getProfile",
   seniorUpsertProfile: "senior.upsertProfile",
+  availabilityGet: "availability.get",
+  availabilitySetStatus: "availability.setStatus",
+  availabilitySetSlots: "availability.setSlots",
+  availabilitySearch: "availability.search",
   opsGetSettings: "ops.getSettings",
   opsSaveSettings: "ops.saveSettings",
   jobsRunDue: "jobs.runDue",
@@ -136,6 +141,15 @@ export const COMMANDS: CommandSpec[] = [
     alfMode: "disable",
     screen: "senior",
     actionFunctionName: "senior.open",
+  },
+  {
+    id: "availability",
+    name: "가능시간",
+    description: "밥약 가능 상태와 주간 가능 시간표를 관리해요",
+    scope: "desk",
+    alfMode: "disable",
+    screen: "availability",
+    actionFunctionName: "availability.open",
   },
   {
     id: "wild",
@@ -342,6 +356,16 @@ export const LinkManagerOutputSchema = z.object({
   userId: z.string(),
 });
 
+export const SENIOR_STATUSES = ["active", "paused"] as const;
+export type SeniorStatus = (typeof SENIOR_STATUSES)[number];
+
+/** The availability grid the WAM renders: one cell per hour, 08:00-23:00. */
+export const GRID_START_HOUR = 8;
+export const GRID_END_HOUR = 23;
+export const MAX_SLOTS = 40;
+
+export const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
+
 export const SeniorSlotSchema = z.object({
   weekday: z.number().int().min(0).max(6),
   startMinute: z.number().int().min(0).max(1439),
@@ -363,13 +387,74 @@ export const SeniorGetProfileOutputSchema = z.object({
   fields: z.array(z.object({ id: z.string(), label: z.string() })),
 });
 
+/** `status` and `slots` are owned by the availability screen; omitting them
+ *  here leaves the stored timetable untouched. */
 export const SeniorUpsertProfileInputSchema = z.object({
   headline: z.string().trim().max(60).optional(),
   portfolio: z.string().trim().max(200).optional(),
   weeklyLimitMinutes: z.number().int().min(0).max(1200),
-  status: z.enum(["active", "paused"]),
+  status: z.enum(SENIOR_STATUSES).optional(),
   fieldIds: z.array(z.string().min(1)).min(1).max(5),
-  slots: z.array(SeniorSlotSchema).max(20),
+  slots: z.array(SeniorSlotSchema).max(MAX_SLOTS).optional(),
+});
+
+export const AvailabilityStatusSchema = z.object({
+  status: z.enum(SENIOR_STATUSES),
+  pausedUntil: z.string().nullable(),
+  statusNote: z.string().nullable(),
+  /** `paused` with a past `pausedUntil` reads as available again. */
+  availableNow: z.boolean(),
+});
+
+export const AvailabilityGetOutputSchema = z.object({
+  linked: z.boolean(),
+  registered: z.boolean(),
+  availability: AvailabilityStatusSchema,
+  slots: z.array(SeniorSlotSchema),
+  totalMinutes: z.number().int(),
+  weeklyLimitMinutes: z.number().int(),
+  updatedAt: z.string().nullable(),
+});
+
+export const AvailabilitySetStatusInputSchema = z.object({
+  status: z.enum(SENIOR_STATUSES),
+  /** ISO date or datetime; ignored unless `status` is `paused`. */
+  pausedUntil: z.string().trim().min(4).max(40).nullish(),
+  statusNote: z.string().trim().max(80).nullish(),
+});
+
+export const AvailabilitySetSlotsInputSchema = z.object({
+  slots: z.array(SeniorSlotSchema).max(MAX_SLOTS),
+});
+
+export const AvailabilitySetSlotsOutputSchema = z.object({
+  slots: z.array(SeniorSlotSchema),
+  totalMinutes: z.number().int(),
+  updatedAt: z.string(),
+});
+
+export const AvailabilitySearchInputSchema = z.object({
+  weekday: z.number().int().min(0).max(6),
+  startMinute: z.number().int().min(0).max(1439),
+  endMinute: z.number().int().min(1).max(1440),
+  fieldIds: z.array(z.string().min(1)).max(5).optional(),
+  minOverlapMinutes: z.number().int().min(0).max(1440).optional(),
+  limit: z.number().int().min(1).max(50).optional(),
+});
+
+export const AvailableSeniorSchema = z.object({
+  userId: z.string(),
+  nickname: z.string(),
+  headline: z.string().nullable(),
+  fieldIds: z.array(z.string()),
+  startMinute: z.number().int(),
+  endMinute: z.number().int(),
+  overlapMinutes: z.number().int(),
+  weeklyLimitMinutes: z.number().int(),
+});
+
+export const AvailabilitySearchOutputSchema = z.object({
+  items: z.array(AvailableSeniorSchema),
 });
 
 export const OpsSettingsSchema = z.object({
@@ -419,4 +504,5 @@ export const ERROR_CODES = {
   full: "FULL",
   alreadyAccepted: "ALREADY_ACCEPTED",
   slotRequired: "SLOT_REQUIRED",
+  invalidSlot: "INVALID_SLOT",
 } as const;

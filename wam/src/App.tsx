@@ -13,6 +13,7 @@ import Me from './pages/Me'
 import Upgrade from './pages/Upgrade'
 import Link from './pages/Link'
 import Senior from './pages/Senior'
+import Availability from './pages/Availability'
 import Ops from './pages/Ops'
 import OpsConfig from './pages/OpsConfig'
 import RunDue from './pages/RunDue'
@@ -28,6 +29,8 @@ function Screen({ data }: { data: WamData }) {
       return <Link appId={data.appId} />
     case 'senior':
       return <Senior appId={data.appId} />
+    case 'availability':
+      return <Availability appId={data.appId} />
     case 'ops':
       return <Ops appId={data.appId} />
     case 'opsconfig':

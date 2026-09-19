@@ -121,6 +121,14 @@ export class CommandActions {
     return openWam("senior", params);
   }
 
+  @Func("availability.open")
+  @Description("가능 시간표 열기")
+  @InputSchema(CommandActionInputSchema)
+  @OutputSchema(CommandResultSchema)
+  availability(@Input() params: CommandActionInput): CommandResult {
+    return openWam("availability", params);
+  }
+
   @Func("wild.open")
   @Description("출현 목록 열기")
   @InputSchema(CommandActionInputSchema)

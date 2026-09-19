@@ -16,6 +16,7 @@ import {
   type Context,
 } from "@channel.io/app-sdk-server";
 import { AccountsService } from "../accounts.service.js";
+import { mergeSlots } from "../availability.service.js";
 import { getDatabase, queryAll } from "../database.js";
 import { newId, nowIso } from "../util.js";
 
@@ -128,7 +129,6 @@ export class SeniorFunctions {
              headline = excluded.headline,
              portfolio = excluded.portfolio,
              weekly_limit_minutes = excluded.weekly_limit_minutes,
-             status = excluded.status,
              updated_at = excluded.updated_at`,
         )
         .bind(
@@ -136,15 +136,12 @@ export class SeniorFunctions {
           input.headline ?? null,
           input.portfolio ?? null,
           input.weeklyLimitMinutes,
-          input.status,
+          input.status ?? "active",
           now,
           now,
         ),
       database
         .prepare("DELETE FROM senior_fields WHERE user_id = ?")
-        .bind(user.id),
-      database
-        .prepare("DELETE FROM senior_slots WHERE user_id = ?")
         .bind(user.id),
       ...input.fieldIds.map((fieldId) =>
         database
@@ -153,20 +150,46 @@ export class SeniorFunctions {
           )
           .bind(user.id, fieldId),
       ),
-      ...input.slots.map((slot) =>
+    ];
+
+    // The availability screen owns status and the timetable; only overwrite
+    // them when this caller actually supplied them.
+    if (input.status) {
+      statements.push(
         database
           .prepare(
-            "INSERT INTO senior_slots (id, user_id, weekday, start_minute, end_minute) VALUES (?, ?, ?, ?, ?)",
+            "UPDATE senior_profiles SET status = ?, updated_at = ? WHERE user_id = ?",
           )
-          .bind(
-            newId("slt"),
-            user.id,
-            slot.weekday,
-            slot.startMinute,
-            slot.endMinute,
-          ),
-      ),
-    ];
+          .bind(input.status, now, user.id),
+      );
+    }
+
+    if (input.slots) {
+      const slots = mergeSlots(input.slots);
+      statements.push(
+        database
+          .prepare("DELETE FROM senior_slots WHERE user_id = ?")
+          .bind(user.id),
+        ...slots.map((slot) =>
+          database
+            .prepare(
+              "INSERT INTO senior_slots (id, user_id, weekday, start_minute, end_minute) VALUES (?, ?, ?, ?, ?)",
+            )
+            .bind(
+              newId("slt"),
+              user.id,
+              slot.weekday,
+              slot.startMinute,
+              slot.endMinute,
+            ),
+        ),
+        database
+          .prepare(
+            "UPDATE senior_profiles SET availability_updated_at = ?, updated_at = ? WHERE user_id = ?",
+          )
+          .bind(now, now, user.id),
+      );
+    }
 
     await database.batch(statements);
     return { ok: true };
