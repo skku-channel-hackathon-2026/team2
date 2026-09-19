@@ -234,17 +234,17 @@ requested ──승인──▶ approved ──코드 입력──▶ linked
 
 ### 4.6 Functions (T1)
 
-| 메서드                                       | 호출         | params                                   | result                                                                      |
+| 메서드 | 호출 | params | result |
 | -------------------------------------------- | ------------ | ---------------------------------------- | --------------------------------------------------------------------------- | ------------- | -------------------------------------- |
-| `account.me`                                 | front·desk   | `{}`                                     | `{ user, roles: ('junior'                                                   | 'senior'      | 'staff')[], upgrade?: UpgradeStatus }` |
-| `account.upsertProfile`                      | front        | `{ nickname, department?, cohortYear? }` | `{ ok }`                                                                    |
-| `upgrade.open`                               | front 커맨드 | `{}`                                     | WAM `upgrade`                                                               |
-| `upgrade.request`                            | front WAM    | `{ email?, intro, agreeRules: true }`    | `{ requestId, status: 'requested' }`                                        |
-| `upgrade.status`                             | front WAM    | `{}`                                     | `{ status, inviteLink?, linkCode?, codeExpiresAt? }` (승인된 본인에게만)    |
-| `upgrade.list`                               | desk(운영)   | `{ status? }`                            | `{ items: UpgradeRequestCard[] }`                                           |
-| `upgrade.decide`                             | desk(운영)   | `{ requestId, approve, reason? }`        | `{ status, delivered: 'user_chat'                                           | 'wam_only' }` |
-| `account.linkManager`                        | desk WAM     | `{ code }`                               | `{ linked: true, userId }` 또는 `CODE_INVALID`·`CODE_EXPIRED`·`CODE_LOCKED` |
-| `senior.getProfile` / `senior.upsertProfile` | desk         | §HUBAE_GO_SPEC 10.4                      | 동일                                                                        |
+| `account.me` | front·desk | `{}` | `{ user, roles: ('junior'                                                   | 'senior'      | 'staff')[], upgrade?: UpgradeStatus }` |
+| `account.upsertProfile` | front | `{ nickname, department?, cohortYear? }` | `{ ok }` |
+| `upgrade.open` | front 커맨드 | `{}` | WAM `upgrade` |
+| `upgrade.request` | front WAM | `{ email?, intro, agreeRules: true }` | `{ requestId, status: 'requested' }` |
+| `upgrade.status` | front WAM | `{}` | `{ status, inviteLink?, linkCode?, codeExpiresAt? }` (승인된 본인에게만) |
+| `upgrade.list` | desk(운영) | `{ status? }` | `{ items: UpgradeRequestCard[] }` |
+| `upgrade.decide` | desk(운영) | `{ requestId, approve, reason? }` | `{ status, delivered: 'user_chat'                                           | 'wam_only' }` |
+| `account.linkManager` | desk WAM | `{ code }` | `{ linked: true, userId }` 또는 `CODE_INVALID`·`CODE_EXPIRED`·`CODE_LOCKED` |
+| `senior.getProfile` / `senior.upsertProfile` | desk | §HUBAE_GO_SPEC 10.4 | 동일 |
 
 **계정 자동 생성 규칙:** `caller.type = user`인 요청이 처음 오면 `users`에 고객
 ID로 행을 만들고, `context.userChat`이 있으면 `primary_user_chat_id`로

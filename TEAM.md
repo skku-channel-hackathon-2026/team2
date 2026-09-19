@@ -1,11 +1,14 @@
 # SKKU 2026 team2
 
+> 배포 안내 (2026-09-19): 서버는 Vercel Hobby, DB는 기존 팀 전용 Cloudflare D1을 사용합니다. PR을 main에 머지하고 CI가 통과하면 SQL 마이그레이션 후 자동 배포됩니다. Vercel 초대나 수동 배포는 필요 없습니다. 로컬 DB 개발은 기존 Wrangler 명령을 사용합니다.
+> 운영 DB 연결은 팀별 키로 분리되며 `prepare/bind/run/first/all`을 지원합니다. HTTP 연결에서는 `.batch()`를 지원하지 않습니다.
+
 - 레포: https://github.com/skku-channel-hackathon-2026/team2
 - 채널톡 앱: `SKKU 2026 Team2` (`6aab941aabdacecc770c`)
 - 앱 관리: https://channel.works/-/developers/apps/6aab941aabdacecc770c/general
 - 공통 채널: 성균관대 해커톤
 - 검증 그룹: https://channel.works/xd1l0/team-chat/groups/609235
-- 서버: https://skku-team2.skku-hackathon-2026.workers.dev
+- 서버: https://skku-team2.vercel.app
 - 전용 D1: `skku-team2` (`d6d86b00-5cd8-4778-806c-b635b7c043b7`)
 - 자동 배포: PR 머지 후 main CI가 성공하면 웹훅으로 Cloudflare 자동 배포를
   실행합니다. 실행 대기·빌드 시간이 필요합니다.

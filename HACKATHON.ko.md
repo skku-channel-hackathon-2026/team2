@@ -1,5 +1,8 @@
 # 성균관대 해커톤 개발 가이드
 
+> 배포 안내 (2026-09-19): 서버는 Vercel Hobby, DB는 기존 팀 전용 Cloudflare D1을 사용합니다. PR을 main에 머지하고 CI가 통과하면 SQL 마이그레이션 후 자동 배포됩니다. Vercel 초대나 수동 배포는 필요 없습니다. 로컬 DB 개발은 기존 Wrangler 명령을 사용합니다.
+> 운영 DB 연결은 팀별 키로 분리되며 `prepare/bind/run/first/all`을 지원합니다. HTTP 연결에서는 `.batch()`를 지원하지 않습니다.
+
 공식 `channel-io/app-tutorial-ts`와 Channel App SDK 0.17.2를 기반으로 합니다.
 서버는 Cloudflare Workers Free, DB는 팀별 Cloudflare D1(SQLite), 화면은 React
 WAM입니다. Node.js 24와 pnpm 11.24.0을 사용합니다. `pnpm-lock.yaml`을 함께
