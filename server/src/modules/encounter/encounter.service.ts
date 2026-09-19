@@ -31,16 +31,19 @@ export async function createEncounter(
 
   const encounterId = newId("enc");
   const now = nowIso();
+  const WAVE1_WINDOW_MS = 6 * 60 * 60 * 1000;
+  const nextWaveAt = new Date(Date.now() + WAVE1_WINDOW_MS).toISOString();
 
   await execute(
-    `INSERT INTO encounters (id, junior_id, field_id, title, meet_type, max_seniors, status, wave, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, 'wild', 1, ?)`,
+    `INSERT INTO encounters (id, junior_id, field_id, title, meet_type, max_seniors, status, wave, next_wave_at, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, 'wild', 1, ?, ?)`,
     encounterId,
     juniorId,
     input.fieldId,
     input.title,
     input.meetType,
     input.maxSeniors,
+    nextWaveAt,
     now,
   );
 

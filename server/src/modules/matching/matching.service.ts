@@ -103,16 +103,60 @@ interface SeniorProfileRow {
   weekly_limit_minutes: number;
 }
 
+// 매칭 v2 가중치 (HUBAE_GO_SPEC.md §6.2). 분야는 이미 필터에서 100% 일치를
+// 보장하므로 상수 1로 취급 — 남은 후보들 사이의 순위는 나머지 4개가 가른다.
+const WEIGHTS = {
+  field: 0.4,
+  categoryExperience: 0.2,
+  timeOverlap: 0.15,
+  responsiveness: 0.15,
+  fairness: 0.1,
+};
+
+/** 이 분야에서 잡아본 서로 다른 후배 수를 0~1로 스무딩(n/(n+3)). */
+async function categoryExperienceScore(
+  seniorId: string,
+  fieldId: string,
+): Promise<number> {
+  const rows = await queryAll(
+    "SELECT 1 FROM dex_entries WHERE senior_id = ? AND type_field_id = ?",
+    seniorId,
+    fieldId,
+  );
+  const n = rows.length;
+  return n / (n + 3);
+}
+
+/** 최근 알림 대비 실제 수락 비율. 알림을 아직 못 받은 신규 선배는 0.5. */
+async function responsivenessScore(seniorId: string): Promise<number> {
+  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const [notified, accepted] = await Promise.all([
+    queryAll(
+      "SELECT 1 FROM encounter_targets WHERE senior_id = ? AND notified_at >= ?",
+      seniorId,
+      since,
+    ),
+    queryAll(
+      "SELECT 1 FROM balls WHERE senior_id = ? AND thrown_at >= ?",
+      seniorId,
+      since,
+    ),
+  ]);
+  if (notified.length === 0) return 0.5;
+  return Math.min(1, accepted.length / notified.length);
+}
+
 /**
- * 매칭 v1 (규칙 기반): 후보 필터 → 시간 겹침 → 최근 7일 알림 횟수가 적은
- * 순으로 상위 5명. 선배 수가 적은 해커톤 규모를 가정해 후보별로 조회하며,
- * 수백 명 단위로 커지면 조인 하나로 합치는 게 낫다(T4에서 재검토).
+ * 매칭 v2 (규칙 + 가중치 점수): 후보 필터 → 5개 요소 가중합 점수 → 상위 5명.
+ * 선배 수가 적은 해커톤 규모를 가정해 후보별로 조회한다(수백 명 단위로
+ * 커지면 조인 하나로 합치는 게 낫다).
  */
 export async function findCandidates(params: {
   fieldId: string;
   meetType: MeetType;
   windows: TimeWindow[];
   juniorId: string;
+  excludeSeniorIds?: Set<string>;
 }): Promise<Candidate[]> {
   const durationNeeded = MEET_MINUTES[params.meetType];
 
@@ -125,10 +169,12 @@ export async function findCandidates(params: {
     params.fieldId,
   );
 
-  const scored: Array<Candidate & { recentNotifyCount: number }> = [];
+  const scored: Array<Candidate & { score: number }> = [];
   const since = new Date(Date.now() - RECENT_NOTIFY_WINDOW_MS).toISOString();
 
   for (const senior of seniors) {
+    if (params.excludeSeniorIds?.has(senior.user_id)) continue;
+
     const activeWithJunior = await queryOne(
       `SELECT b.id FROM balls b JOIN encounters e ON e.id = b.encounter_id
        WHERE b.senior_id = ? AND e.junior_id = ? AND b.status IN ('thrown','wobbling')`,
@@ -152,17 +198,29 @@ export async function findCandidates(params: {
       since,
     );
 
+    const [categoryExperience, responsiveness] = await Promise.all([
+      categoryExperienceScore(senior.user_id, params.fieldId),
+      responsivenessScore(senior.user_id),
+    ]);
+    const timeOverlapRatio = overlapWindows.length / params.windows.length;
+    const fairness = 1 / (1 + recentTargets.length);
+
+    const score =
+      WEIGHTS.field * 1 +
+      WEIGHTS.categoryExperience * categoryExperience +
+      WEIGHTS.timeOverlap * timeOverlapRatio +
+      WEIGHTS.responsiveness * responsiveness +
+      WEIGHTS.fairness * fairness;
+
     scored.push({
       seniorId: senior.user_id,
       seniorNickname: senior.nickname,
       overlapWindows,
-      recentNotifyCount: recentTargets.length,
+      score,
     });
   }
 
-  scored.sort(
-    (a, b) => a.recentNotifyCount - b.recentNotifyCount || Math.random() - 0.5,
-  );
+  scored.sort((a, b) => b.score - a.score);
   return scored
     .slice(0, MAX_CANDIDATES)
     .map(({ seniorId, seniorNickname, overlapWindows }) => ({

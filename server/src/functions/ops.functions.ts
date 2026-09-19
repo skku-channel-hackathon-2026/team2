@@ -24,6 +24,7 @@ import { NotificationsService } from "../notifications.service.js";
 import { SettingsService } from "../settings.service.js";
 import { newId } from "../util.js";
 import { sweepReviewLifecycle } from "../modules/ball/review-lifecycle.service.js";
+import { sweepWaves } from "../modules/matching/wave-lifecycle.service.js";
 
 @Injectable()
 export class OpsFunctions {
@@ -97,12 +98,13 @@ export class OpsFunctions {
   ): Promise<z.infer<typeof RunDueOutputSchema>> {
     await this.accounts.requireStaff(ctx);
 
-    // 후기 마감 리마인드·도망 처리를 outbox에 먼저 쌓은 뒤, 아래에서 한 번에
-    // 발송한다. 이렇게 하면 새 응답 필드 없이도(=등록 갱신 불필요) 방금 쌓인
-    // 알림이 sent/failed 집계에 자연히 포함된다.
-    await sweepReviewLifecycle({
+    // 후기 마감 리마인드·도망 처리, 웨이브 승급·만료를 outbox에 먼저 쌓은
+    // 뒤, 아래에서 한 번에 발송한다. 이렇게 하면 새 응답 필드 없이도(=등록
+    // 갱신 불필요) 방금 쌓인 알림이 sent/failed 집계에 자연히 포함된다.
+    await sweepReviewLifecycle({ notifications: this.notifications });
+    await sweepWaves({
       notifications: this.notifications,
-      channelId: ctx.channel.id,
+      settings: this.settings,
     });
 
     const summary = await this.notifications.runDue(ctx.channel.id, 20);

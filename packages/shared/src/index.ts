@@ -505,4 +505,5 @@ export const ERROR_CODES = {
   alreadyAccepted: "ALREADY_ACCEPTED",
   slotRequired: "SLOT_REQUIRED",
   invalidSlot: "INVALID_SLOT",
+  piiDetected: "PII_DETECTED",
 } as const;
