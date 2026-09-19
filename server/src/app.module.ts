@@ -21,6 +21,7 @@ import { EncounterFunctions } from "./modules/encounter/encounter.functions.js";
 import { WildFunctions } from "./modules/wild/wild.functions.js";
 import { AnswersFunctions } from "./modules/answers/answers.functions.js";
 import { KnowledgeFunctions } from "./modules/knowledge/knowledge.functions.js";
+import { TutorialFunctions } from "./tutorial.functions.js";
 
 @Module({
   imports: [ChannelAppModule.forRoot(channelAppOptions)],
@@ -45,6 +46,7 @@ import { KnowledgeFunctions } from "./modules/knowledge/knowledge.functions.js";
     WildFunctions,
     AnswersFunctions,
     KnowledgeFunctions,
+    TutorialFunctions,
     {
       provide: APP_GUARD,
       useFactory: () => new SignatureGuard(channelAppOptions),
