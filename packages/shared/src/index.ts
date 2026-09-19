@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export * from "./hubaego.js";
+
 export const WAM_NAME = "hubaego";
 
 export const SCREENS = [
@@ -409,4 +411,12 @@ export const ERROR_CODES = {
   duplicateRequest: "DUPLICATE_REQUEST",
   notFound: "NOT_FOUND",
   notConfigured: "NOT_CONFIGURED",
+  forbidden: "FORBIDDEN",
+  closed: "CLOSED",
+  reviewNotReady: "REVIEW_NOT_READY",
+  reviewAlreadyDone: "REVIEW_ALREADY_DONE",
+  reminderLimit: "REMINDER_LIMIT",
+  full: "FULL",
+  alreadyAccepted: "ALREADY_ACCEPTED",
+  slotRequired: "SLOT_REQUIRED",
 } as const;
