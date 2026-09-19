@@ -15,6 +15,35 @@ test("command metadata matches the SDK discovery schema", () => {
   assert.equal(output.commands.length, COMMANDS.length);
 });
 
+/**
+ * getCommands returns a literal so the registered payload can be read straight
+ * off the page; COMMANDS still drives the WAM args and the demo, so the two
+ * must not drift.
+ */
+test("the literal metadata stays in step with COMMANDS", () => {
+  const output = new CommandExtension().getCommands();
+  assert.deepEqual(
+    output.commands.map((command) => [
+      command.name,
+      command.actionFunctionName,
+    ]),
+    COMMANDS.map((command) => [command.name, command.actionFunctionName]),
+  );
+});
+
+test("command names avoid characters channels may reject", () => {
+  for (const command of new CommandExtension().getCommands().commands) {
+    assert.ok(
+      /^[A-Za-z0-9_]+$/.test(command.name),
+      `command name must be plain ASCII word characters: ${command.name}`,
+    );
+    assert.ok(
+      command.name.length <= 30,
+      `command name too long: ${command.name}`,
+    );
+  }
+});
+
 test("command identifiers stay unique and within the channel limit", () => {
   const names = COMMANDS.map((command) => command.name);
   const ids = COMMANDS.map((command) => command.id);
