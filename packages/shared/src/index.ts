@@ -13,6 +13,8 @@ export const SCREENS = [
   "ops",
   "opsconfig",
   "rundue",
+  "helpme",
+  "review",
   "soon",
 ] as const;
 export type Screen = (typeof SCREENS)[number];
@@ -102,7 +104,7 @@ export const COMMANDS: CommandSpec[] = [
     alfMode: "recommend",
     alfDescription:
       "후배가 진로나 학업 고민을 선배에게 물어보고 싶을 때 추천해요",
-    screen: "soon",
+    screen: "helpme",
     actionFunctionName: "helpme.open",
   },
   {
@@ -121,7 +123,7 @@ export const COMMANDS: CommandSpec[] = [
     description: "만남 후기를 남기고 선배를 도감에 등록해요",
     scope: "front",
     alfMode: "disable",
-    screen: "soon",
+    screen: "review",
     actionFunctionName: "review.open",
   },
   {

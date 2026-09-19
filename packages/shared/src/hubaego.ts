@@ -5,6 +5,15 @@ import { z } from "zod";
 // 여기서는 데이터 함수(list/confirmMet/remind/submit)만 다룬다.
 // 도감 "타입"은 T1에서 이미 만들어진 fields(진로·취업/학업·수강/...) 테이블을 쓴다.
 
+// 0003_t1_accounts.sql이 심어둔 fields 테이블과 반드시 같은 값을 유지한다.
+export const FIELD_OPTIONS = [
+  { id: "career", label: "진로·취업" },
+  { id: "study", label: "학업·수강" },
+  { id: "club", label: "동아리·대외활동" },
+  { id: "grad", label: "대학원·연구" },
+  { id: "life", label: "학교생활" },
+] as const;
+
 export const BALL_FUNCTIONS = {
   list: "ball.list",
   confirmMet: "ball.confirmMet",
