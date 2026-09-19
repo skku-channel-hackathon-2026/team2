@@ -194,6 +194,12 @@ export const EncounterCreateOutputSchema = z.object({
 });
 export type EncounterCreateOutput = z.infer<typeof EncounterCreateOutputSchema>;
 
+export const EncounterSeniorSchema = z.object({
+  seniorAlias: z.string(),
+  ballStatus: BallStatusSchema,
+});
+export type EncounterSenior = z.infer<typeof EncounterSeniorSchema>;
+
 export const MyEncounterCardSchema = z.object({
   encounterId: z.string(),
   title: z.string(),
@@ -203,6 +209,14 @@ export const MyEncounterCardSchema = z.object({
   slotStart: z.string().nullable(),
   slotEnd: z.string().nullable(),
   place: z.string().nullable(),
+  fieldId: z.string(),
+  fieldLabel: z.string(),
+  meetType: MeetTypeSchema,
+  createdAt: z.string(),
+  windows: z.array(TimeWindowSchema),
+  seniors: z.array(EncounterSeniorSchema),
+  reviewDueAt: z.string().nullable(),
+  hasReview: z.boolean(),
 });
 export type MyEncounterCard = z.infer<typeof MyEncounterCardSchema>;
 

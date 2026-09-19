@@ -85,7 +85,7 @@ export interface CommandSpec {
 export const COMMANDS: CommandSpec[] = [
   {
     id: "me",
-    name: "내정보",
+    name: "me",
     description: "내 별명과 학과, 업그레이드 상태를 확인해요",
     scope: "front",
     alfMode: "disable",
@@ -94,7 +94,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "upgrade",
-    name: "선배로-업그레이드",
+    name: "upgrade",
     description: "밥약을 해주는 선배로 업그레이드를 신청해요",
     scope: "front",
     alfMode: "recommend",
@@ -104,7 +104,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "helpme",
-    name: "선배-도와줘요",
+    name: "helpme",
     description: "궁금한 것을 물어보고 선배와 밥약을 잡아요",
     scope: "front",
     alfMode: "recommend",
@@ -115,7 +115,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "mybab",
-    name: "내밥약",
+    name: "mybab",
     description: "내 밥약 신청과 일정을 확인해요",
     scope: "front",
     alfMode: "recommend",
@@ -125,7 +125,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "review",
-    name: "후기",
+    name: "review",
     description: "만남 후기를 남기고 선배를 도감에 등록해요",
     scope: "front",
     alfMode: "disable",
@@ -134,7 +134,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "seniorstart",
-    name: "선배시작",
+    name: "seniorstart",
     description: "연결 코드를 입력해 선배 계정을 연결해요",
     scope: "desk",
     alfMode: "disable",
@@ -143,7 +143,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "senior",
-    name: "선배등록",
+    name: "senior",
     description: "분야와 가용 시간, 주간 상한을 등록해요",
     scope: "desk",
     alfMode: "disable",
@@ -152,7 +152,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "availability",
-    name: "가능시간",
+    name: "availability",
     description: "밥약 가능 상태와 주간 가능 시간표를 관리해요",
     scope: "desk",
     alfMode: "disable",
@@ -161,7 +161,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "wild",
-    name: "출현",
+    name: "wild",
     description: "나에게 온 출현을 확인하고 수락해요",
     scope: "desk",
     alfMode: "disable",
@@ -170,7 +170,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "balls",
-    name: "포켓볼",
+    name: "balls",
     description: "내 밥약 일정과 만남 완료를 관리해요",
     scope: "desk",
     alfMode: "disable",
@@ -179,7 +179,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "dex",
-    name: "도감",
+    name: "dex",
     description: "내가 잡은 후배 목록을 봐요",
     scope: "desk",
     alfMode: "disable",
@@ -188,7 +188,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "answers",
-    name: "답변",
+    name: "answers",
     description: "내가 도운 질문과 후배의 답을 봐요",
     scope: "desk",
     alfMode: "disable",
@@ -197,7 +197,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "ops",
-    name: "운영",
+    name: "ops",
     description: "업그레이드 승인과 운영 작업을 처리해요",
     scope: "desk",
     alfMode: "disable",
@@ -206,7 +206,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "opsconfig",
-    name: "운영설정",
+    name: "opsconfig",
     description: "이 그룹방의 역할과 초대 링크를 등록해요",
     scope: "desk",
     alfMode: "disable",
@@ -215,7 +215,7 @@ export const COMMANDS: CommandSpec[] = [
   },
   {
     id: "rundue",
-    name: "알림실행",
+    name: "rundue",
     description: "예약된 알림을 지금 발송해요",
     scope: "desk",
     alfMode: "disable",
@@ -293,6 +293,7 @@ export const AccountMeOutputSchema = z.object({
     reason: z.string().optional(),
   }),
 });
+export type AccountMeOutput = z.infer<typeof AccountMeOutputSchema>;
 
 export const UpsertProfileInputSchema = z.object({
   nickname: z.string().trim().min(1).max(20),
@@ -321,6 +322,7 @@ export const UpgradeStatusOutputSchema = z.object({
   linkCode: z.string().optional(),
   codeExpiresAt: z.string().optional(),
 });
+export type UpgradeStatusOutput = z.infer<typeof UpgradeStatusOutputSchema>;
 
 export const UpgradeListInputSchema = z.object({
   status: z
@@ -342,6 +344,8 @@ export const UpgradeRequestCardSchema = z.object({
 export const UpgradeListOutputSchema = z.object({
   items: z.array(UpgradeRequestCardSchema),
 });
+export type UpgradeRequestCard = z.infer<typeof UpgradeRequestCardSchema>;
+export type UpgradeListOutput = z.infer<typeof UpgradeListOutputSchema>;
 
 export const UpgradeDecideInputSchema = z.object({
   requestId: z.string().min(1),
@@ -354,6 +358,7 @@ export const UpgradeDecideOutputSchema = z.object({
   delivered: z.enum(["user_chat", "wam_only", "manual"]),
   linkCode: z.string().optional(),
 });
+export type UpgradeDecideOutput = z.infer<typeof UpgradeDecideOutputSchema>;
 
 export const LinkManagerInputSchema = z.object({
   code: z.string().trim().min(4).max(12),
@@ -372,7 +377,9 @@ export const GRID_START_HOUR = 8;
 export const GRID_END_HOUR = 23;
 export const MAX_SLOTS = 40;
 
-export const WEEKDAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
+/** Index 0 is Monday, matching `senior_slots.weekday` and the KST weekday
+ *  the matcher derives in `matching.service.ts`. */
+export const WEEKDAY_LABELS = ["월", "화", "수", "목", "금", "토", "일"];
 
 export const SeniorSlotSchema = z.object({
   weekday: z.number().int().min(0).max(6),
@@ -394,6 +401,10 @@ export const SeniorGetProfileOutputSchema = z.object({
   profile: SeniorProfileSchema.nullable(),
   fields: z.array(z.object({ id: z.string(), label: z.string() })),
 });
+export type SeniorProfile = z.infer<typeof SeniorProfileSchema>;
+export type SeniorGetProfileOutput = z.infer<
+  typeof SeniorGetProfileOutputSchema
+>;
 
 /** `status` and `slots` are owned by the availability screen; omitting them
  *  here leaves the stored timetable untouched. */
@@ -423,6 +434,8 @@ export const AvailabilityGetOutputSchema = z.object({
   weeklyLimitMinutes: z.number().int(),
   updatedAt: z.string().nullable(),
 });
+export type SeniorSlot = z.infer<typeof SeniorSlotSchema>;
+export type AvailabilityGetOutput = z.infer<typeof AvailabilityGetOutputSchema>;
 
 export const AvailabilitySetStatusInputSchema = z.object({
   status: z.enum(SENIOR_STATUSES),

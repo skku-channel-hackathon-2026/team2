@@ -1,71 +1,202 @@
-import { useCallback, useEffect, useState } from 'react'
-import { COMMANDS } from '@tutorial/shared'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import Login from './Login'
-import {
-  bootAs,
-  fetchIdentity,
-  runCommand,
-  signOut,
-  type BootState,
-} from './channel'
+import { bootAs, fetchIdentity, shutdown, type BootState } from './channel'
 import {
   clearSession,
   readSession,
   writeSession,
+  ROLE_LABEL,
+  type Role,
   type Session,
 } from './session'
+import Account from './tabs/Account'
+import Answers from './tabs/Answers'
+import Ask from './tabs/Ask'
+import Balls from './tabs/Balls'
+import Dex from './tabs/Dex'
+import Meetings from './tabs/Meetings'
+import Ops from './tabs/Ops'
+import Review from './tabs/Review'
+import Setup from './tabs/Setup'
+import Wild from './tabs/Wild'
 
-const FRONT_COMMANDS = COMMANDS.filter((command) => command.scope === 'front')
+interface TabSpec {
+  id: string
+  label: string
+}
 
-/** The one command the whole product exists for; the rest are supporting. */
-const PRIMARY_ID = 'helpme'
+const JUNIOR_TABS: TabSpec[] = [
+  { id: 'meetings', label: '내 밥약' },
+  { id: 'ask', label: '질문하기' },
+  { id: 'review', label: '후기' },
+  { id: 'account', label: '내 정보' },
+]
+
+const SENIOR_TABS: TabSpec[] = [
+  { id: 'wild', label: '출현' },
+  { id: 'balls', label: '포켓볼' },
+  { id: 'dex', label: '도감' },
+  { id: 'answers', label: '답변' },
+  { id: 'setup', label: '선배 설정' },
+  { id: 'ops', label: '운영' },
+]
+
+const TABS: Record<Role, TabSpec[]> = {
+  junior: JUNIOR_TABS,
+  senior: SENIOR_TABS,
+}
 
 function App() {
   const [session, setSession] = useState<Session | null>(readSession)
   const [state, setState] = useState<BootState>({ status: 'idle' })
+  // A restored session can be either role, so the first tab follows it.
+  const [tab, setTab] = useState(
+    () => TABS[readSession()?.role ?? 'junior'][0].id
+  )
+  const [reviewTarget, setReviewTarget] = useState<string | null>(null)
+  // Bumping this remounts the active tab, which is how a cross-tab action
+  // (accepting an encounter, submitting a review) refreshes what it changed.
+  const [revision, setRevision] = useState(0)
 
-  const connect = useCallback(async (next: Session, encoding?: 'raw') => {
-    setState({ status: 'booting' })
-    try {
-      const identity = await fetchIdentity(next, encoding)
-      const result = await bootAs(identity)
-      setState(result)
-      if (result.status === 'booted') writeSession(next)
-    } catch (error) {
-      setState({
-        status: 'failed',
-        error: error instanceof Error ? error.message : String(error),
-      })
+  const role = session?.role ?? 'junior'
+  const tabs = TABS[role]
+
+  // Only the 후배 surface is a customer surface; the messenger has no place on
+  // the desk-side view.
+  useEffect(() => {
+    if (!session) return
+    if (session.role !== 'junior') {
+      shutdown()
+      setState({ status: 'idle' })
+      return
     }
+
+    let cancelled = false
+    setState({ status: 'booting' })
+    void (async () => {
+      try {
+        const identity = await fetchIdentity(session)
+        const result = await bootAs(identity)
+        if (!cancelled) setState(result)
+      } catch (error) {
+        if (cancelled) return
+        setState({
+          status: 'failed',
+          error: error instanceof Error ? error.message : String(error),
+        })
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [session])
+
+  const signIn = useCallback((next: Session) => {
+    writeSession(next)
+    setSession(next)
+    setTab(TABS[next.role][0].id)
   }, [])
 
-  useEffect(() => {
-    if (session) void connect(session)
-  }, [connect, session])
+  const switchRole = useCallback(
+    (next: Role) => {
+      if (!session || session.role === next) return
+      const updated = { ...session, role: next }
+      writeSession(updated)
+      setSession(updated)
+      setTab(TABS[next][0].id)
+      setReviewTarget(null)
+    },
+    [session]
+  )
 
-  const handleSignOut = useCallback(() => {
-    signOut()
+  const signOut = useCallback(() => {
+    shutdown()
     clearSession()
     setSession(null)
     setState({ status: 'idle' })
   }, [])
+
+  const refreshAll = useCallback(() => setRevision((n) => n + 1), [])
+
+  const openReview = useCallback((encounterId: string) => {
+    setReviewTarget(encounterId)
+    setTab('review')
+  }, [])
+
+  const panel = useMemo(() => {
+    if (!session) return null
+    switch (tab) {
+      case 'meetings':
+        return (
+          <Meetings
+            session={session}
+            onAsk={() => setTab('ask')}
+            onReview={openReview}
+          />
+        )
+      case 'ask':
+        return (
+          <Ask
+            session={session}
+            onCreated={refreshAll}
+          />
+        )
+      case 'review':
+        return (
+          <Review
+            session={session}
+            selected={reviewTarget}
+            onSelect={setReviewTarget}
+            onSubmitted={refreshAll}
+          />
+        )
+      case 'account':
+        return <Account session={session} />
+      case 'wild':
+        return (
+          <Wild
+            session={session}
+            onAccepted={refreshAll}
+          />
+        )
+      case 'balls':
+        return (
+          <Balls
+            session={session}
+            onChanged={refreshAll}
+          />
+        )
+      case 'dex':
+        return <Dex session={session} />
+      case 'answers':
+        return <Answers session={session} />
+      case 'setup':
+        return (
+          <Setup
+            session={session}
+            onLinked={refreshAll}
+          />
+        )
+      case 'ops':
+        return <Ops session={session} />
+      default:
+        return null
+    }
+  }, [openReview, refreshAll, reviewTarget, session, tab])
 
   if (!session) {
     return (
       <Login
         busy={state.status === 'booting'}
         error={state.status === 'failed' ? state.error : undefined}
-        onSubmit={setSession}
+        onSubmit={signIn}
       />
     )
   }
 
-  const ready = state.status === 'booted'
-  const primary = FRONT_COMMANDS.find((command) => command.id === PRIMARY_ID)
-
   return (
-    <div className="page">
+    <div className={`page page--${role}`}>
       <header className="bar">
         <div className="brand">
           <span className="brand__mark">GO</span>
@@ -73,79 +204,58 @@ function App() {
         </div>
 
         <div className="who">
-          <span className={`dot dot--${state.status}`} />
+          <div className="roles">
+            {(['junior', 'senior'] as Role[]).map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={role === value ? 'role role--on' : 'role'}
+                onClick={() => switchRole(value)}
+              >
+                {ROLE_LABEL[value]}
+              </button>
+            ))}
+          </div>
+          {role === 'junior' && <span className={`dot dot--${state.status}`} />}
           <span className="who__name">
             {session.name} · {session.studentId.slice(0, 4)}학번
           </span>
           <button
             className="who__out"
             type="button"
-            onClick={handleSignOut}
+            onClick={signOut}
           >
             로그아웃
           </button>
         </div>
       </header>
 
-      {/* The messenger is fixed-positioned by the SDK and fills the right slot. */}
+      <nav className="tabs">
+        <div className="tabs__inner">
+          {tabs.map((spec) => (
+            <button
+              key={spec.id}
+              type="button"
+              className={tab === spec.id ? 'tab tab--on' : 'tab'}
+              onClick={() => setTab(spec.id)}
+            >
+              {spec.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
       <div className="content">
-        <aside className="guide">
-          <h1>
-            {session.name.slice(1)}님,
-            <br />
-            무엇이든 물어보세요
-          </h1>
-          <p className="guide__lead">
-            학교생활·수강·진로 같은 일반적인 궁금증은 오른쪽 채팅에서 바로
-            답변받을 수 있어요.
-          </p>
+        <main className="workspace">
+          <div key={`${role}-${tab}-${revision}`}>{panel}</div>
 
-          {primary && (
-            <div className="callout">
-              <span className="callout__badge">선배가 필요하신가요?</span>
-              <p>
-                채팅 입력창에 <code>/{primary.name}</code> 를 입력하면, 답을
-                아는 선배에게 <strong>밥약을 요청</strong>해요.
-              </p>
-            </div>
+          {role === 'junior' && state.status === 'failed' && (
+            <p className="notice notice--error">
+              메신저 연결 실패: {state.error ?? '알 수 없는 오류'}. 탭 기능은
+              그대로 쓸 수 있어요.
+            </p>
           )}
-
-          <p className="guide__label">쓸 수 있는 커맨드</p>
-          <ul className="cmds">
-            {FRONT_COMMANDS.map((command) => (
-              <li key={command.id}>
-                <button
-                  type="button"
-                  className={
-                    command.id === PRIMARY_ID ? 'cmd cmd--primary' : 'cmd'
-                  }
-                  disabled={!ready}
-                  onClick={() => runCommand(command.name)}
-                >
-                  <code>/{command.name}</code>
-                  <span>{command.description}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <p className="guide__foot">
-            커맨드를 누르면 입력창에 자동으로 채워져요. Enter 를 누르면
-            실행돼요.
-          </p>
-
-          {state.status === 'failed' && (
-            <div className="error">
-              <p>연결 실패: {state.error ?? '알 수 없는 오류'}</p>
-              <button
-                type="button"
-                onClick={() => void connect(session, 'raw')}
-              >
-                raw 시크릿으로 재시도
-              </button>
-            </div>
-          )}
-        </aside>
+        </main>
       </div>
     </div>
   )

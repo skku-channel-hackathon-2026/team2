@@ -12,7 +12,8 @@
 부르려면 Function 호출 요청에 `context.caller`(누가 호출했는지)가 필요한데, 이건
 평소엔 채널톡이 서명해서 채워주는 값이다. 로컬에서는 우리가 가짜 `SIGNING_KEY`를
 알고 있으므로, **원하는 caller로 직접 서명한 요청**을 만들어 진짜 서버에 보낼 수
-있다 (SDK 자체 테스트 코드 `channel-app.controller.test.js`에서 요청 형식을 확인함).
+있다 (SDK 자체 테스트 코드 `channel-app.controller.test.js`에서 요청 형식을
+확인함).
 
 ```json
 {
@@ -26,7 +27,8 @@
 ```
 
 이 body를 `SIGNING_KEY`로 HMAC-SHA256(base64) 서명해서 `x-signature` 헤더에 넣고
-`PUT /functions/v1`로 보내면, 실제 NestJS 앱·Zod 검증·D1까지 전부 거쳐서 처리된다.
+`PUT /functions/v1`로 보내면, 실제 NestJS 앱·Zod 검증·D1까지 전부 거쳐서
+처리된다.
 
 ## 1. 빌드
 
@@ -60,7 +62,8 @@ corepack pnpm exec wrangler d1 execute DB --local --file=scripts/seed-demo.sql
 corepack pnpm exec wrangler dev --local --port 8797
 ```
 
-`Ready on http://127.0.0.1:8797` 같은 로그가 뜨면 준비된 것. 이 터미널은 계속 열어둔다.
+`Ready on http://127.0.0.1:8797` 같은 로그가 뜨면 준비된 것. 이 터미널은 계속
+열어둔다.
 
 ## 4. 기본 스모크 테스트 (선택)
 
@@ -88,13 +91,14 @@ node scripts/manual-test.mjs all
 
 ### 시나리오 2 — 만남 완료 → 후기 → 도감 (`encounter-1`)
 
-1. `senior-1`이 `ball.confirmMet` 호출 → `encounter-1.status`가 `matched`→`met`로
-   바뀌고, 같은 출현의 다른 볼(`senior-2`)도 같이 `wobbling`으로 넘어가야 한다.
+1. `senior-1`이 `ball.confirmMet` 호출 → `encounter-1.status`가
+   `matched`→`met`로 바뀌고, 같은 출현의 다른 볼(`senior-2`)도 같이
+   `wobbling`으로 넘어가야 한다.
 2. `junior-1`이 `review.submit` 호출 → `caughtBy`에 선배 2명이 다 나와야 한다.
 3. `senior-1`로 `dex.list` 호출 → 후배 `코딩초보`가 도감에 등록돼 있어야 한다.
 
-T5 잡기 파이프라인 전체(상태 전이 + 도감 등록 + 친밀도)와, T3에서 추가한
-"후기 요청 알림" enqueue가 같이 확인된다.
+T5 잡기 파이프라인 전체(상태 전이 + 도감 등록 + 친밀도)와, T3에서 추가한 "후기
+요청 알림" enqueue가 같이 확인된다.
 
 ### 시나리오 3 — 재촉은 볼당 2번까지 (`encounter-3`)
 
@@ -105,9 +109,9 @@ T5 잡기 파이프라인 전체(상태 전이 + 도감 등록 + 친밀도)와, 
 없어 안전하게 폴백한 것이다.
 
 > **로컬에서는 항상 `"manual_copy"`가 나온다.** `.dev.vars`의 앱 자격증명이
-> 가짜라 실제 채널톡 API를 호출할 수 없기 때문이다. `delivered: "auto"`를
-> 실제로 보려면 **실 Desk 환경**에서 같은 시나리오를 실행해야 한다 — 이 필드가
-> T3 권한 질문(§HUBAE_GO_PLAN.md T3)에 대한 실제 답이 된다.
+> 가짜라 실제 채널톡 API를 호출할 수 없기 때문이다. `delivered: "auto"`를 실제로
+> 보려면 **실 Desk 환경**에서 같은 시나리오를 실행해야 한다 — 이 필드가 T3 권한
+> 질문(§HUBAE_GO_PLAN.md T3)에 대한 실제 답이 된다.
 
 ## 6. 다시 돌리고 싶을 때
 
@@ -124,3 +128,31 @@ T5 잡기 파이프라인 전체(상태 전이 + 도감 등록 + 친밀도)와, 
 corepack pnpm exec wrangler d1 execute DB --local \
   --command="SELECT id, status, reminders_sent FROM balls WHERE encounter_id = 'encounter-1'"
 ```
+
+## 8. 데모 웹페이지로 확인하기
+
+`demo/`는 같은 Function들을 **탭 UI**로 보여주는 데모 페이지다. 브라우저는 서명
+키를 모르므로, vite dev 서버의 `/demo-api/fn` 미들웨어가 `.dev.vars`의
+`SIGNING_KEY`로 서명해 `PUT /functions/v1`로 넘긴다 — §1의 스크립트와 정확히
+같은 경로다. 로컬 전용이며(`apply: "serve"`), 업스트림이 루프백이 아니면
+프록시가 거부한다.
+
+터미널 두 개:
+
+```sh
+corepack pnpm exec wrangler dev --local --port 8797   # 앱 서버 + D1
+corepack pnpm dev:demo                                # 데모 페이지
+```
+
+- 로그인에서 **후배 / 선배** 중 하나를 고르고, 로그인 후에도 헤더에서 바꿀 수
+  있다. 두 역할은 같은 학번을 쓰므로, 후배가 업그레이드하면 이력이 한 계정에
+  이어진다.
+- 후배 탭: 내 밥약 · 질문하기 · 후기 · 내 정보 (+ 오른쪽에 채널톡 메신저)
+- 선배 탭: 출현 · 포켓볼 · 도감 · 답변 · 선배 설정 · 운영
+- caller는 학번에서 파생된다 — 후배 `skku-{학번}`, 선배 `skku-m-{학번}`.
+  `scripts/seed-demo.sql`의 `m-senior-1` 같은 시드 계정과는 별개다.
+- 선배 계정을 만드는 전체 경로: 후배 `내 정보` → 업그레이드 신청 → 선배 `운영` →
+  승인(연결 코드 발급) → 선배 `선배 설정` → 코드 입력 → 분야·가능 시간 저장. 그
+  뒤 후배 `질문하기`로 밥약을 신청하면 선배 `출현`에 도착한다.
+- 업스트림 포트가 다르면 `DEMO_SERVER_ORIGIN`, 채널 ID는 `DEMO_CHANNEL_ID`로
+  바꾼다.

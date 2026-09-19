@@ -1,10 +1,13 @@
 import { ERROR_CODES } from "@tutorial/shared";
 import type {
+  BallStatus,
   EncounterCreateInput,
   EncounterCreateOutput,
   EncounterFieldsOutput,
   EncounterMineOutput,
   EncounterStatus,
+  MeetType,
+  MyEncounterCard,
 } from "@tutorial/shared";
 import { execute, queryAll, queryOne } from "../../database.js";
 import { badRequest } from "../../errors.js";
@@ -108,20 +111,42 @@ interface MyEncounterRow {
   place: string | null;
   max_seniors: number;
   seniors_joined: number;
+  field_id: string;
+  field_label: string | null;
+  meet_type: MeetType;
+  created_at: string;
+  review_due_at: string | null;
+  has_review: number;
 }
 
 export async function listMine(juniorId: string): Promise<EncounterMineOutput> {
   const rows = await queryAll<MyEncounterRow>(
     `SELECT e.id, e.title, e.status, e.slot_start, e.slot_end, e.place, e.max_seniors,
-            (SELECT COUNT(*) FROM balls b WHERE b.encounter_id = e.id AND b.status <> 'cancelled') AS seniors_joined
+            e.field_id, f.label AS field_label, e.meet_type, e.created_at, e.review_due_at,
+            (SELECT COUNT(*) FROM balls b WHERE b.encounter_id = e.id AND b.status <> 'cancelled') AS seniors_joined,
+            EXISTS (SELECT 1 FROM reviews r WHERE r.encounter_id = e.id) AS has_review
      FROM encounters e
+     LEFT JOIN fields f ON f.id = e.field_id
      WHERE e.junior_id = ?
      ORDER BY e.created_at DESC`,
     juniorId,
   );
 
-  return {
-    items: rows.map((row) => ({
+  const items: MyEncounterCard[] = [];
+  for (const row of rows) {
+    const windows = await queryAll<{ start_at: string; end_at: string }>(
+      "SELECT start_at, end_at FROM encounter_windows WHERE encounter_id = ? ORDER BY start_at",
+      row.id,
+    );
+    const seniors = await queryAll<{ nickname: string; status: BallStatus }>(
+      `SELECT u.nickname, b.status
+       FROM balls b JOIN users u ON u.id = b.senior_id
+       WHERE b.encounter_id = ? AND b.status <> 'cancelled'
+       ORDER BY b.thrown_at`,
+      row.id,
+    );
+
+    items.push({
       encounterId: row.id,
       title: row.title,
       status: row.status,
@@ -130,6 +155,22 @@ export async function listMine(juniorId: string): Promise<EncounterMineOutput> {
       slotStart: row.slot_start,
       slotEnd: row.slot_end,
       place: row.place,
-    })),
-  };
+      fieldId: row.field_id,
+      fieldLabel: row.field_label ?? row.field_id,
+      meetType: row.meet_type,
+      createdAt: row.created_at,
+      windows: windows.map((window) => ({
+        startAt: window.start_at,
+        endAt: window.end_at,
+      })),
+      seniors: seniors.map((senior) => ({
+        seniorAlias: senior.nickname,
+        ballStatus: senior.status,
+      })),
+      reviewDueAt: row.review_due_at,
+      hasReview: row.has_review === 1,
+    });
+  }
+
+  return { items };
 }

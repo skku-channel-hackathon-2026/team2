@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 
-import type { Session } from './session'
+import { ROLE_LABEL, type Role, type Session } from './session'
 
 interface LoginProps {
   busy: boolean
@@ -8,7 +8,15 @@ interface LoginProps {
   onSubmit: (session: Session) => void
 }
 
+const ROLES: Role[] = ['junior', 'senior']
+
+const ROLE_HINT: Record<Role, string> = {
+  junior: '질문하고 밥약을 신청해요',
+  senior: '출현을 수락하고 도감을 채워요',
+}
+
 function Login({ busy, error, onSubmit }: LoginProps) {
+  const [role, setRole] = useState<Role>('junior')
   const [name, setName] = useState('')
   const [studentId, setStudentId] = useState('')
   const [localError, setLocalError] = useState('')
@@ -20,7 +28,7 @@ function Login({ busy, error, onSubmit }: LoginProps) {
     if (!/^[0-9]{4,12}$/.test(studentId.trim())) {
       return setLocalError('학번은 숫자 4~12자리로 입력해 주세요.')
     }
-    onSubmit({ name: name.trim(), studentId: studentId.trim() })
+    onSubmit({ role, name: name.trim(), studentId: studentId.trim() })
   }
 
   const notice = localError || error
@@ -36,8 +44,26 @@ function Login({ busy, error, onSubmit }: LoginProps) {
           <span className="brand__name">후배 Go</span>
         </div>
         <p className="login__lead">
-          학번으로 로그인하면 채널톡 상담 내역이 이어져요.
+          학번으로 로그인하면 채널톡 상담 내역이 이어져요. 로그인 후에도 위에서
+          역할을 바꿀 수 있어요.
         </p>
+
+        <div className="field">
+          <span>어떤 화면으로 들어갈까요?</span>
+          <div className="picks">
+            {ROLES.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={role === value ? 'pick pick--on' : 'pick'}
+                onClick={() => setRole(value)}
+              >
+                <strong>{ROLE_LABEL[value]}</strong>
+                <span>{ROLE_HINT[value]}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         <label className="field">
           <span>이름</span>

@@ -74,11 +74,6 @@ export function bootAs(identity: Identity): Promise<BootState> {
   })
 }
 
-export function signOut(): void {
+export function shutdown(): void {
   ChannelService.shutdown()
-}
-
-/** `openChat` with no chat id starts a new chat and prefills the composer. */
-export function runCommand(command: string): void {
-  ChannelService.openChat(undefined, `/${command} `)
 }
