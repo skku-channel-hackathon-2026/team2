@@ -14,6 +14,10 @@ import Upgrade from './pages/Upgrade'
 import Link from './pages/Link'
 import Senior from './pages/Senior'
 import Availability from './pages/Availability'
+import Wild from './pages/Wild'
+import Balls from './pages/Balls'
+import Dex from './pages/Dex'
+import Review from './pages/Review'
 import Ops from './pages/Ops'
 import OpsConfig from './pages/OpsConfig'
 import RunDue from './pages/RunDue'
@@ -31,6 +35,14 @@ function Screen({ data }: { data: WamData }) {
       return <Senior appId={data.appId} />
     case 'availability':
       return <Availability appId={data.appId} />
+    case 'wild':
+      return <Wild appId={data.appId} />
+    case 'balls':
+      return <Balls appId={data.appId} />
+    case 'dex':
+      return <Dex appId={data.appId} />
+    case 'review':
+      return <Review appId={data.appId} />
     case 'ops':
       return <Ops appId={data.appId} />
     case 'opsconfig':

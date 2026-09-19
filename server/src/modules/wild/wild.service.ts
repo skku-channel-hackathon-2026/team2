@@ -16,6 +16,7 @@ interface WildRow {
   id: string;
   title: string;
   field_id: string;
+  field_label: string | null;
   meet_type: "meal" | "cafe" | "online";
   max_seniors: number;
   seniors_joined: number;
@@ -24,12 +25,14 @@ interface WildRow {
 
 export async function listWild(seniorId: string): Promise<WildListOutput> {
   const rows = await queryAll<WildRow>(
-    `SELECT e.id, e.title, e.field_id, e.meet_type, e.max_seniors,
+    `SELECT e.id, e.title, e.field_id, f.label AS field_label,
+            e.meet_type, e.max_seniors,
             u.nickname AS junior_nickname,
             (SELECT COUNT(*) FROM balls b WHERE b.encounter_id = e.id AND b.status <> 'cancelled') AS seniors_joined
      FROM encounters e
      JOIN encounter_targets t ON t.encounter_id = e.id AND t.senior_id = ?
      JOIN users u ON u.id = e.junior_id
+     LEFT JOIN fields f ON f.id = e.field_id
      WHERE e.status IN ('wild','matched')
        AND NOT EXISTS (SELECT 1 FROM balls b2 WHERE b2.encounter_id = e.id AND b2.senior_id = ?)
      ORDER BY e.created_at ASC`,
@@ -51,6 +54,7 @@ export async function listWild(seniorId: string): Promise<WildListOutput> {
       encounterId: row.id,
       title: row.title,
       fieldId: row.field_id,
+      fieldLabel: row.field_label ?? row.field_id,
       meetType: row.meet_type,
       overlapWindows,
       seniorsJoined: row.seniors_joined,

@@ -32,6 +32,12 @@ export const WILD_FUNCTIONS = {
 export const MeetTypeSchema = z.enum(["meal", "cafe", "online"]);
 export type MeetType = z.infer<typeof MeetTypeSchema>;
 
+export const MEET_TYPE_LABEL: Record<MeetType, string> = {
+  meal: "밥약",
+  cafe: "카페",
+  online: "온라인",
+};
+
 export const TimeWindowSchema = z.object({
   startAt: z.string(),
   endAt: z.string(),
@@ -46,6 +52,14 @@ export const BallStatusSchema = z.enum([
   "cancelled",
 ]);
 export type BallStatus = z.infer<typeof BallStatusSchema>;
+
+export const BALL_STATUS_LABEL: Record<BallStatus, string> = {
+  thrown: "만남 예정",
+  wobbling: "후기 대기",
+  caught: "잡기 성공",
+  escaped: "도망",
+  cancelled: "취소",
+};
 
 export const EncounterStatusSchema = z.enum([
   "wild",
@@ -125,6 +139,7 @@ export type ReviewSubmitOutput = z.infer<typeof ReviewSubmitOutputSchema>;
 export const DexEntrySchema = z.object({
   juniorAlias: z.string(),
   typeFieldId: z.string(),
+  typeLabel: z.string(),
   firstCaughtAt: z.string(),
   catchCount: z.number().int(),
   intimacy: z.number().int(),
@@ -176,6 +191,7 @@ export const WildCardSchema = z.object({
   encounterId: z.string(),
   title: z.string(),
   fieldId: z.string(),
+  fieldLabel: z.string(),
   meetType: MeetTypeSchema,
   overlapWindows: z.array(TimeWindowSchema),
   seniorsJoined: z.number().int(),

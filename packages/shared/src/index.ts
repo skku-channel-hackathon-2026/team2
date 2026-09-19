@@ -12,6 +12,10 @@ export const SCREENS = [
   "availability",
   "ops",
   "opsconfig",
+  "wild",
+  "balls",
+  "dex",
+  "review",
   "rundue",
   "soon",
 ] as const;
@@ -121,7 +125,7 @@ export const COMMANDS: CommandSpec[] = [
     description: "만남 후기를 남기고 선배를 도감에 등록해요",
     scope: "front",
     alfMode: "disable",
-    screen: "soon",
+    screen: "review",
     actionFunctionName: "review.open",
   },
   {
@@ -157,7 +161,7 @@ export const COMMANDS: CommandSpec[] = [
     description: "나에게 온 출현을 확인하고 수락해요",
     scope: "desk",
     alfMode: "disable",
-    screen: "soon",
+    screen: "wild",
     actionFunctionName: "wild.open",
   },
   {
@@ -166,7 +170,7 @@ export const COMMANDS: CommandSpec[] = [
     description: "내 밥약 일정과 만남 완료를 관리해요",
     scope: "desk",
     alfMode: "disable",
-    screen: "soon",
+    screen: "balls",
     actionFunctionName: "balls.open",
   },
   {
@@ -175,7 +179,7 @@ export const COMMANDS: CommandSpec[] = [
     description: "내가 잡은 후배 목록을 봐요",
     scope: "desk",
     alfMode: "disable",
-    screen: "soon",
+    screen: "dex",
     actionFunctionName: "dex.open",
   },
   {
