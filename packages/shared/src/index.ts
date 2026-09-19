@@ -416,4 +416,7 @@ export const ERROR_CODES = {
   reviewNotReady: "REVIEW_NOT_READY",
   reviewAlreadyDone: "REVIEW_ALREADY_DONE",
   reminderLimit: "REMINDER_LIMIT",
+  full: "FULL",
+  alreadyAccepted: "ALREADY_ACCEPTED",
+  slotRequired: "SLOT_REQUIRED",
 } as const;

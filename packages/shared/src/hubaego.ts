@@ -19,6 +19,25 @@ export const DEX_FUNCTIONS = {
   list: "dex.list",
 } as const;
 
+export const ENCOUNTER_FUNCTIONS = {
+  create: "encounter.create",
+  mine: "encounter.mine",
+} as const;
+
+export const WILD_FUNCTIONS = {
+  list: "wild.list",
+  accept: "wild.accept",
+} as const;
+
+export const MeetTypeSchema = z.enum(["meal", "cafe", "online"]);
+export type MeetType = z.infer<typeof MeetTypeSchema>;
+
+export const TimeWindowSchema = z.object({
+  startAt: z.string(),
+  endAt: z.string(),
+});
+export type TimeWindow = z.infer<typeof TimeWindowSchema>;
+
 export const BallStatusSchema = z.enum([
   "thrown",
   "wobbling",
@@ -120,6 +139,72 @@ export const DexListOutputSchema = z.object({
   items: z.array(DexEntrySchema),
 });
 export type DexListOutput = z.infer<typeof DexListOutputSchema>;
+
+export const EncounterCreateInputSchema = z.object({
+  title: z.string().trim().min(5).max(200),
+  fieldId: z.string().min(1),
+  meetType: MeetTypeSchema,
+  maxSeniors: z.number().int().min(1).max(3),
+  windows: z.array(TimeWindowSchema).min(1).max(5),
+});
+export type EncounterCreateInput = z.infer<typeof EncounterCreateInputSchema>;
+
+export const EncounterCreateOutputSchema = z.object({
+  encounterId: z.string(),
+  notifiedCount: z.number().int(),
+});
+export type EncounterCreateOutput = z.infer<typeof EncounterCreateOutputSchema>;
+
+export const MyEncounterCardSchema = z.object({
+  encounterId: z.string(),
+  title: z.string(),
+  status: EncounterStatusSchema,
+  seniorsJoined: z.number().int(),
+  maxSeniors: z.number().int(),
+  slotStart: z.string().nullable(),
+  slotEnd: z.string().nullable(),
+  place: z.string().nullable(),
+});
+export type MyEncounterCard = z.infer<typeof MyEncounterCardSchema>;
+
+export const EncounterMineOutputSchema = z.object({
+  items: z.array(MyEncounterCardSchema),
+});
+export type EncounterMineOutput = z.infer<typeof EncounterMineOutputSchema>;
+
+export const WildCardSchema = z.object({
+  encounterId: z.string(),
+  title: z.string(),
+  fieldId: z.string(),
+  meetType: MeetTypeSchema,
+  overlapWindows: z.array(TimeWindowSchema),
+  seniorsJoined: z.number().int(),
+  maxSeniors: z.number().int(),
+  juniorAlias: z.string(),
+});
+export type WildCard = z.infer<typeof WildCardSchema>;
+
+export const WildListOutputSchema = z.object({
+  items: z.array(WildCardSchema),
+});
+export type WildListOutput = z.infer<typeof WildListOutputSchema>;
+
+export const WildAcceptInputSchema = z.object({
+  encounterId: z.string().min(1),
+  slot: TimeWindowSchema.optional(),
+  place: z.string().trim().max(100).optional(),
+});
+export type WildAcceptInput = z.infer<typeof WildAcceptInputSchema>;
+
+export const WildAcceptOutputSchema = z.object({
+  ballId: z.string(),
+  isFirst: z.boolean(),
+  slotStart: z.string().nullable(),
+  slotEnd: z.string().nullable(),
+  seniorsJoined: z.number().int(),
+  maxSeniors: z.number().int(),
+});
+export type WildAcceptOutput = z.infer<typeof WildAcceptOutputSchema>;
 
 // 친밀도 레벨: Lv1 0-29 · Lv2 30-79 · Lv3 80-149 · Lv4 150+
 export function intimacyLevel(points: number): 1 | 2 | 3 | 4 {

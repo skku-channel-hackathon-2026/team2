@@ -15,6 +15,8 @@ import { OpsFunctions } from "./functions/ops.functions.js";
 import { BallFunctions } from "./modules/ball/ball.functions.js";
 import { ReviewFunctions } from "./modules/review/review.functions.js";
 import { DexFunctions } from "./modules/dex/dex.functions.js";
+import { EncounterFunctions } from "./modules/encounter/encounter.functions.js";
+import { WildFunctions } from "./modules/wild/wild.functions.js";
 
 @Module({
   imports: [ChannelAppModule.forRoot(channelAppOptions)],
@@ -33,6 +35,8 @@ import { DexFunctions } from "./modules/dex/dex.functions.js";
     BallFunctions,
     ReviewFunctions,
     DexFunctions,
+    EncounterFunctions,
+    WildFunctions,
     {
       provide: APP_GUARD,
       useFactory: () => new SignatureGuard(channelAppOptions),
