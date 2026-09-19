@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-19T06:08:00.242Z",
+  "generator": "scripts/build-knowledge.mjs",
+  "sources": {
+    "sopmu": "data/sopmu-wiki/documents.jsonl",
+    "skkuOfficial": "data/Kingo-info/skku-latest.json",
+    "skkuFood": "data/skku_food/posts.jsonl",
+    "everytime": [
+      "data/everytime/brori/*.json",
+      "data/everytime/fresh/*.json"
+    ]
+  },
+  "files": {
+    "documents.jsonl": {
+      "records": 422,
+      "sha256": "88dc057cb2c66dd365bde6800d3fe8a2b70880e9ed0e6e7859e89b95009788ff"
+    },
+    "assets.jsonl": {
+      "records": 482,
+      "sha256": "a2202ad1863abeab51f9f098f1196eacb07ca360d71b8c5b981f0ef76a06bef4"
+    },
+    "review-queue.jsonl": {
+      "records": 317,
+      "sha256": "59fe83d03f8d7bf57f86e5ef1f99d8d83e7d155a1ef6d69fcf609a7a318cd542"
+    },
+    "rejected.jsonl": {
+      "records": 3,
+      "sha256": "5ce6f3fcecb741549cae6f1a417d9ea0572179af4d9d79b4e7a1bdfd426adcf3"
+    },
+    "conflicts.jsonl": {
+      "records": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "quality-report.json": {
+      "records": 1,
+      "sha256": "c4253cb08b17f05685d8e2737da316d0d337592407f54fb3493190647d6908d8"
+    }
+  }
+}

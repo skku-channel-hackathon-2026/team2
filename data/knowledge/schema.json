@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sopmu.local/schemas/knowledge-document-v1.json",
+  "title": "Canonical knowledge document",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "id",
+    "documentType",
+    "title",
+    "summary",
+    "bodyMarkdown",
+    "retrieval",
+    "scope",
+    "authority",
+    "temporal",
+    "provenance",
+    "review",
+    "assetIds",
+    "originalMetadata",
+    "channel"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "parentId": { "type": ["string", "null"] },
+    "documentType": {
+      "enum": [
+        "guide",
+        "course-review",
+        "research-lab",
+        "club",
+        "facility",
+        "policy",
+        "notice",
+        "calendar",
+        "menu",
+        "community-qa",
+        "place-review",
+        "reference"
+      ]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string" },
+    "bodyMarkdown": { "type": "string" },
+    "retrieval": {
+      "type": "object",
+      "required": ["questions", "aliases", "topics"],
+      "properties": {
+        "questions": { "type": "array", "items": { "type": "string" } },
+        "aliases": { "type": "array", "items": { "type": "string" } },
+        "topics": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "required": ["campuses", "audiences", "departments"],
+      "properties": {
+        "campuses": { "type": "array", "items": { "type": "string" } },
+        "audiences": { "type": "array", "items": { "type": "string" } },
+        "departments": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "authority": {
+      "enum": [
+        "official-current",
+        "official-archived",
+        "curated-community",
+        "community-anecdote",
+        "social-review"
+      ]
+    },
+    "temporal": {
+      "type": "object",
+      "required": ["type", "observedAt", "validFrom", "validUntil"],
+      "properties": {
+        "type": { "enum": ["static", "versioned", "ephemeral"] },
+        "observedAt": { "type": ["string", "null"] },
+        "validFrom": { "type": ["string", "null"] },
+        "validUntil": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "dataset",
+        "sourceId",
+        "sourceUrl",
+        "rawPath",
+        "collectedAt",
+        "model",
+        "contentHash"
+      ],
+      "properties": {
+        "dataset": { "type": "string" },
+        "sourceId": { "type": "string" },
+        "sourceUrl": { "type": ["string", "null"] },
+        "rawPath": { "type": ["string", "null"] },
+        "collectedAt": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "contentHash": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "required": ["status", "reasons", "reviewedAt"],
+      "properties": {
+        "status": { "enum": ["approved", "needs_review", "rejected"] },
+        "reasons": { "type": "array", "items": { "type": "string" } },
+        "reviewedAt": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "assetIds": { "type": "array", "items": { "type": "string" } },
+    "originalMetadata": { "type": "object" },
+    "channel": {
+      "type": "object",
+      "required": [
+        "folder",
+        "publishEligible",
+        "publishReady",
+        "requiresSplit",
+        "splitReasons"
+      ],
+      "properties": {
+        "folder": { "type": "string" },
+        "publishEligible": { "type": "boolean" },
+        "publishReady": { "type": "boolean" },
+        "requiresSplit": { "type": "boolean" },
+        "splitReasons": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
