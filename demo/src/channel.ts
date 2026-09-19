@@ -59,8 +59,9 @@ export function bootAs(identity: Identity): Promise<BootState> {
           })
           return
         }
-        // The page has no launcher button; the messenger is the page.
-        ChannelService.showMessenger()
+        // Land straight in a chat: the messenger's home/"Start a chat" screen
+        // is Channel's CS shell, not this product's UI.
+        ChannelService.openChat()
         resolve({
           status: 'booted',
           memberId: user?.memberId ?? identity.memberId,

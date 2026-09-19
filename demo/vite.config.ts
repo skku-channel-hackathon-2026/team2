@@ -114,5 +114,18 @@ function identityEndpoint(): Plugin {
 
 export default defineConfig({
   plugins: [react(), identityEndpoint()],
-  server: { port: 5174 },
+  server: {
+    port: 5174,
+    // Vite rejects unknown Host headers, which blocks demo tunnels. A leading
+    // dot matches subdomains. Note a tunnel also publishes /demo-api/identity,
+    // so anyone with the URL can mint a hash for the three demo personas.
+    allowedHosts: [
+      'detoxify-refinance-pointless.ngrok-free.dev',
+      '.ngrok-free.app',
+      '.ngrok.app',
+      '.ngrok.io',
+      '.trycloudflare.com',
+      '.loca.lt',
+    ],
+  },
 })

@@ -6,6 +6,9 @@ import { bootAs, fetchIdentity, runCommand, type BootState } from './channel'
 
 const FRONT_COMMANDS = COMMANDS.filter((command) => command.scope === 'front')
 
+/** The one command the whole product exists for; the rest are supporting. */
+const PRIMARY_ID = 'helpme'
+
 function App() {
   const [persona, setPersona] = useState<Persona>(PERSONAS[0])
   const [state, setState] = useState<BootState>({ status: 'idle' })
@@ -28,6 +31,7 @@ function App() {
   }, [connect, persona])
 
   const ready = state.status === 'booted'
+  const primary = FRONT_COMMANDS.find((command) => command.id === PRIMARY_ID)
 
   return (
     <div className="page">
@@ -36,21 +40,6 @@ function App() {
           <span className="brand__mark">GO</span>
           <span className="brand__name">후배 Go</span>
         </div>
-
-        <nav className="commands">
-          {FRONT_COMMANDS.map((command) => (
-            <button
-              key={command.id}
-              className="commands__item"
-              type="button"
-              title={command.description}
-              disabled={!ready}
-              onClick={() => runCommand(command.name)}
-            >
-              /{command.name}
-            </button>
-          ))}
-        </nav>
 
         <label className="who">
           <span className={`dot dot--${state.status}`} />
@@ -75,25 +64,66 @@ function App() {
         </label>
       </header>
 
-      {/* The messenger is fixed-positioned by the SDK; this reserves its slot. */}
-      <main className="stage">
-        {!ready && (
-          <p className="stage__status">
-            {state.status === 'failed'
-              ? `연결 실패: ${state.error ?? '알 수 없는 오류'}`
-              : '채널톡 메신저를 여는 중…'}
+      {/* The messenger is fixed-positioned by the SDK and fills the right slot. */}
+      <div className="content">
+        <aside className="guide">
+          <h1>
+            {persona.name.slice(1)}님,
+            <br />
+            무엇이든 물어보세요
+          </h1>
+          <p className="guide__lead">
+            학교생활·수강·진로 같은 일반적인 궁금증은 오른쪽 채팅에서 바로
+            답변받을 수 있어요.
           </p>
-        )}
-        {state.status === 'failed' && (
-          <button
-            className="stage__retry"
-            type="button"
-            onClick={() => void connect(persona, 'raw')}
-          >
-            raw 시크릿으로 재시도
-          </button>
-        )}
-      </main>
+
+          {primary && (
+            <div className="callout">
+              <span className="callout__badge">선배가 필요하신가요?</span>
+              <p>
+                채팅 입력창에 <code>/{primary.name}</code> 를 입력하면, 답을
+                아는 선배에게 <strong>밥약을 요청</strong>해요.
+              </p>
+            </div>
+          )}
+
+          <p className="guide__label">쓸 수 있는 커맨드</p>
+          <ul className="cmds">
+            {FRONT_COMMANDS.map((command) => (
+              <li key={command.id}>
+                <button
+                  type="button"
+                  className={
+                    command.id === PRIMARY_ID ? 'cmd cmd--primary' : 'cmd'
+                  }
+                  disabled={!ready}
+                  onClick={() => runCommand(command.name)}
+                >
+                  <code>/{command.name}</code>
+                  <span>{command.description}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <p className="guide__foot">
+            커맨드를 누르면 입력창에 자동으로 채워져요. Enter 를 누르면
+            실행돼요.
+          </p>
+
+          {state.status === 'failed' && (
+            <div className="error">
+              <p>연결 실패: {state.error ?? '알 수 없는 오류'}</p>
+              <button
+                type="button"
+                onClick={() => void connect(persona, 'raw')}
+              >
+                raw 시크릿으로 재시도
+              </button>
+            </div>
+          )}
+        </aside>
+      </div>
     </div>
   )
 }
