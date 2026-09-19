@@ -21,6 +21,7 @@ import Review from './pages/Review'
 import Ops from './pages/Ops'
 import OpsConfig from './pages/OpsConfig'
 import RunDue from './pages/RunDue'
+import Helpme from './pages/Helpme'
 import Soon from './pages/Soon'
 
 function Screen({ data }: { data: WamData }) {
@@ -55,6 +56,8 @@ function Screen({ data }: { data: WamData }) {
       )
     case 'rundue':
       return <RunDue appId={data.appId} />
+    case 'helpme':
+      return <Helpme appId={data.appId} />
     default:
       return <Soon commandName={data.commandName} />
   }

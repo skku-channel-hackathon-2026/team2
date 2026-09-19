@@ -17,6 +17,7 @@ export const SCREENS = [
   "dex",
   "review",
   "rundue",
+  "helpme",
   "soon",
 ] as const;
 export type Screen = (typeof SCREENS)[number];
@@ -106,7 +107,7 @@ export const COMMANDS: CommandSpec[] = [
     alfMode: "recommend",
     alfDescription:
       "후배가 진로나 학업 고민을 선배에게 물어보고 싶을 때 추천해요",
-    screen: "soon",
+    screen: "helpme",
     actionFunctionName: "helpme.open",
   },
   {
