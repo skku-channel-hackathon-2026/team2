@@ -30,7 +30,7 @@ export class BallFunctions {
   ) {}
 
   @Func(BALL_FUNCTIONS.list)
-  @Description("내 포켓볼 목록")
+  @Description("잡은 새내기 목록")
   @InputSchema(EmptyInputSchema)
   @OutputSchema(BallListOutputSchema)
   async list(

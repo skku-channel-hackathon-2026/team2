@@ -18,8 +18,7 @@ type RegistrationResult = {
   validationErrors?: string[];
 };
 type RegistrationReport =
-  | { ok: true; results: RegistrationResult[] }
-  | { ok: false; error: string };
+  { ok: true; results: RegistrationResult[] } | { ok: false; error: string };
 
 let initialization: Promise<Runtime> | undefined;
 let registration: Promise<RegistrationReport> | undefined;

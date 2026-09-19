@@ -80,7 +80,7 @@ function Wild({ appId }: WildProps) {
       if (!response) return
 
       setResult(
-        `볼을 던졌어요! (${response.seniorsJoined}/${response.maxSeniors})` +
+        `수락했어요! (${response.seniorsJoined}/${response.maxSeniors})` +
           (response.slotStart && response.slotEnd
             ? ` · ${formatWindow(response.slotStart, response.slotEnd)}`
             : '')

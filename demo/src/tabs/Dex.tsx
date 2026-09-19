@@ -49,7 +49,7 @@ function Dex({ session }: DexProps) {
 
   return (
     <Section
-      title="도감"
+      title="새내기 도감"
       action={
         <Button
           size="s"
@@ -106,7 +106,7 @@ function Dex({ session }: DexProps) {
         resource={resource}
         empty={
           <Empty
-            title="도감이 비어 있어요"
+            title="새내기 도감이 비어 있어요"
             hint="새내기가 후기를 제출하면 그 새내기가 도감에 등록돼요."
           />
         }

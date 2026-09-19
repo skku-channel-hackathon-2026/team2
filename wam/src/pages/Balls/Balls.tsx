@@ -104,7 +104,7 @@ function Balls({ appId }: BallsProps) {
         typo="16"
         bold
       >
-        내 포켓볼
+        잡은 새내기
       </Text>
 
       {notice && (
@@ -128,7 +128,7 @@ function Balls({ appId }: BallsProps) {
 
       {items && items.length === 0 && (
         <VStack spacing={8}>
-          <EmptyState title="아직 던진 볼이 없어요" />
+          <EmptyState title="아직 잡은 새내기가 없어요" />
           <Text
             typo="13"
             color="text-neutral-light"

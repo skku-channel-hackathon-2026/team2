@@ -90,7 +90,7 @@ function Balls({ session, onChanged }: BallsProps) {
 
   return (
     <Section
-      title="포켓볼"
+      title="잡은 새내기"
       action={
         <Button
           size="s"
@@ -126,7 +126,7 @@ function Balls({ session, onChanged }: BallsProps) {
         empty={
           <Empty
             title="아직 잡은 밥약이 없어요"
-            hint="‘출현’ 탭에서 새내기의 질문을 수락하면 볼이 생겨요."
+            hint="‘출현’ 탭에서 새내기의 질문을 수락하면 여기에 추가돼요."
           />
         }
       >

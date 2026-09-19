@@ -54,6 +54,14 @@ INSERT INTO users (id, channel_user_id, primary_user_chat_id, nickname, cohort_y
   ('p-junior-4', 'skku-2025310404', 'demo-chat-2025310404', '최서준', 2025, '2026-08-20T00:00:00.000Z', '2026-08-20T00:00:00.000Z'),
   ('p-junior-5', 'skku-2025310505', 'demo-chat-2025310505', '한지우', 2025, '2026-08-21T00:00:00.000Z', '2026-08-21T00:00:00.000Z');
 
+-- 도감을 채우는 후배들 (이미 잡힌 기록만 있고, 진행 중인 볼은 없다).
+INSERT INTO users (id, channel_user_id, primary_user_chat_id, nickname, cohort_year, created_at, updated_at) VALUES
+  ('p-junior-6', 'skku-2026310606', 'demo-chat-2026310606', '오시윤', 2026, '2026-07-10T00:00:00.000Z', '2026-07-10T00:00:00.000Z'),
+  ('p-junior-7', 'skku-2025310707', 'demo-chat-2025310707', '강예린', 2025, '2026-06-02T00:00:00.000Z', '2026-06-02T00:00:00.000Z'),
+  ('p-junior-8', 'skku-2025310808', 'demo-chat-2025310808', '정우진', 2025, '2026-05-18T00:00:00.000Z', '2026-05-18T00:00:00.000Z'),
+  ('p-junior-9', 'skku-2026310909', 'demo-chat-2026310909', '신가온', 2026, '2026-08-05T00:00:00.000Z', '2026-08-05T00:00:00.000Z'),
+  ('p-junior-10', 'skku-2024311010', 'demo-chat-2024311010', '문하준', 2024, '2026-04-11T00:00:00.000Z', '2026-04-11T00:00:00.000Z');
+
 INSERT INTO users (id, channel_manager_id, nickname, is_senior, created_at, updated_at) VALUES
   ('p-senior-1', 'skku-m-2021310111', '윤태경', 1, '2026-08-01T00:00:00.000Z', '2026-08-01T00:00:00.000Z');
 
@@ -202,3 +210,104 @@ VALUES
    'published', 1, '2026-2',
    '백엔드로 가려면 학부 때 뭘 해둬야 해요? 토이 프로젝트 하나를 실제로 배포까지 해보는 게 제일 크게 남아요. 과제용 코드만 쌓는 것보다 훨씬 이야기할 거리가 많아져요.',
    '2026-09-12T09:00:00.000Z', '2026-09-13T01:00:00.000Z');
+
+-- ── 선배 화면 ④: 포켓볼을 상태별로 다 채운다 ────────────────────────────
+-- 이 주(KST) 안에 들어가는 약속은 enc-p3 하나뿐이다 — weekly_limit_minutes
+-- (600분)를 아껴둬야 시연 중 즉석에서 만든 요청도 발표자에게 매칭된다.
+
+-- 예정: 다음 주 온라인 30분.
+INSERT INTO encounters
+  (id, junior_id, field_id, title, meet_type, max_seniors, status, slot_start, slot_end, place, created_at)
+VALUES
+  ('enc-p6', 'p-junior-4', 'grad',
+   '학부연구생 지원 메일, 어떻게 써야 답장이 올까요?',
+   'online', 1, 'matched',
+   '2026-09-23T05:00:00.000Z', '2026-09-23T05:30:00.000Z', '온라인(구글밋)',
+   '2026-09-18T06:00:00.000Z');
+
+INSERT INTO balls (id, encounter_id, senior_id, status, thrown_at) VALUES
+  ('bal-p6', 'enc-p6', 'presenter-senior', 'thrown', '2026-09-18T06:20:00.000Z');
+
+-- 후기 대기 + 이미 한 번 재촉함 → 재촉 1번 남은 카드.
+INSERT INTO encounters
+  (id, junior_id, field_id, title, meet_type, max_seniors, status, slot_start, slot_end, place, review_due_at, created_at)
+VALUES
+  ('enc-p7', 'p-junior-5', 'club',
+   '학회 운영진 하면 학점 관리 가능해요?',
+   'cafe', 1, 'met',
+   '2026-09-11T04:00:00.000Z', '2026-09-11T04:45:00.000Z', '학관 지하 카페',
+   '2026-09-18T05:00:00.000Z', '2026-09-09T00:00:00.000Z');
+
+INSERT INTO balls (id, encounter_id, senior_id, status, thrown_at, met_confirmed_at, reminders_sent) VALUES
+  ('bal-p7', 'enc-p7', 'presenter-senior', 'wobbling',
+   '2026-09-09T02:00:00.000Z', '2026-09-11T05:00:00.000Z', 1);
+
+-- 잡음 + 후기 있음(공유 미동의 → 답변 탭에 "익명 후배"로 뜬다).
+INSERT INTO encounters
+  (id, junior_id, field_id, title, meet_type, max_seniors, status, slot_start, slot_end, place, review_due_at, created_at)
+VALUES
+  ('enc-p8', 'p-junior-2', 'life',
+   '동기들이랑 안 친해졌는데 지금이라도 방법 있나요?',
+   'meal', 1, 'caught',
+   '2026-09-08T04:00:00.000Z', '2026-09-08T05:00:00.000Z', '인사캠 학식',
+   '2026-09-15T05:00:00.000Z', '2026-09-06T00:00:00.000Z');
+
+INSERT INTO balls (id, encounter_id, senior_id, status, thrown_at, met_confirmed_at, caught_at) VALUES
+  ('bal-p8', 'enc-p8', 'presenter-senior', 'caught',
+   '2026-09-06T01:00:00.000Z', '2026-09-08T05:10:00.000Z', '2026-09-08T10:00:00.000Z');
+
+INSERT INTO reviews (encounter_id, junior_id, rating, review_text, self_answer, share_consent, created_at) VALUES
+  ('enc-p8', 'p-junior-2', 4,
+   '혼자만 늦은 줄 알았는데 아니라고 해주셔서 마음이 놓였어요. 소모임부터 들어가 볼게요.',
+   NULL, 0, '2026-09-08T10:00:00.000Z');
+
+-- 놓침: 후기 기한이 지나 볼이 튕겨 나간 기록 (도감에 안 올라간다).
+INSERT INTO encounters
+  (id, junior_id, field_id, title, meet_type, max_seniors, status, slot_start, slot_end, place, review_due_at, created_at)
+VALUES
+  ('enc-p9', 'p-junior-3', 'study',
+   '재수강이 나을까요, 그냥 가는 게 나을까요?',
+   'cafe', 1, 'escaped',
+   '2026-09-04T04:00:00.000Z', '2026-09-04T04:45:00.000Z', '학관 지하 카페',
+   '2026-09-11T05:00:00.000Z', '2026-09-02T00:00:00.000Z');
+
+INSERT INTO balls (id, encounter_id, senior_id, status, thrown_at, met_confirmed_at, reminders_sent) VALUES
+  ('bal-p9', 'enc-p9', 'presenter-senior', 'escaped',
+   '2026-09-02T01:00:00.000Z', '2026-09-04T05:00:00.000Z', 2);
+
+-- ── 선배 화면 ⑤: 도감을 분야별로 채운다 ─────────────────────────────────
+-- intimacy 는 아래 intimacy_events 합계와 정확히 같게 맞춰 둔다
+-- (30 first_catch · 20 repeat_catch · 10 five_star · 10 self_answer · 50 evolution).
+-- 레벨 기준: 150+ = 4, 80+ = 3, 30+ = 2.
+INSERT INTO dex_entries
+  (senior_id, junior_id, type_field_id, first_caught_at, catch_count, intimacy, evolved_at, share_consent)
+VALUES
+  ('presenter-senior', 'p-junior-2',  'life',   '2026-09-08T10:00:00.000Z', 1,  40, NULL, 0),
+  ('presenter-senior', 'p-junior-6',  'grad',   '2026-07-15T08:00:00.000Z', 1,  30, NULL, 1),
+  ('presenter-senior', 'p-junior-7',  'life',   '2026-06-10T08:00:00.000Z', 4, 110, NULL, 1),
+  ('presenter-senior', 'p-junior-8',  'career', '2026-05-25T08:00:00.000Z', 4, 160, '2026-08-30T08:00:00.000Z', 1),
+  ('presenter-senior', 'p-junior-9',  'study',  '2026-08-10T08:00:00.000Z', 1,  40, NULL, 1),
+  ('presenter-senior', 'p-junior-10', 'grad',   '2026-04-20T08:00:00.000Z', 2,  60, NULL, 1);
+
+INSERT INTO intimacy_events (id, senior_id, junior_id, kind, points, dedupe_key, created_at) VALUES
+  ('evt-p16', 'presenter-senior', 'p-junior-2', 'first_catch', 30, 'first_catch:enc-p8', '2026-09-08T10:00:00.000Z'),
+  ('evt-p17', 'presenter-senior', 'p-junior-2', 'five_star', 10, 'five_star:enc-p8', '2026-09-08T10:00:00.000Z'),
+  ('evt-p18', 'presenter-senior', 'p-junior-6', 'first_catch', 30, 'first_catch:p-junior-6', '2026-07-15T08:00:00.000Z'),
+  ('evt-p19', 'presenter-senior', 'p-junior-7', 'first_catch', 30, 'first_catch:p-junior-7', '2026-06-10T08:00:00.000Z'),
+  ('evt-p20', 'presenter-senior', 'p-junior-7', 'repeat_catch', 20, 'repeat_catch:p-junior-7:2', '2026-06-24T08:00:00.000Z'),
+  ('evt-p21', 'presenter-senior', 'p-junior-7', 'repeat_catch', 20, 'repeat_catch:p-junior-7:3', '2026-07-08T08:00:00.000Z'),
+  ('evt-p22', 'presenter-senior', 'p-junior-7', 'repeat_catch', 20, 'repeat_catch:p-junior-7:4', '2026-07-29T08:00:00.000Z'),
+  ('evt-p23', 'presenter-senior', 'p-junior-7', 'five_star', 10, 'five_star:p-junior-7', '2026-07-29T08:30:00.000Z'),
+  ('evt-p24', 'presenter-senior', 'p-junior-7', 'self_answer', 10, 'self_answer:p-junior-7', '2026-07-29T08:30:00.000Z'),
+  ('evt-p25', 'presenter-senior', 'p-junior-8', 'first_catch', 30, 'first_catch:p-junior-8', '2026-05-25T08:00:00.000Z'),
+  ('evt-p26', 'presenter-senior', 'p-junior-8', 'repeat_catch', 20, 'repeat_catch:p-junior-8:2', '2026-06-15T08:00:00.000Z'),
+  ('evt-p27', 'presenter-senior', 'p-junior-8', 'repeat_catch', 20, 'repeat_catch:p-junior-8:3', '2026-07-20T08:00:00.000Z'),
+  ('evt-p28', 'presenter-senior', 'p-junior-8', 'repeat_catch', 20, 'repeat_catch:p-junior-8:4', '2026-08-30T08:00:00.000Z'),
+  ('evt-p29', 'presenter-senior', 'p-junior-8', 'evolution', 50, 'evolution:p-junior-8', '2026-08-30T08:00:00.000Z'),
+  ('evt-p30', 'presenter-senior', 'p-junior-8', 'five_star', 10, 'five_star:p-junior-8', '2026-08-30T08:30:00.000Z'),
+  ('evt-p31', 'presenter-senior', 'p-junior-8', 'self_answer', 10, 'self_answer:p-junior-8', '2026-08-30T08:30:00.000Z'),
+  ('evt-p32', 'presenter-senior', 'p-junior-9', 'first_catch', 30, 'first_catch:p-junior-9', '2026-08-10T08:00:00.000Z'),
+  ('evt-p33', 'presenter-senior', 'p-junior-9', 'five_star', 10, 'five_star:p-junior-9', '2026-08-10T08:30:00.000Z'),
+  ('evt-p34', 'presenter-senior', 'p-junior-10', 'first_catch', 30, 'first_catch:p-junior-10', '2026-04-20T08:00:00.000Z'),
+  ('evt-p35', 'presenter-senior', 'p-junior-10', 'repeat_catch', 20, 'repeat_catch:p-junior-10:2', '2026-05-11T08:00:00.000Z'),
+  ('evt-p36', 'presenter-senior', 'p-junior-10', 'self_answer', 10, 'self_answer:p-junior-10', '2026-05-11T08:30:00.000Z');

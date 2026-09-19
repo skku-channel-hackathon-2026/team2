@@ -59,7 +59,7 @@ function Dex({ appId }: DexProps) {
           typo="16"
           bold
         >
-          내 도감
+          새내기 도감
         </Text>
         {data && (
           <>

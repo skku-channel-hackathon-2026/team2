@@ -46,8 +46,8 @@ const JUNIOR_TABS: TabSpec[] = [
 
 const SENIOR_TABS: TabSpec[] = [
   { id: 'wild', label: '출현' },
-  { id: 'balls', label: '포켓볼' },
-  { id: 'dex', label: '도감' },
+  { id: 'balls', label: '잡은 새내기' },
+  { id: 'dex', label: '새내기 도감' },
   { id: 'answers', label: '답변' },
   { id: 'setup', label: '선배 설정' },
   { id: 'ops', label: '운영' },
