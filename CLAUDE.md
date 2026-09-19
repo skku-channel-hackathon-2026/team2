@@ -182,8 +182,9 @@ gracefully.
 | Channel token        | Channel-scoped ops                     | Server cache, per channel   |
 | Provider OAuth token | External service calls                 | Injected as `ctx.authToken` |
 
-- **Inbound**: `SignatureGuard` verifies HMAC-SHA256 `x-signature` over the
-  **raw body** using the hex-decoded Signing Key.
+- **Inbound**: `SignatureGuard` verifies `x-signature` as
+  `base64(HMAC-SHA256(hexDecode(SIGNING_KEY), rawBody))` — the key is hex, the
+  digest is **base64**. Verified against the SDK guard, not just the docs.
 - **Outbound**: `TokenManager` issues and caches token pairs (`accessToken`,
   `refreshToken`, `expiresIn`) from the App Secret and refreshes before expiry.
   `issueToken`/`refreshToken` are rate-limited to **10 calls per 30 minutes per

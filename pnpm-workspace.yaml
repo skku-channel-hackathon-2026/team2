@@ -1,6 +1,7 @@
 packages:
   - "server"
   - "wam"
+  - "demo"
   - "packages/*"
 
 # 승인되지 않은 빌드 스크립트가 있으면 install을 실패시킨다(조용히 건너뛰지 않는다).
