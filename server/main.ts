@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { Logger } from "@nestjs/common";
+import { WAM_NAME } from "@tutorial/shared";
 import { createApplication } from "./src/application.js";
 
 async function bootstrap() {
@@ -9,7 +10,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
   const wamDist = resolve(process.cwd(), "../wam/dist");
   if (existsSync(wamDist)) {
-    app.useStaticAssets(wamDist, { prefix: "/resource/wam/tutorial" });
+    app.useStaticAssets(wamDist, { prefix: `/resource/wam/${WAM_NAME}` });
   } else {
     new Logger("Bootstrap").warn(
       `WAM build not found at ${wamDist}. Run pnpm build from the repository root.`,

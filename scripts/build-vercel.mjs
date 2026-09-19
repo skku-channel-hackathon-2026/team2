@@ -2,6 +2,9 @@ import { cp, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import { tmpdir } from "node:os";
+import { WAM_NAME } from "../packages/shared/dist/index.js";
+
+const wamPath = `/resource/wam/${WAM_NAME}`;
 
 const output = resolve(".vercel/output");
 const functionDir = resolve(output, "functions/server.func");
@@ -31,10 +34,10 @@ await writeFile(
     2,
   ),
 );
-await mkdir(resolve(output, "static/resource/wam/tutorial"), {
+await mkdir(resolve(output, `static${wamPath}`), {
   recursive: true,
 });
-await cp("wam/dist", resolve(output, "static/resource/wam/tutorial"), {
+await cp("wam/dist", resolve(output, `static${wamPath}`), {
   recursive: true,
 });
 await writeFile(
@@ -44,13 +47,13 @@ await writeFile(
       version: 3,
       routes: [
         {
-          src: "^/resource/wam/tutorial$",
+          src: `^${wamPath}$`,
           status: 308,
-          headers: { Location: "/resource/wam/tutorial/" },
+          headers: { Location: `${wamPath}/` },
         },
         {
-          src: "^/resource/wam/tutorial/$",
-          dest: "/resource/wam/tutorial/index.html",
+          src: `^${wamPath}/$`,
+          dest: `${wamPath}/index.html`,
         },
         { handle: "filesystem" },
         { src: "^/functions(?:/.*)?$", dest: "/server" },

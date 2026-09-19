@@ -3,6 +3,7 @@ import { createHmac } from "node:crypto";
 import { createServer } from "node:http";
 import { readFile, readdir, realpath } from "node:fs/promises";
 import { resolve, relative } from "node:path";
+import { COMMANDS, WAM_NAME } from "../packages/shared/dist/index.js";
 
 // Synthetic credentials only; registration must never make external calls here.
 process.env.APP_ID = "local-smoke";
@@ -19,6 +20,18 @@ globalThis.fetch = (...args) => {
   }
   return originalFetch(...args);
 };
+// Asserts discovery without pinning a command name, so renaming a command
+// cannot silently break CI and block deployment.
+function assertCommands(body) {
+  const serialized = JSON.stringify(JSON.parse(body));
+  assert.match(serialized, /"commands"/);
+  for (const command of COMMANDS)
+    assert.ok(
+      serialized.includes(command.actionFunctionName),
+      `discovery is missing ${command.actionFunctionName}`,
+    );
+}
+
 const bundle = resolve(".vercel/output/functions/server.func");
 async function checkTree(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
@@ -74,7 +87,7 @@ try {
   ]);
   for (const result of coldResults) {
     assert.equal(result.status, 200);
-    assert.match(await result.text(), /tutorial\.open/);
+    assertCommands(await result.text());
   }
   for (const path of ["/functions", "/functions/v1"]) {
     assert.equal((await send(path)).status, 401);
@@ -85,13 +98,13 @@ try {
     ]);
     for (const result of results) {
       assert.equal(result.status, 200);
-      assert.match(await result.text(), /tutorial\.open/);
+      assertCommands(await result.text());
     }
     assert.equal((await send(path, signature, body + " ")).status, 401);
   }
   assert.equal(externalCalls, 0);
   const html = await readFile(
-    ".vercel/output/static/resource/wam/tutorial/index.html",
+    `.vercel/output/static/resource/wam/${WAM_NAME}/index.html`,
     "utf8",
   );
   assert.match(html, /assets\//);
