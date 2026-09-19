@@ -19,11 +19,15 @@ import {
   type Context,
 } from "@channel.io/app-sdk-server";
 import { AccountsService } from "../../accounts.service.js";
+import { NotificationsService } from "../../notifications.service.js";
 import { confirmMet, listForSenior, remind } from "./ball.service.js";
 
 @Injectable()
 export class BallFunctions {
-  constructor(private readonly accounts: AccountsService) {}
+  constructor(
+    private readonly accounts: AccountsService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   @Func(BALL_FUNCTIONS.list)
   @Description("내 포켓볼 목록")
@@ -45,7 +49,10 @@ export class BallFunctions {
     @Input() input: z.infer<typeof ConfirmMetInputSchema>,
   ): Promise<z.infer<typeof ConfirmMetOutputSchema>> {
     const senior = await this.accounts.requireLinkedSenior(ctx);
-    return confirmMet(input.ballId, senior.id);
+    return confirmMet(input.ballId, senior.id, {
+      notifications: this.notifications,
+      channelId: ctx.channel.id,
+    });
   }
 
   @Func(BALL_FUNCTIONS.remind)
@@ -57,6 +64,9 @@ export class BallFunctions {
     @Input() input: z.infer<typeof RemindInputSchema>,
   ): Promise<z.infer<typeof RemindOutputSchema>> {
     const senior = await this.accounts.requireLinkedSenior(ctx);
-    return remind(input.ballId, senior.id);
+    return remind(input.ballId, senior.id, {
+      notifications: this.notifications,
+      channelId: ctx.channel.id,
+    });
   }
 }

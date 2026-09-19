@@ -23,6 +23,7 @@ import { AccountsService } from "../accounts.service.js";
 import { NotificationsService } from "../notifications.service.js";
 import { SettingsService } from "../settings.service.js";
 import { newId } from "../util.js";
+import { sweepReviewLifecycle } from "../modules/ball/review-lifecycle.service.js";
 
 @Injectable()
 export class OpsFunctions {
@@ -95,6 +96,32 @@ export class OpsFunctions {
     @Ctx() ctx: Context,
   ): Promise<z.infer<typeof RunDueOutputSchema>> {
     await this.accounts.requireStaff(ctx);
-    return this.notifications.runDue(ctx.channel.id, 20);
+
+    // 후기 마감 리마인드·도망 처리를 outbox에 먼저 쌓은 뒤, 아래에서 한 번에
+    // 발송한다. 이렇게 하면 새 응답 필드 없이도(=등록 갱신 불필요) 방금 쌓인
+    // 알림이 sent/failed 집계에 자연히 포함된다.
+    await sweepReviewLifecycle({
+      notifications: this.notifications,
+      channelId: ctx.channel.id,
+    });
+
+    const summary = await this.notifications.runDue(ctx.channel.id, 20);
+
+    if (summary.failed > 0) {
+      const opsGroupId = await this.settings.groupId("ops");
+      if (opsGroupId) {
+        const id = await this.notifications.enqueue({
+          dedupeKey: `notify_failures:${newId("d")}`,
+          kind: "notify_failures",
+          text: `⚠️ 알림 발송 실패 ${summary.failed}건이 있어요. 서버 로그를 확인해 주세요.`,
+          targetType: "group",
+          targetId: opsGroupId,
+          urgent: true,
+        });
+        if (id) await this.notifications.runOne(ctx.channel.id, id);
+      }
+    }
+
+    return summary;
   }
 }

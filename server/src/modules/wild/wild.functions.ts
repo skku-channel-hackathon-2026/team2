@@ -17,11 +17,15 @@ import {
   type Context,
 } from "@channel.io/app-sdk-server";
 import { AccountsService } from "../../accounts.service.js";
+import { NotificationsService } from "../../notifications.service.js";
 import { acceptWild, listWild } from "./wild.service.js";
 
 @Injectable()
 export class WildFunctions {
-  constructor(private readonly accounts: AccountsService) {}
+  constructor(
+    private readonly accounts: AccountsService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   @Func(WILD_FUNCTIONS.list)
   @Description("나에게 온 출현 목록")
@@ -43,6 +47,9 @@ export class WildFunctions {
     @Input() input: z.infer<typeof WildAcceptInputSchema>,
   ): Promise<z.infer<typeof WildAcceptOutputSchema>> {
     const senior = await this.accounts.requireLinkedSenior(ctx);
-    return acceptWild(senior.id, input);
+    return acceptWild({ id: senior.id, nickname: senior.nickname }, input, {
+      notifications: this.notifications,
+      channelId: ctx.channel.id,
+    });
   }
 }
