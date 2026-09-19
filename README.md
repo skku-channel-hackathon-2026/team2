@@ -143,7 +143,7 @@ packages/shared/
 wam/
   src/hooks/                   validates host data with the shared Zod contract
   src/pages/                   one component per WAM screen
-cloudflare/migrations/         versioned schema changes applied by operators
+cloudflare/migrations/         versioned schema changes applied by operator
 ```
 
 Use the SDK guides and references for the current contract, and use this
