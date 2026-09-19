@@ -1,12 +1,12 @@
 -- "출현" (밥약 요청 한 건). T2(질문·매칭)가 아직 없으므로 question_id는
--- FK 없이 자리만 잡아두고, title/category_id를 신청 시 임시로 직접 저장한다.
--- T2가 들어오면 question_id에 questions(id) 참조를 연결하고 title/category_id는
--- questions 테이블 조회로 대체할 수 있다 (컬럼은 그대로 둬도 무해).
+-- FK 없이 자리만 잡아두고, title/field_id를 신청 시 임시로 직접 저장한다.
+-- field_id는 T1의 fields(진로·취업/학업·수강/동아리·대외활동/...) 테이블을 쓴다
+-- (도감 "타입"과 동일한 분류).
 CREATE TABLE encounters (
   id TEXT PRIMARY KEY,
   question_id TEXT UNIQUE,
-  junior_id   TEXT NOT NULL REFERENCES users(id),
-  category_id TEXT NOT NULL REFERENCES categories(id),
+  junior_id TEXT NOT NULL REFERENCES users(id),
+  field_id   TEXT NOT NULL REFERENCES fields(id),
   title TEXT NOT NULL,
   meet_type   TEXT NOT NULL CHECK (meet_type IN ('meal','cafe','online')),
   max_seniors INTEGER NOT NULL CHECK (max_seniors BETWEEN 1 AND 3),

@@ -4,7 +4,9 @@
       "Bash(npm -v)",
       "PowerShell(node -v)",
       "PowerShell(npm -v)",
-      "PowerShell(corepack -v 2>&1)"
+      "PowerShell(corepack -v 2>&1)",
+      "Bash(export WSL_UTF8=1)",
+      "Bash(wsl.exe -e bash -lc 'export NVM_DIR=\"$HOME/.nvm\"; \\\\. \"$NVM_DIR/nvm.sh\"; cd /mnt/c/Coding/team2 && corepack pnpm typecheck 2>&1 | tail -150')"
     ]
   }
 }

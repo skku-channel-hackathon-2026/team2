@@ -1,5 +1,6 @@
 import "dotenv/config";
 import type { ChannelAppModuleOptions } from "@channel.io/app-sdk-server";
+import { D1TokenCache } from "./token-cache.js";
 
 function required(name: string): string {
   const value = process.env[name]?.trim();
@@ -24,4 +25,5 @@ export const channelAppOptions: ChannelAppModuleOptions = {
   appStoreUrl: process.env.APP_STORE_URL ?? "https://app-store-api.channel.io",
   autoRegister: process.env.VERCEL !== "1" && process.env.CLOUDFLARE_WORKER !== "1" && process.env.AUTO_REGISTER !== "false",
   skipSignatureVerification,
+  tokenCacheStorage: new D1TokenCache(),
 };

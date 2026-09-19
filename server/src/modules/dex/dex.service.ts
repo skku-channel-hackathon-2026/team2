@@ -1,10 +1,10 @@
 import { type DexEntry, type DexListOutput, intimacyLevel } from "@tutorial/shared";
-import { getDatabase } from "../../database.js";
+import { execute, queryOne, queryAll } from "../../database.js";
 
 interface DexEntryRow {
   junior_id: string;
   junior_nickname: string;
-  type_category_id: string;
+  type_field_id: string;
   first_caught_at: string;
   catch_count: number;
   intimacy: number;
@@ -12,21 +12,19 @@ interface DexEntryRow {
 }
 
 export async function listDex(seniorId: string): Promise<DexListOutput> {
-  const { results } = await getDatabase()
-    .prepare(
-      `SELECT d.junior_id, u.nickname AS junior_nickname, d.type_category_id,
-              d.first_caught_at, d.catch_count, d.intimacy, d.evolved_at
-       FROM dex_entries d
-       JOIN users u ON u.id = d.junior_id
-       WHERE d.senior_id = ?
-       ORDER BY d.first_caught_at DESC`,
-    )
-    .bind(seniorId)
-    .all<DexEntryRow>();
+  const rows = await queryAll<DexEntryRow>(
+    `SELECT d.junior_id, u.nickname AS junior_nickname, d.type_field_id,
+            d.first_caught_at, d.catch_count, d.intimacy, d.evolved_at
+     FROM dex_entries d
+     JOIN users u ON u.id = d.junior_id
+     WHERE d.senior_id = ?
+     ORDER BY d.first_caught_at DESC`,
+    seniorId,
+  );
 
-  const items: DexEntry[] = results.map((row) => ({
+  const items: DexEntry[] = rows.map((row) => ({
     juniorAlias: row.junior_nickname,
-    typeCategoryId: row.type_category_id,
+    typeFieldId: row.type_field_id,
     firstCaughtAt: row.first_caught_at,
     catchCount: row.catch_count,
     intimacy: row.intimacy,
@@ -46,43 +44,37 @@ export async function listDex(seniorId: string): Promise<DexListOutput> {
 export async function registerCatch(params: {
   seniorId: string;
   juniorId: string;
-  typeCategoryId: string;
+  typeFieldId: string;
   caughtAt: string;
   shareConsent: boolean;
 }): Promise<{ wasFirstCatch: boolean }> {
-  const db = getDatabase();
-  const existing = await db
-    .prepare(
-      "SELECT senior_id FROM dex_entries WHERE senior_id = ? AND junior_id = ?",
-    )
-    .bind(params.seniorId, params.juniorId)
-    .first();
+  const existing = await queryOne(
+    "SELECT senior_id FROM dex_entries WHERE senior_id = ? AND junior_id = ?",
+    params.seniorId,
+    params.juniorId,
+  );
 
   if (!existing) {
-    await db
-      .prepare(
-        `INSERT INTO dex_entries
-           (senior_id, junior_id, type_category_id, first_caught_at, catch_count, intimacy, share_consent)
-         VALUES (?, ?, ?, ?, 1, 0, ?)`,
-      )
-      .bind(
-        params.seniorId,
-        params.juniorId,
-        params.typeCategoryId,
-        params.caughtAt,
-        params.shareConsent ? 1 : 0,
-      )
-      .run();
+    await execute(
+      `INSERT INTO dex_entries
+         (senior_id, junior_id, type_field_id, first_caught_at, catch_count, intimacy, share_consent)
+       VALUES (?, ?, ?, ?, 1, 0, ?)`,
+      params.seniorId,
+      params.juniorId,
+      params.typeFieldId,
+      params.caughtAt,
+      params.shareConsent ? 1 : 0,
+    );
     return { wasFirstCatch: true };
   }
 
-  await db
-    .prepare(
-      `UPDATE dex_entries
-       SET catch_count = catch_count + 1, share_consent = ?
-       WHERE senior_id = ? AND junior_id = ?`,
-    )
-    .bind(params.shareConsent ? 1 : 0, params.seniorId, params.juniorId)
-    .run();
+  await execute(
+    `UPDATE dex_entries
+     SET catch_count = catch_count + 1, share_consent = ?
+     WHERE senior_id = ? AND junior_id = ?`,
+    params.shareConsent ? 1 : 0,
+    params.seniorId,
+    params.juniorId,
+  );
   return { wasFirstCatch: false };
 }

@@ -1,26 +1,21 @@
 import { z } from "zod";
 
 // T5 — 잡기 파이프라인: 만남 완료 → 재촉 → 후기 제출 → 도감 등록 + 친밀도.
-// 질문/매칭(T2)은 아직 없으므로 encounter.create 등은 여기 포함하지 않는다.
-
-export const BALL_WAM_NAME = "balls";
-export const REVIEW_WAM_NAME = "review";
-export const DEX_WAM_NAME = "dex";
+// "커맨드 열기"(*.open)는 commands.extension.ts의 CommandActions가 전담하므로
+// 여기서는 데이터 함수(list/confirmMet/remind/submit)만 다룬다.
+// 도감 "타입"은 T1에서 이미 만들어진 fields(진로·취업/학업·수강/...) 테이블을 쓴다.
 
 export const BALL_FUNCTIONS = {
-  open: "ball.open",
   list: "ball.list",
   confirmMet: "ball.confirmMet",
   remind: "ball.remind",
 } as const;
 
 export const REVIEW_FUNCTIONS = {
-  open: "review.open",
   submit: "review.submit",
 } as const;
 
 export const DEX_FUNCTIONS = {
-  open: "dex.open",
   list: "dex.list",
 } as const;
 
@@ -110,7 +105,7 @@ export type ReviewSubmitOutput = z.infer<typeof ReviewSubmitOutputSchema>;
 
 export const DexEntrySchema = z.object({
   juniorAlias: z.string(),
-  typeCategoryId: z.string(),
+  typeFieldId: z.string(),
   firstCaughtAt: z.string(),
   catchCount: z.number().int(),
   intimacy: z.number().int(),
