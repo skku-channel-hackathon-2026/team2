@@ -118,7 +118,7 @@ corepack pnpm dev:cloudflare
 
 팀 레포에서 작업 브랜치의 PR을 `main`에 머지하면 main CI 성공 후 자동
 배포됩니다. PR 검사만 성공하거나 main CI가 실패한 경우에는 배포되지 않습니다.
-서버는 Cloudflare Workers Free, DB는 팀별 D1입니다. 별도 Vercel 배포는 사용하지
+서버는 Vercel Hobby, DB는 팀별 D1입니다. 별도 Vercel 배포는 사용하지
 않습니다. CI 성공과 배포 완료는 별개이며, 배포 로그·커밋 SHA는 운영진이 확인할
 수 있습니다. `/api/health`는 서버 상태, `/api/ready`는 실제 D1
 연결(`SELECT 1`)을 확인합니다. 이 상태 검사만으로 기능의 데이터 저장·조회까지
