@@ -7,12 +7,21 @@ import {
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { createApplication } from "./application.js";
 import { appId } from "./config.js";
-import { safeEqual } from "./util.js";
 
 type Handler = (request: IncomingMessage, response: ServerResponse) => void;
 type Runtime = { dispatch: Handler; app: NestExpressApplication };
+type RegistrationResult = {
+  extension: string;
+  systemVersion: string;
+  success: boolean;
+  errorMessage?: string;
+  validationErrors?: string[];
+};
+type RegistrationReport =
+  { ok: true; results: RegistrationResult[] } | { ok: false; error: string };
 
 let initialization: Promise<Runtime> | undefined;
+let registration: Promise<RegistrationReport> | undefined;
 
 function sendJson(response: ServerResponse, status: number, body: unknown) {
   response.statusCode = status;
@@ -21,20 +30,25 @@ function sendJson(response: ServerResponse, status: number, body: unknown) {
 }
 
 /**
- * Workers never call `app.listen()`, so the SDK's auto-registration (which
- * waits on the server's "listening" event) never fires. This lets an operator
- * trigger `registerExtension` from the deployed Worker, which already holds
- * APP_SECRET, instead of copying that secret out of the developer portal.
- * Disabled unless REGISTER_TOKEN is set; drop the var once registration is
- * refreshed.
+ * Workers never call `app.listen()`, so the SDK's auto-registration — which
+ * waits on the HTTP server's "listening" event — never fires, and the command
+ * metadata AppStore serves stays frozen at whatever it last pulled. Deploying
+ * new code does not refresh it; only `registerExtension` does.
+ *
+ * The deploy pipeline applies this repo's code but not its `vars`, so a shared
+ * secret cannot be placed in the production env to gate this. Instead
+ * POST /api/register runs it once per isolate, using the APP_SECRET the Worker
+ * already holds, and reports AppStore's raw validation errors. Remove this
+ * route once the command list is registered.
  */
-async function registerExtensions(app: NestExpressApplication) {
+async function registerExtensions(
+  app: NestExpressApplication,
+): Promise<RegistrationResult[]> {
   const discovery = app.get(ExtensionDiscoveryService);
   const nativeClient = app.get(NativeFunctionClient);
   const { accessToken } = await app.get(TokenManager).getAppToken();
-  const extensions = discovery.getExtensions();
   return await Promise.all(
-    extensions.map(async (extension) => {
+    discovery.getExtensions().map(async (extension) => {
       const result = await nativeClient.registerExtension(
         appId,
         extension.name,
@@ -50,33 +64,6 @@ async function registerExtensions(app: NestExpressApplication) {
       };
     }),
   );
-}
-
-async function handleRegister(
-  request: IncomingMessage,
-  response: ServerResponse,
-  app: NestExpressApplication,
-) {
-  const expected = process.env.REGISTER_TOKEN?.trim();
-  if (!expected) {
-    sendJson(response, 404, { error: "registration trigger is disabled" });
-    return;
-  }
-  const provided = new URL(
-    request.url ?? "",
-    "http://localhost",
-  ).searchParams.get("token");
-  if (!provided || !safeEqual(provided, expected)) {
-    sendJson(response, 401, { error: "invalid token" });
-    return;
-  }
-  try {
-    sendJson(response, 200, { results: await registerExtensions(app) });
-  } catch (error: unknown) {
-    sendJson(response, 500, {
-      error: error instanceof Error ? error.message : "registration failed",
-    });
-  }
 }
 
 export default async function handler(
@@ -102,8 +89,23 @@ export default async function handler(
     });
   const runtime = await initialization;
 
+  // Started and awaited inside this one request. Work left pending when a
+  // request ends is frozen by the Workers runtime, so a promise kicked off by
+  // some other request can never be awaited here — it just hangs. Safe to
+  // start now because `initialization` has resolved: AppStore calls straight
+  // back into this Worker during registration, and those requests must not
+  // block on a promise that is itself waiting for them.
   if (request.method === "POST" && path === "/api/register") {
-    await handleRegister(request, response, runtime.app);
+    registration ??= registerExtensions(runtime.app).then(
+      (results): RegistrationReport => ({ ok: true, results }),
+      (error: unknown): RegistrationReport => ({
+        ok: false,
+        error: error instanceof Error ? error.message : "registration failed",
+      }),
+    );
+    const report = await registration;
+    if (!report.ok) registration = undefined;
+    sendJson(response, report.ok ? 200 : 500, report);
     return;
   }
 
