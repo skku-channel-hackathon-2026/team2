@@ -13,6 +13,9 @@
   "vars": {
     "AUTO_REGISTER": "false",
     "CLOUDFLARE_WORKER": "1",
+    // Temporary: enables POST /api/register so the Worker can refresh its own
+    // extension registration. Remove this var once commands are registered.
+    "REGISTER_TOKEN": "4bDpKwhXs_-EzsUwv6GqvLU8huC0dT1W",
   },
   "d1_databases": [
     {
