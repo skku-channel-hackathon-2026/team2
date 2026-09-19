@@ -1,4 +1,8 @@
-import { type DexEntry, type DexListOutput, intimacyLevel } from "@tutorial/shared";
+import {
+  type DexEntry,
+  type DexListOutput,
+  intimacyLevel,
+} from "@tutorial/shared";
 import { execute, queryOne, queryAll } from "../../database.js";
 
 interface DexEntryRow {

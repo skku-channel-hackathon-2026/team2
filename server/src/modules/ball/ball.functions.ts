@@ -9,7 +9,15 @@ import {
   RemindInputSchema,
   RemindOutputSchema,
 } from "@tutorial/shared";
-import { Ctx, Description, Func, Input, InputSchema, OutputSchema, type Context } from "@channel.io/app-sdk-server";
+import {
+  Ctx,
+  Description,
+  Func,
+  Input,
+  InputSchema,
+  OutputSchema,
+  type Context,
+} from "@channel.io/app-sdk-server";
 import { AccountsService } from "../../accounts.service.js";
 import { confirmMet, listForSenior, remind } from "./ball.service.js";
 
@@ -21,7 +29,9 @@ export class BallFunctions {
   @Description("내 포켓볼 목록")
   @InputSchema(EmptyInputSchema)
   @OutputSchema(BallListOutputSchema)
-  async list(@Ctx() ctx: Context): Promise<z.infer<typeof BallListOutputSchema>> {
+  async list(
+    @Ctx() ctx: Context,
+  ): Promise<z.infer<typeof BallListOutputSchema>> {
     const senior = await this.accounts.requireLinkedSenior(ctx);
     return listForSenior(senior.id);
   }

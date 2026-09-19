@@ -7,7 +7,15 @@ import {
   EncounterMineOutputSchema,
   EmptyInputSchema,
 } from "@tutorial/shared";
-import { Ctx, Description, Func, Input, InputSchema, OutputSchema, type Context } from "@channel.io/app-sdk-server";
+import {
+  Ctx,
+  Description,
+  Func,
+  Input,
+  InputSchema,
+  OutputSchema,
+  type Context,
+} from "@channel.io/app-sdk-server";
 import { AccountsService } from "../../accounts.service.js";
 import { NotificationsService } from "../../notifications.service.js";
 import { SettingsService } from "../../settings.service.js";
@@ -41,7 +49,9 @@ export class EncounterFunctions {
   @Description("내 밥약 신청과 상태를 반환한다")
   @InputSchema(EmptyInputSchema)
   @OutputSchema(EncounterMineOutputSchema)
-  async mine(@Ctx() ctx: Context): Promise<z.infer<typeof EncounterMineOutputSchema>> {
+  async mine(
+    @Ctx() ctx: Context,
+  ): Promise<z.infer<typeof EncounterMineOutputSchema>> {
     const junior = await this.accounts.resolveJunior(ctx);
     return listMine(junior.id);
   }

@@ -99,7 +99,9 @@ export async function remind(
   if (ball.status !== "wobbling") {
     throw badRequest(
       "지금은 재촉할 수 없는 상태예요",
-      ball.status === "thrown" ? ERROR_CODES.reviewNotReady : ERROR_CODES.closed,
+      ball.status === "thrown"
+        ? ERROR_CODES.reviewNotReady
+        : ERROR_CODES.closed,
     );
   }
   if (ball.reminders_sent >= 2) {

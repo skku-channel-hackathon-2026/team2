@@ -71,7 +71,9 @@ export async function createEncounter(
 
   const wildGroupId = await deps.settings.groupId("wild");
   if (wildGroupId && candidates.length > 0) {
-    const names = candidates.map((candidate) => candidate.seniorNickname).join(", ");
+    const names = candidates
+      .map((candidate) => candidate.seniorNickname)
+      .join(", ");
     const enqueued = await deps.notifications.enqueue({
       dedupeKey: `wild_appeared:${encounterId}`,
       kind: "wild_appeared",

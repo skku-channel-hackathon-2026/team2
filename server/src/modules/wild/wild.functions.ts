@@ -7,7 +7,15 @@ import {
   WildAcceptOutputSchema,
   WildListOutputSchema,
 } from "@tutorial/shared";
-import { Ctx, Description, Func, Input, InputSchema, OutputSchema, type Context } from "@channel.io/app-sdk-server";
+import {
+  Ctx,
+  Description,
+  Func,
+  Input,
+  InputSchema,
+  OutputSchema,
+  type Context,
+} from "@channel.io/app-sdk-server";
 import { AccountsService } from "../../accounts.service.js";
 import { acceptWild, listWild } from "./wild.service.js";
 
@@ -19,7 +27,9 @@ export class WildFunctions {
   @Description("나에게 온 출현 목록")
   @InputSchema(EmptyInputSchema)
   @OutputSchema(WildListOutputSchema)
-  async list(@Ctx() ctx: Context): Promise<z.infer<typeof WildListOutputSchema>> {
+  async list(
+    @Ctx() ctx: Context,
+  ): Promise<z.infer<typeof WildListOutputSchema>> {
     const senior = await this.accounts.requireLinkedSenior(ctx);
     return listWild(senior.id);
   }

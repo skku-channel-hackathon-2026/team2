@@ -39,7 +39,10 @@ export async function submitReview(
     throw badRequest("내 출현이 아니에요", ERROR_CODES.forbidden);
   }
   if (encounter.status !== "met") {
-    throw badRequest("만남이 끝난 뒤에 쓸 수 있어요", ERROR_CODES.reviewNotReady);
+    throw badRequest(
+      "만남이 끝난 뒤에 쓸 수 있어요",
+      ERROR_CODES.reviewNotReady,
+    );
   }
 
   const existingReview = await queryOne(
