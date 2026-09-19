@@ -10,6 +10,7 @@ import { changedRows, execute, queryAll, queryOne } from "../../database.js";
 import { badRequest } from "../../errors.js";
 import { newId, nowIso } from "../../util.js";
 import { overlapWindowsForSenior } from "../matching/matching.service.js";
+import type { NotificationsService } from "../../notifications.service.js";
 
 interface WildRow {
   id: string;
@@ -62,15 +63,18 @@ export async function listWild(seniorId: string): Promise<WildListOutput> {
 }
 
 export async function acceptWild(
-  seniorId: string,
+  senior: { id: string; nickname: string },
   input: WildAcceptInput,
+  deps: { notifications: NotificationsService; channelId: string },
 ): Promise<WildAcceptOutput> {
+  const seniorId = senior.id;
   const encounter = await queryOne<{
     id: string;
     status: EncounterStatus;
     max_seniors: number;
+    junior_id: string;
   }>(
-    "SELECT id, status, max_seniors FROM encounters WHERE id = ?",
+    "SELECT id, status, max_seniors, junior_id FROM encounters WHERE id = ?",
     input.encounterId,
   );
   if (!encounter) {
@@ -155,13 +159,36 @@ export async function acceptWild(
     "SELECT COUNT(*) AS count FROM balls WHERE encounter_id = ? AND status <> 'cancelled'",
     input.encounterId,
   );
+  const seniorsJoined = joined?.count ?? 1;
+
+  // 후배 채팅방 알림. writeUserChatMessage 권한이 없으면 notifications.runDue가
+  // 조용히 실패로 남기고, 응답에는 영향 없다 (§upgrade.functions.ts와 동일 패턴).
+  await deps.notifications.enqueue({
+    dedupeKey: `accepted:${input.encounterId}:${seniorId}`,
+    kind: "wild_accepted",
+    text: `${senior.nickname} 선배가 수락했어요! 곧 채팅으로 연락할 거예요.`,
+    targetType: "user_chat",
+    targetUserId: encounter.junior_id,
+    urgent: true,
+  });
+  if (seniorsJoined === encounter.max_seniors) {
+    await deps.notifications.enqueue({
+      dedupeKey: `full:${input.encounterId}`,
+      kind: "wild_full",
+      text: `선배 ${encounter.max_seniors}명이 모두 정해졌어요! /내밥약 에서 일정을 확인하세요.`,
+      targetType: "user_chat",
+      targetUserId: encounter.junior_id,
+      urgent: true,
+    });
+  }
+  await deps.notifications.runDue(deps.channelId, 5);
 
   return {
     ballId,
     isFirst,
     slotStart: final?.slot_start ?? null,
     slotEnd: final?.slot_end ?? null,
-    seniorsJoined: joined?.count ?? 1,
+    seniorsJoined,
     maxSeniors: encounter.max_seniors,
   };
 }

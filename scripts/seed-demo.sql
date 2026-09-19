@@ -57,5 +57,22 @@ VALUES
 INSERT INTO encounter_windows (encounter_id, start_at, end_at) VALUES
   ('encounter-2', '2026-09-21T03:00:00.000Z', '2026-09-21T05:00:00.000Z'); -- KST 12:00-14:00
 
+-- senior-1·senior-2 둘 다 대상으로 넣어 "두 선배가 동시에 수락해도 1명만
+-- 성공"하는 선착순 시나리오를 재현할 수 있게 한다.
 INSERT INTO encounter_targets (encounter_id, senior_id, wave, notified_at) VALUES
-  ('encounter-2', 'senior-1', 1, '2026-09-19T01:00:05.000Z');
+  ('encounter-2', 'senior-1', 1, '2026-09-19T01:00:05.000Z'),
+  ('encounter-2', 'senior-2', 1, '2026-09-19T01:00:05.000Z');
+
+-- ── manual-test.mjs 시나리오 3 전용: 재촉 한도 테스트가 encounter-1/2를
+-- 건드리지 않도록 독립된 출현을 하나 더 둔다 ──────────────────────────
+INSERT INTO encounters
+  (id, junior_id, field_id, title, meet_type, max_seniors, status, slot_start, slot_end, place, created_at)
+VALUES
+  ('encounter-3', 'junior-1', 'club',
+   '동아리 면접에서 뭘 물어봐요?',
+   'cafe', 1, 'matched',
+   '2026-09-23T03:00:00.000Z', '2026-09-23T04:00:00.000Z',
+   '학생회관 카페', '2026-09-19T00:00:00.000Z');
+
+INSERT INTO balls (id, encounter_id, senior_id, status, thrown_at) VALUES
+  ('ball-3', 'encounter-3', 'senior-1', 'thrown', '2026-09-19T00:05:00.000Z');

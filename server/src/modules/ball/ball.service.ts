@@ -7,9 +7,15 @@ import type {
   EncounterStatus,
   RemindOutput,
 } from "@tutorial/shared";
-import { execute, queryAll, queryOne } from "../../database.js";
+import { changedRows, execute, queryAll, queryOne } from "../../database.js";
 import { badRequest } from "../../errors.js";
 import { nowIso } from "../../util.js";
+import type { NotificationsService } from "../../notifications.service.js";
+
+interface NotifyDeps {
+  notifications: NotificationsService;
+  channelId: string;
+}
 
 const REVIEW_WINDOW_DAYS = 7;
 
@@ -47,6 +53,7 @@ function assertOwnedBySenior(ball: BallRow, seniorId: string): void {
 export async function confirmMet(
   ballId: string,
   seniorId: string,
+  deps: NotifyDeps,
 ): Promise<ConfirmMetOutput> {
   const ball = await getBallOrThrow(ballId);
   assertOwnedBySenior(ball, seniorId);
@@ -68,18 +75,33 @@ export async function confirmMet(
     Date.now() + REVIEW_WINDOW_DAYS * 24 * 60 * 60 * 1000,
   ).toISOString();
 
-  await execute(
+  // 이 UPDATE가 실제로 행을 바꿨을 때만(=matched→met 전환이 지금 일어났을 때만)
+  // 후기 요청 알림을 보낸다. 다른 선배가 먼저 confirmMet을 불러 이미 met이었다면
+  // 다시 보내지 않는다.
+  const transition = await execute(
     "UPDATE encounters SET status = 'met', review_due_at = ? WHERE id = ? AND status = 'matched'",
     reviewDueAt,
     ball.encounter_id,
   );
 
-  const encounter = await queryOne<EncounterRow>(
-    "SELECT id, status, review_due_at FROM encounters WHERE id = ?",
+  const encounter = await queryOne<EncounterRow & { junior_id: string }>(
+    "SELECT id, status, review_due_at, junior_id FROM encounters WHERE id = ?",
     ball.encounter_id,
   );
   if (!encounter) {
     throw badRequest("출현 정보를 찾을 수 없어요", ERROR_CODES.notFound);
+  }
+
+  if (changedRows(transition) === 1) {
+    await deps.notifications.enqueue({
+      dedupeKey: `review_requested:${ball.encounter_id}`,
+      kind: "review_requested",
+      text: "만남은 어땠나요? 후기를 남기면 선배 도감에 등록돼요! /후기",
+      targetType: "user_chat",
+      targetUserId: encounter.junior_id,
+      urgent: false,
+    });
+    await deps.notifications.runDue(deps.channelId, 5);
   }
 
   return {
@@ -92,6 +114,7 @@ export async function confirmMet(
 export async function remind(
   ballId: string,
   seniorId: string,
+  deps: NotifyDeps,
 ): Promise<RemindOutput> {
   const ball = await getBallOrThrow(ballId);
   assertOwnedBySenior(ball, seniorId);
@@ -108,21 +131,42 @@ export async function remind(
     throw badRequest("재촉은 볼당 2번까지예요", ERROR_CODES.reminderLimit);
   }
 
+  const nextCount = ball.reminders_sent + 1;
   await execute(
     "UPDATE balls SET reminders_sent = reminders_sent + 1 WHERE id = ?",
     ballId,
   );
 
-  // T3(writeUserChatMessage 권한)가 아직 없어 자동 발송이 불가능하다.
-  // 지금은 선배가 직접 붙여넣을 문구만 돌려주고, 권한이 생기면 이 함수 안에서
-  // outbox(notifications.service)에 enqueue하는 분기만 추가하면 된다.
   const messageTemplate =
     "선배가 기다리고 있어요! 후기를 남기면 선배 도감에 등록돼요 🍚";
 
+  // writeUserChatMessage 권한이 있으면 바로 발송, 없거나 실패하면 WAM에
+  // 문구만 보여주는 수동 복사 경로로 조용히 폴백한다
+  // (upgrade.functions.ts의 notifyApplicant와 동일한 패턴).
+  const encounter = await queryOne<{ junior_id: string }>(
+    "SELECT junior_id FROM encounters WHERE id = ?",
+    ball.encounter_id,
+  );
+
+  let delivered: RemindOutput["delivered"] = "manual_copy";
+  if (encounter) {
+    const id = await deps.notifications.enqueue({
+      dedupeKey: `ball_remind:${ballId}:${nextCount}`,
+      kind: "ball_remind",
+      text: messageTemplate,
+      targetType: "user_chat",
+      targetUserId: encounter.junior_id,
+      urgent: true,
+    });
+    if (id && (await deps.notifications.runOne(deps.channelId, id))) {
+      delivered = "auto";
+    }
+  }
+
   return {
-    remindersSent: ball.reminders_sent + 1,
+    remindersSent: nextCount,
     messageTemplate,
-    delivered: "manual_copy",
+    delivered,
   };
 }
 
