@@ -19,6 +19,7 @@ import { ReviewFunctions } from "./modules/review/review.functions.js";
 import { DexFunctions } from "./modules/dex/dex.functions.js";
 import { EncounterFunctions } from "./modules/encounter/encounter.functions.js";
 import { WildFunctions } from "./modules/wild/wild.functions.js";
+import { KnowledgeFunctions } from "./modules/knowledge/knowledge.functions.js";
 
 @Module({
   imports: [ChannelAppModule.forRoot(channelAppOptions)],
@@ -41,6 +42,7 @@ import { WildFunctions } from "./modules/wild/wild.functions.js";
     DexFunctions,
     EncounterFunctions,
     WildFunctions,
+    KnowledgeFunctions,
     {
       provide: APP_GUARD,
       useFactory: () => new SignatureGuard(channelAppOptions),

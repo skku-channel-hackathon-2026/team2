@@ -76,3 +76,14 @@ VALUES
 
 INSERT INTO balls (id, encounter_id, senior_id, status, thrown_at) VALUES
   ('ball-3', 'encounter-3', 'senior-1', 'thrown', '2026-09-19T00:05:00.000Z');
+
+-- ── T4: 공개된 지식 1건 (question.searchSimilar 테스트용) ────────────────
+INSERT INTO knowledge_entries
+  (id, question_title, answer_text, source, author_id, confirmed_by, field_id,
+   status, pii_checked, valid_until_term, search_text, created_at, updated_at)
+VALUES
+  ('kno-1', '동아리 첫 모임에서 뭘 준비해야 해요?',
+   '자기소개 한 줄이랑 궁금한 점 2~3개만 미리 적어가도 충분해요.',
+   'senior', 'senior-1', 'senior-1', 'club', 'published', 1, '2026-2',
+   '동아리 첫 모임에서 뭘 준비해야 해요? 자기소개 한 줄이랑 궁금한 점 2~3개만 미리 적어가도 충분해요.',
+   '2026-09-19T00:00:00.000Z', '2026-09-19T00:00:00.000Z');

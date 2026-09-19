@@ -7,7 +7,7 @@ import type {
 } from "@tutorial/shared";
 import { execute, queryAll, queryOne } from "../../database.js";
 import { badRequest } from "../../errors.js";
-import { nowIso } from "../../util.js";
+import { newId, nowIso } from "../../util.js";
 import { registerCatch } from "../dex/dex.service.js";
 import { awardIntimacy } from "../intimacy/intimacy.service.js";
 
@@ -15,6 +15,7 @@ interface EncounterRow {
   id: string;
   junior_id: string;
   field_id: string;
+  title: string;
   status: EncounterStatus;
 }
 
@@ -29,7 +30,7 @@ export async function submitReview(
   input: ReviewSubmitInput,
 ): Promise<ReviewSubmitOutput> {
   const encounter = await queryOne<EncounterRow>(
-    "SELECT id, junior_id, field_id, status FROM encounters WHERE id = ?",
+    "SELECT id, junior_id, field_id, title, status FROM encounters WHERE id = ?",
     input.encounterId,
   );
   if (!encounter) {
@@ -73,6 +74,25 @@ export async function submitReview(
     "UPDATE encounters SET status = 'caught' WHERE id = ?",
     input.encounterId,
   );
+
+  // 후배가 자기 답을 남기면 지식 초안이 된다 — 선배 확인(knowledge.review)을
+  // 거쳐야 published(검색 가능)된다. 발행 전이라 PII 검사는 review 시점에 한다.
+  if (input.selfAnswer) {
+    await execute(
+      `INSERT INTO knowledge_entries
+         (id, question_title, answer_text, source, source_encounter_id, author_id, field_id, status, search_text, created_at, updated_at)
+       VALUES (?, ?, ?, 'junior_self', ?, ?, ?, 'draft', ?, ?, ?)`,
+      newId("kno"),
+      encounter.title,
+      input.selfAnswer,
+      input.encounterId,
+      juniorId,
+      encounter.field_id,
+      `${encounter.title} ${input.selfAnswer}`,
+      now,
+      now,
+    );
+  }
 
   const wobblingBalls = await queryAll<WobblingBallRow>(
     `SELECT b.id, b.senior_id, u.nickname AS senior_nickname

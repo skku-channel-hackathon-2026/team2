@@ -206,6 +206,61 @@ export const WildAcceptOutputSchema = z.object({
 });
 export type WildAcceptOutput = z.infer<typeof WildAcceptOutputSchema>;
 
+export const KNOWLEDGE_FUNCTIONS = {
+  searchSimilar: "question.searchSimilar",
+  review: "knowledge.review",
+  export: "knowledge.export",
+} as const;
+
+export const SearchSimilarInputSchema = z.object({
+  text: z.string().trim().min(1),
+  fieldId: z.string().min(1),
+});
+export type SearchSimilarInput = z.infer<typeof SearchSimilarInputSchema>;
+
+export const KnowledgeCardSchema = z.object({
+  knowledgeId: z.string(),
+  questionTitle: z.string(),
+  answerText: z.string(),
+  confirmedBySeniorAlias: z.string().nullable(),
+});
+export type KnowledgeCard = z.infer<typeof KnowledgeCardSchema>;
+
+export const SearchSimilarOutputSchema = z.object({
+  items: z.array(KnowledgeCardSchema),
+});
+export type SearchSimilarOutput = z.infer<typeof SearchSimilarOutputSchema>;
+
+export const KnowledgeStatusSchema = z.enum([
+  "draft",
+  "published",
+  "expired",
+  "rejected",
+]);
+
+export const KnowledgeReviewInputSchema = z.object({
+  knowledgeId: z.string().min(1),
+  action: z.enum(["publish", "reject"]),
+  editedAnswerText: z.string().trim().min(1).optional(),
+});
+export type KnowledgeReviewInput = z.infer<typeof KnowledgeReviewInputSchema>;
+
+export const KnowledgeReviewOutputSchema = z.object({
+  status: KnowledgeStatusSchema,
+});
+export type KnowledgeReviewOutput = z.infer<typeof KnowledgeReviewOutputSchema>;
+
+export const KnowledgeExportInputSchema = z.object({
+  since: z.string().optional(),
+});
+export type KnowledgeExportInput = z.infer<typeof KnowledgeExportInputSchema>;
+
+export const KnowledgeExportOutputSchema = z.object({
+  markdown: z.string(),
+  count: z.number().int(),
+});
+export type KnowledgeExportOutput = z.infer<typeof KnowledgeExportOutputSchema>;
+
 // 친밀도 레벨: Lv1 0-29 · Lv2 30-79 · Lv3 80-149 · Lv4 150+
 export function intimacyLevel(points: number): 1 | 2 | 3 | 4 {
   if (points >= 150) return 4;

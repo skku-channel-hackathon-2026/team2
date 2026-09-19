@@ -18,14 +18,11 @@ interface MetEncounterRow {
  */
 export async function sweepReviewLifecycle(deps: {
   notifications: NotificationsService;
-  channelId: string;
 }): Promise<void> {
   const now = Date.now();
   const metEncounters = await queryAll<MetEncounterRow>(
     "SELECT id, junior_id, review_due_at FROM encounters WHERE status = 'met'",
   );
-
-  let enqueuedAny = false;
 
   for (const encounter of metEncounters) {
     const dueAt = new Date(encounter.review_due_at).getTime();
@@ -48,7 +45,7 @@ export async function sweepReviewLifecycle(deps: {
       remaining <= DAY_MS ? "d1" : remaining <= 3 * DAY_MS ? "d3" : null;
     if (!bucket) continue;
 
-    const id = await deps.notifications.enqueue({
+    await deps.notifications.enqueue({
       dedupeKey: `review_reminder_${bucket}:${encounter.id}`,
       kind: "review_reminder",
       text:
@@ -59,8 +56,5 @@ export async function sweepReviewLifecycle(deps: {
       targetUserId: encounter.junior_id,
       urgent: false,
     });
-    if (id) enqueuedAny = true;
   }
-
-  if (enqueuedAny) await deps.notifications.runDue(deps.channelId, 20);
 }

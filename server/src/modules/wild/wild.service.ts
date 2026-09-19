@@ -139,7 +139,7 @@ export async function acceptWild(
 
   if (isFirst && input.slot) {
     await execute(
-      `UPDATE encounters SET status = 'matched', slot_start = ?, slot_end = ?, place = ?
+      `UPDATE encounters SET status = 'matched', slot_start = ?, slot_end = ?, place = ?, next_wave_at = NULL
        WHERE id = ? AND status = 'wild'`,
       input.slot.startAt,
       input.slot.endAt,
