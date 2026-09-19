@@ -1,8 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { COMMANDS } from '@tutorial/shared'
 
-import { PERSONAS, type Persona } from './personas'
-import { bootAs, fetchIdentity, runCommand, type BootState } from './channel'
+import Login from './Login'
+import {
+  bootAs,
+  fetchIdentity,
+  runCommand,
+  signOut,
+  type BootState,
+} from './channel'
+import {
+  clearSession,
+  readSession,
+  writeSession,
+  type Session,
+} from './session'
 
 const FRONT_COMMANDS = COMMANDS.filter((command) => command.scope === 'front')
 
@@ -10,14 +22,16 @@ const FRONT_COMMANDS = COMMANDS.filter((command) => command.scope === 'front')
 const PRIMARY_ID = 'helpme'
 
 function App() {
-  const [persona, setPersona] = useState<Persona>(PERSONAS[0])
+  const [session, setSession] = useState<Session | null>(readSession)
   const [state, setState] = useState<BootState>({ status: 'idle' })
 
-  const connect = useCallback(async (next: Persona, encoding?: 'raw') => {
+  const connect = useCallback(async (next: Session, encoding?: 'raw') => {
     setState({ status: 'booting' })
     try {
-      const identity = await fetchIdentity(next.id, encoding)
-      setState(await bootAs(identity))
+      const identity = await fetchIdentity(next, encoding)
+      const result = await bootAs(identity)
+      setState(result)
+      if (result.status === 'booted') writeSession(next)
     } catch (error) {
       setState({
         status: 'failed',
@@ -27,8 +41,25 @@ function App() {
   }, [])
 
   useEffect(() => {
-    void connect(persona)
-  }, [connect, persona])
+    if (session) void connect(session)
+  }, [connect, session])
+
+  const handleSignOut = useCallback(() => {
+    signOut()
+    clearSession()
+    setSession(null)
+    setState({ status: 'idle' })
+  }, [])
+
+  if (!session) {
+    return (
+      <Login
+        busy={state.status === 'booting'}
+        error={state.status === 'failed' ? state.error : undefined}
+        onSubmit={setSession}
+      />
+    )
+  }
 
   const ready = state.status === 'booted'
   const primary = FRONT_COMMANDS.find((command) => command.id === PRIMARY_ID)
@@ -41,34 +72,26 @@ function App() {
           <span className="brand__name">후배 Go</span>
         </div>
 
-        <label className="who">
+        <div className="who">
           <span className={`dot dot--${state.status}`} />
-          <select
-            value={persona.id}
-            onChange={(event) => {
-              const next = PERSONAS.find(
-                (item) => item.id === event.target.value
-              )
-              if (next) setPersona(next)
-            }}
+          <span className="who__name">
+            {session.name} · {session.studentId.slice(0, 4)}학번
+          </span>
+          <button
+            className="who__out"
+            type="button"
+            onClick={handleSignOut}
           >
-            {PERSONAS.map((item) => (
-              <option
-                key={item.id}
-                value={item.id}
-              >
-                {item.name} · {item.cohort}
-              </option>
-            ))}
-          </select>
-        </label>
+            로그아웃
+          </button>
+        </div>
       </header>
 
       {/* The messenger is fixed-positioned by the SDK and fills the right slot. */}
       <div className="content">
         <aside className="guide">
           <h1>
-            {persona.name.slice(1)}님,
+            {session.name.slice(1)}님,
             <br />
             무엇이든 물어보세요
           </h1>
@@ -116,7 +139,7 @@ function App() {
               <p>연결 실패: {state.error ?? '알 수 없는 오류'}</p>
               <button
                 type="button"
-                onClick={() => void connect(persona, 'raw')}
+                onClick={() => void connect(session, 'raw')}
               >
                 raw 시크릿으로 재시도
               </button>

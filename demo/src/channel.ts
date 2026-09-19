@@ -5,6 +5,8 @@ export interface Identity {
   memberId: string
   memberHash: string | null
   hashEncoding: 'hex' | 'raw' | null
+  name: string
+  studentId: string
   profile: Record<string, string>
 }
 
@@ -18,10 +20,10 @@ export interface BootState {
 let scriptLoaded = false
 
 export async function fetchIdentity(
-  personaId: string,
+  session: { name: string; studentId: string },
   encoding?: 'raw'
 ): Promise<Identity> {
-  const query = new URLSearchParams({ persona: personaId })
+  const query = new URLSearchParams(session)
   if (encoding) query.set('encoding', encoding)
 
   const response = await fetch(`/demo-api/identity?${query}`)
@@ -70,6 +72,10 @@ export function bootAs(identity: Identity): Promise<BootState> {
       }
     )
   })
+}
+
+export function signOut(): void {
+  ChannelService.shutdown()
 }
 
 /** `openChat` with no chat id starts a new chat and prefills the composer. */

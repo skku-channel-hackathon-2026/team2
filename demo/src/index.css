@@ -92,14 +92,119 @@ body {
   background: #d94a3d;
 }
 
-.who select {
-  padding: 6px 8px;
+.who__name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.who__out {
+  padding: 6px 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
   font-family: inherit;
+  font-size: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.who__out:hover {
+  border-color: var(--skku);
+  color: var(--skku);
+}
+
+/* Login */
+
+.login {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.login__card {
+  width: 100%;
+  max-width: 380px;
+  padding: 30px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 10px 40px rgb(16 24 40 / 8%);
+}
+
+.brand--lg .brand__mark {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.brand--lg .brand__name {
+  font-size: 19px;
+}
+
+.login__lead {
+  margin: 14px 0 22px;
+  color: var(--ink-soft);
   font-size: 13px;
+  line-height: 1.6;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.field span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.field input {
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 14px;
   color: inherit;
+}
+
+.field input:focus {
+  border-color: var(--skku);
+  outline: none;
+}
+
+.login__error {
+  margin: 0 0 12px;
+  color: #a5342a;
+  font-size: 12px;
+}
+
+.login__submit {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 9px;
+  background: var(--skku);
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login__submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.login__foot {
+  margin: 18px 0 0;
+  color: var(--ink-soft);
+  font-size: 11px;
+  text-align: center;
 }
 
 .content {
