@@ -1,6 +1,7 @@
 # 통합 RAG 지식 데이터
 
-`data/` 아래의 수집 원본은 각 수집기가 관리하며 Git에서 제외한다. 이 폴더만 모든 출처를 공통 스키마로 정규화한 결과로 추적한다.
+`data/` 아래의 수집 원본은 각 수집기가 관리하며 Git에서 제외한다. 이 폴더만 모든
+출처를 공통 스키마로 정규화한 결과로 추적한다.
 
 ## 파일
 
@@ -15,7 +16,8 @@
 
 ## 출처 등급
 
-우선순위는 아래와 같다. 낮은 등급의 문서가 높은 등급의 공식 사실을 덮어쓰면 안 된다.
+우선순위는 아래와 같다. 낮은 등급의 문서가 높은 등급의 공식 사실을 덮어쓰면 안
+된다.
 
 1. `official-current`: 학교 공식 홈페이지의 현행 자료
 2. `official-archived`: 만료되었거나 과거 시점의 학교 공식 자료
@@ -29,7 +31,8 @@
 - `needs_review`: 출처·최신성·변환 결과를 사람이 확인해야 함
 - `rejected`: 답변 근거로 사용하지 않음
 
-`approved`라도 `channel.publishReady`가 `false`일 수 있다. 이미지에 공개 URL이 없거나 자료가 만료된 경우가 이에 해당한다.
+`approved`라도 `channel.publishReady`가 `false`일 수 있다. 이미지에 공개 URL이
+없거나 자료가 만료된 경우가 이에 해당한다.
 
 ## 다시 생성하기
 
@@ -57,7 +60,8 @@ node scripts/build-knowledge.mjs --check
 
 ## Channel Documents로 보낼 때
 
-`documents.jsonl`에서 아래 조건을 모두 만족하는 문서만 importer 입력으로 사용한다.
+`documents.jsonl`에서 아래 조건을 모두 만족하는 문서만 importer 입력으로
+사용한다.
 
 ```text
 review.status == "approved"
@@ -65,4 +69,7 @@ channel.publishEligible == true
 channel.publishReady == true
 ```
 
-이미지는 `assets.jsonl`의 `publicUrl`을 채운 뒤 본문 링크가 아니라 직접 이미지 block으로 삽입한다. 긴 문서와 이미지가 40개를 넘는 문서는 `channel.requiresSplit` 및 `channel.splitReasons`를 확인해 의미 있는 제목 경계로 나눈다.
+이미지는 `assets.jsonl`의 `publicUrl`을 채운 뒤 본문 링크가 아니라 직접 이미지
+block으로 삽입한다. 긴 문서와 이미지가 40개를 넘는 문서는
+`channel.requiresSplit` 및 `channel.splitReasons`를 확인해 의미 있는 제목 경계로
+나눈다.

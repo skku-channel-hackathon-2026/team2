@@ -326,7 +326,7 @@ z-index 레이어는 명시적으로 단계화돼 있다 [src:3][src:2]:
 관찰된 사용처는 명확하다 — 버튼은 `{rounded.radius-6}`~~`{rounded.radius-16}`,
 모달은 `{rounded.radius-20}`, 배너/토스트/리스트아이템은 `{rounded.radius-12}`,
 프로그레스바·슬라이더 트랙은 `{rounded.radius-3}`를 쓴다 [src:3][src:2].
-**8~~12px가 주력**이고, 큰 컨테이너일수록 16~20px로 커진다 [src:2].
+\*\*8~~12px가 주력\*\*이고, 큰 컨테이너일수록 16~20px로 커진다 [src:2].
 
 별도로 `{component.smooth-corners-box}`가
 `--b-smooth-corners-box-border-radius`·`-shadow-*` 로컬 변수로 iOS식 연속
