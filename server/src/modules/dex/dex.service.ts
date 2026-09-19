@@ -9,6 +9,7 @@ interface DexEntryRow {
   junior_id: string;
   junior_nickname: string;
   type_field_id: string;
+  type_label: string | null;
   first_caught_at: string;
   catch_count: number;
   intimacy: number;
@@ -18,9 +19,11 @@ interface DexEntryRow {
 export async function listDex(seniorId: string): Promise<DexListOutput> {
   const rows = await queryAll<DexEntryRow>(
     `SELECT d.junior_id, u.nickname AS junior_nickname, d.type_field_id,
+            f.label AS type_label,
             d.first_caught_at, d.catch_count, d.intimacy, d.evolved_at
      FROM dex_entries d
      JOIN users u ON u.id = d.junior_id
+     LEFT JOIN fields f ON f.id = d.type_field_id
      WHERE d.senior_id = ?
      ORDER BY d.first_caught_at DESC`,
     seniorId,
@@ -29,6 +32,7 @@ export async function listDex(seniorId: string): Promise<DexListOutput> {
   const items: DexEntry[] = rows.map((row) => ({
     juniorAlias: row.junior_nickname,
     typeFieldId: row.type_field_id,
+    typeLabel: row.type_label ?? row.type_field_id,
     firstCaughtAt: row.first_caught_at,
     catchCount: row.catch_count,
     intimacy: row.intimacy,

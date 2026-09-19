@@ -1,51 +1,63 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   VStack,
   HStack,
   Button,
-  ButtonGroup,
+  Checkbox,
   Text,
   TextArea,
-  Checkbox,
+  Radio,
+  RadioGroup,
   Divider,
 } from '@channel.io/bezier-react/beta'
-import { InlineBanner } from '@channel.io/app-sdk-wam-ui'
+import { EmptyState, InlineBanner } from '@channel.io/app-sdk-wam-ui'
 import {
   ENCOUNTER_FUNCTIONS,
   REVIEW_FUNCTIONS,
   type EncounterMineOutput,
   type MyEncounterCard,
-  type SeniorCard,
+  type ReviewSubmitOutput,
 } from '@tutorial/shared'
 
 import { useAppFunction } from '../../hooks/useAppFunction'
+import { formatWindow } from '../../utils/datetime'
 
 interface ReviewProps {
   appId: string
 }
+
+const MIN_REVIEW_LENGTH = 20
+const RATINGS = [5, 4, 3, 2, 1]
 
 function Review({ appId }: ReviewProps) {
   const mine = useAppFunction<EncounterMineOutput>(
     appId,
     ENCOUNTER_FUNCTIONS.mine
   )
-  const submit = useAppFunction<{ caughtBy: SeniorCard[] }>(
+  const submit = useAppFunction<ReviewSubmitOutput>(
     appId,
     REVIEW_FUNCTIONS.submit
   )
 
-  const [pending, setPending] = useState<MyEncounterCard[] | null>(null)
-  const [selected, setSelected] = useState<MyEncounterCard | null>(null)
-  const [rating, setRating] = useState(5)
+  const [encounters, setEncounters] = useState<MyEncounterCard[] | null>(null)
+  const [encounterId, setEncounterId] = useState('')
+  const [rating, setRating] = useState('5')
   const [reviewText, setReviewText] = useState('')
   const [selfAnswer, setSelfAnswer] = useState('')
-  const [shareConsent, setShareConsent] = useState(false)
-  const [caughtBy, setCaughtBy] = useState<SeniorCard[] | null>(null)
+  const [shareConsent, setShareConsent] = useState(true)
+  const [result, setResult] = useState('')
+  const [localError, setLocalError] = useState('')
 
   const refresh = useCallback(async () => {
-    const result = await mine.run()
-    if (!result) return
-    setPending(result.items.filter((item) => item.status === 'met'))
+    const response = await mine.run()
+    if (!response) return
+    const pending = response.items.filter((item) => item.status === 'met')
+    setEncounters(pending)
+    setEncounterId((previous) =>
+      pending.some((item) => item.encounterId === previous)
+        ? previous
+        : (pending[0]?.encounterId ?? '')
+    )
   }, [mine])
 
   useEffect(() => {
@@ -53,106 +65,71 @@ function Review({ appId }: ReviewProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const selected = useMemo(
+    () => encounters?.find((item) => item.encounterId === encounterId) ?? null,
+    [encounters, encounterId]
+  )
+
   const handleSubmit = useCallback(async () => {
-    if (!selected) return
-    const result = await submit.run({
-      encounterId: selected.encounterId,
-      rating,
+    setResult('')
+    setLocalError('')
+
+    if (!encounterId) {
+      setLocalError('후기를 남길 밥약을 골라 주세요.')
+      return
+    }
+    if (reviewText.trim().length < MIN_REVIEW_LENGTH) {
+      setLocalError(`후기는 ${MIN_REVIEW_LENGTH}자 이상 써 주세요.`)
+      return
+    }
+
+    const response = await submit.run({
+      encounterId,
+      rating: Number(rating),
       reviewText: reviewText.trim(),
-      ...(selfAnswer.trim() ? { selfAnswer: selfAnswer.trim() } : {}),
       shareConsent,
+      ...(selfAnswer.trim() ? { selfAnswer: selfAnswer.trim() } : {}),
     })
-    if (result) setCaughtBy(result.caughtBy)
-  }, [rating, reviewText, selected, selfAnswer, shareConsent, submit])
+    if (!response) return
 
-  const notice = mine.message || submit.message
-
-  if (caughtBy) {
-    return (
-      <VStack spacing={12}>
-        <Text
-          typo="16"
-          bold
-        >
-          잡혔다! 🍚
-        </Text>
-        <InlineBanner
-          variant="success"
-          content={`${caughtBy.map((senior) => senior.seniorAlias).join(', ')} 선배의 도감에 등록됐어요.`}
-        />
-      </VStack>
+    const names = response.caughtBy.map((senior) => senior.seniorAlias)
+    setResult(
+      names.length > 0
+        ? `잡기 성공! ${names.join(', ')} 선배의 도감에 등록됐어요 🎉`
+        : '후기를 남겼어요. 고마워요!'
     )
-  }
+    setReviewText('')
+    setSelfAnswer('')
+    await refresh()
+  }, [
+    encounterId,
+    rating,
+    refresh,
+    reviewText,
+    selfAnswer,
+    shareConsent,
+    submit,
+  ])
 
-  if (selected) {
+  const notice = mine.message || submit.message || localError
+  const busy = mine.loading || submit.loading
+
+  if (encounters && encounters.length === 0) {
     return (
       <VStack spacing={12}>
-        <Text
-          typo="16"
-          bold
-        >
-          {selected.title}
-        </Text>
-
-        {notice && (
+        {result && (
           <InlineBanner
-            variant="error"
-            content={notice}
+            variant="success"
+            content={result}
           />
         )}
-
-        <Text typo="13">별점</Text>
-        <ButtonGroup>
-          {[1, 2, 3, 4, 5].map((n) => (
-            <Button
-              key={n}
-              variant={rating === n ? 'filled' : 'outlined'}
-              semantic="primary"
-              label={String(n)}
-              onClick={() => setRating(n)}
-            />
-          ))}
-        </ButtonGroup>
-
-        <TextArea
-          placeholder="후기를 남겨 주세요 (20자 이상)"
-          value={reviewText}
-          minRows={3}
-          maxRows={6}
-          onChange={(event) => setReviewText(event.target.value)}
-        />
-        <TextArea
-          placeholder="처음 질문에 대한 내 답 (선택, 다음 후배를 위한 지식이 돼요)"
-          value={selfAnswer}
-          minRows={3}
-          maxRows={6}
-          onChange={(event) => setSelfAnswer(event.target.value)}
-        />
-
-        <HStack
-          align="center"
-          spacing={6}
+        <EmptyState title="후기를 남길 밥약이 없어요" />
+        <Text
+          typo="13"
+          color="text-neutral-light"
         >
-          <Checkbox
-            checked={shareConsent}
-            onCheckedChange={(checked) => setShareConsent(checked === true)}
-          />
-          <Text typo="13">
-            선배 도감 공유 시 이 후기가 같이 보여도 괜찮아요.
-          </Text>
-        </HStack>
-
-        <Divider />
-
-        <HStack justify="end">
-          <Button
-            variant="filled"
-            semantic="primary"
-            label="제출하고 잡혀주기"
-            disabled={submit.loading || reviewText.trim().length < 20}
-            onClick={() => void handleSubmit()}
-          />
-        </HStack>
+          선배가 만남 완료를 누르면 여기에서 후기를 쓸 수 있어요.
+        </Text>
       </VStack>
     )
   }
@@ -163,7 +140,7 @@ function Review({ appId }: ReviewProps) {
         typo="16"
         bold
       >
-        후기
+        만남 후기
       </Text>
 
       {notice && (
@@ -172,31 +149,105 @@ function Review({ appId }: ReviewProps) {
           content={notice}
         />
       )}
-
-      {pending && pending.length === 0 && (
+      {result && !notice && (
         <InlineBanner
-          variant="info"
-          content="후기 남길 밥약이 없어요. 만남이 끝나면 여기 나타나요."
+          variant="success"
+          content={result}
         />
       )}
 
-      <VStack spacing={8}>
-        {pending?.map((encounter) => (
-          <HStack
-            key={encounter.encounterId}
-            justify="between"
-            align="center"
+      {encounters && encounters.length > 1 && (
+        <RadioGroup
+          value={encounterId}
+          onValueChange={setEncounterId}
+        >
+          {encounters.map((item) => (
+            <Radio
+              key={item.encounterId}
+              value={item.encounterId}
+            >
+              {item.title}
+            </Radio>
+          ))}
+        </RadioGroup>
+      )}
+
+      {selected && (
+        <Text
+          typo="13"
+          color="text-neutral-light"
+        >
+          {selected.title}
+          {selected.slotStart && selected.slotEnd
+            ? ` · ${formatWindow(selected.slotStart, selected.slotEnd)}`
+            : ''}
+          {selected.place ? ` · ${selected.place}` : ''}
+        </Text>
+      )}
+
+      <Divider />
+
+      <Text
+        typo="13"
+        bold
+      >
+        별점
+      </Text>
+      <RadioGroup
+        value={rating}
+        direction="horizontal"
+        onValueChange={setRating}
+      >
+        {RATINGS.map((value) => (
+          <Radio
+            key={value}
+            value={String(value)}
           >
-            <Text typo="13">{encounter.title}</Text>
-            <Button
-              variant="outlined"
-              semantic="primary"
-              label="후기 쓰기"
-              onClick={() => setSelected(encounter)}
-            />
-          </HStack>
+            {value}
+          </Radio>
         ))}
-      </VStack>
+      </RadioGroup>
+
+      <TextArea
+        placeholder={`어떤 도움이 됐는지 ${MIN_REVIEW_LENGTH}자 이상 남겨 주세요`}
+        value={reviewText}
+        minRows={3}
+        maxRows={6}
+        maxLength={1000}
+        onChange={(event) => setReviewText(event.target.value)}
+      />
+      <Text
+        typo="13"
+        color="text-neutral-light"
+      >
+        {reviewText.trim().length}/{MIN_REVIEW_LENGTH}자
+      </Text>
+
+      <TextArea
+        placeholder="같은 고민을 하는 후배에게 남길 내 답 (선택)"
+        value={selfAnswer}
+        minRows={3}
+        maxRows={6}
+        maxLength={1000}
+        onChange={(event) => setSelfAnswer(event.target.value)}
+      />
+
+      <Checkbox
+        checked={shareConsent}
+        onCheckedChange={(checked) => setShareConsent(checked === true)}
+      >
+        선배 도감과 라운지에 내 별명이 보여도 괜찮아요
+      </Checkbox>
+
+      <HStack justify="end">
+        <Button
+          variant="filled"
+          semantic="primary"
+          label="후기 남기기"
+          disabled={busy || !encounterId}
+          onClick={() => void handleSubmit()}
+        />
+      </HStack>
     </VStack>
   )
 }
