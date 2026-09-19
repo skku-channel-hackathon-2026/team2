@@ -21,7 +21,7 @@ export class AnswersFunctions {
   constructor(private readonly accounts: AccountsService) {}
 
   @Func(ANSWERS_FUNCTIONS.list)
-  @Description("내가 도운 질문과 후배의 답")
+  @Description("내가 도운 질문과 새내기의 답")
   @InputSchema(EmptyInputSchema)
   @OutputSchema(AnswersListOutputSchema)
   async list(

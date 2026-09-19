@@ -86,7 +86,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "me",
     name: "me",
-    description: "내 별명과 학과, 업그레이드 상태를 확인해요",
+    description: "Check your nickname, department and upgrade status",
     scope: "front",
     alfMode: "disable",
     screen: "me",
@@ -95,38 +95,40 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "upgrade",
     name: "upgrade",
-    description: "밥약을 해주는 선배로 업그레이드를 신청해요",
+    description: "Apply to become a senior who hosts meals",
     scope: "front",
     alfMode: "recommend",
-    alfDescription: "후배가 선배가 되어 밥약을 해주고 싶어할 때 추천해요",
+    alfDescription:
+      "Recommend when a junior wants to become a senior and host meals",
     screen: "upgrade",
     actionFunctionName: "upgrade.open",
   },
   {
     id: "helpme",
     name: "helpme",
-    description: "궁금한 것을 물어보고 선배와 밥약을 잡아요",
+    description: "Ask a question and set up a meal with a senior",
     scope: "front",
     alfMode: "recommend",
     alfDescription:
-      "후배가 진로나 학업 고민을 선배에게 물어보고 싶을 때 추천해요",
+      "Recommend when a junior wants to ask a senior about career or study concerns",
     screen: "helpme",
     actionFunctionName: "helpme.open",
   },
   {
     id: "mybab",
     name: "mybab",
-    description: "내 밥약 신청과 일정을 확인해요",
+    description: "Check your meal requests and schedule",
     scope: "front",
     alfMode: "recommend",
-    alfDescription: "후배가 신청한 밥약의 진행 상태를 물어볼 때 추천해요",
+    alfDescription:
+      "Recommend when a junior asks about the status of a meal request",
     screen: "mybab",
     actionFunctionName: "mybab.open",
   },
   {
     id: "review",
     name: "review",
-    description: "만남 후기를 남기고 선배를 도감에 등록해요",
+    description: "Leave a review and add the senior to your dex",
     scope: "front",
     alfMode: "disable",
     screen: "review",
@@ -135,7 +137,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "seniorstart",
     name: "seniorstart",
-    description: "연결 코드를 입력해 선배 계정을 연결해요",
+    description: "Enter a connection code to link your senior account",
     scope: "desk",
     alfMode: "disable",
     screen: "link",
@@ -144,7 +146,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "senior",
     name: "senior",
-    description: "분야와 가용 시간, 주간 상한을 등록해요",
+    description: "Register your fields, availability and weekly cap",
     scope: "desk",
     alfMode: "disable",
     screen: "senior",
@@ -153,7 +155,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "availability",
     name: "availability",
-    description: "밥약 가능 상태와 주간 가능 시간표를 관리해요",
+    description: "Manage your meal availability and weekly table",
     scope: "desk",
     alfMode: "disable",
     screen: "availability",
@@ -162,7 +164,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "wild",
     name: "wild",
-    description: "나에게 온 출현을 확인하고 수락해요",
+    description: "Review and accept encounters sent to you",
     scope: "desk",
     alfMode: "disable",
     screen: "wild",
@@ -171,7 +173,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "balls",
     name: "balls",
-    description: "내 밥약 일정과 만남 완료를 관리해요",
+    description: "Manage your meal schedule and mark meetings done",
     scope: "desk",
     alfMode: "disable",
     screen: "balls",
@@ -180,7 +182,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "dex",
     name: "dex",
-    description: "내가 잡은 후배 목록을 봐요",
+    description: "See the juniors you have caught",
     scope: "desk",
     alfMode: "disable",
     screen: "dex",
@@ -189,7 +191,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "answers",
     name: "answers",
-    description: "내가 도운 질문과 후배의 답을 봐요",
+    description: "See questions you helped with and the juniors' answers",
     scope: "desk",
     alfMode: "disable",
     screen: "answers",
@@ -198,7 +200,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "ops",
     name: "ops",
-    description: "업그레이드 승인과 운영 작업을 처리해요",
+    description: "Handle upgrade approvals and staff tasks",
     scope: "desk",
     alfMode: "disable",
     screen: "ops",
@@ -207,7 +209,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "opsconfig",
     name: "opsconfig",
-    description: "이 그룹방의 역할과 초대 링크를 등록해요",
+    description: "Register this group's role and invite link",
     scope: "desk",
     alfMode: "disable",
     screen: "opsconfig",
@@ -216,7 +218,7 @@ export const COMMANDS: CommandSpec[] = [
   {
     id: "rundue",
     name: "rundue",
-    description: "예약된 알림을 지금 발송해요",
+    description: "Send the scheduled notifications now",
     scope: "desk",
     alfMode: "disable",
     screen: "rundue",

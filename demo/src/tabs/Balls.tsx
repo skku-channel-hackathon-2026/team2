@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react'
+import { Button, HStack, Text, VStack } from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
 import {
   BALL_FUNCTIONS,
   BALL_STATUS_LABEL,
@@ -10,13 +12,19 @@ import {
 
 import type { Session } from '../session'
 import { useAction, useFunctionData } from '../useFunction'
-import { Badge, Empty, List, Notice, Section, Stat } from '../ui'
+import {
+  Badge,
+  Empty,
+  List,
+  Notice,
+  Portrait,
+  Section,
+  Stat,
+  type BadgeTone,
+} from '../ui'
 import { formatDayTime, formatWindow } from '../utils/datetime'
 
-const STATUS_TONE: Record<
-  BallStatus,
-  'blue' | 'teal' | 'orange' | 'green' | 'red' | 'default'
-> = {
+const STATUS_TONE: Record<BallStatus, BadgeTone> = {
   thrown: 'blue',
   wobbling: 'orange',
   caught: 'green',
@@ -46,7 +54,7 @@ function Balls({ session, onChanged }: BallsProps) {
       setResult(null)
       try {
         await action.run(BALL_FUNCTIONS.confirmMet, { ballId: card.ballId })
-        setResult('만남 완료로 바꿨어요. 후배에게 후기 요청이 갔어요.')
+        setResult('만남 완료로 바꿨어요. 새내기에게 후기 요청이 갔어요.')
         await balls.reload()
         onChanged()
       } catch {
@@ -84,14 +92,15 @@ function Balls({ session, onChanged }: BallsProps) {
     <Section
       title="포켓볼"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={balls.loading}
           onClick={() => void balls.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       <div className="stats">
@@ -117,7 +126,7 @@ function Balls({ session, onChanged }: BallsProps) {
         empty={
           <Empty
             title="아직 잡은 밥약이 없어요"
-            hint="‘출현’ 탭에서 후배의 질문을 수락하면 볼이 생겨요."
+            hint="‘출현’ 탭에서 새내기의 질문을 수락하면 볼이 생겨요."
           />
         }
       >
@@ -128,62 +137,87 @@ function Balls({ session, onChanged }: BallsProps) {
                 key={card.ballId}
                 className="card"
               >
-                <div className="card__head">
-                  <Badge tone={STATUS_TONE[card.status]}>
-                    {BALL_STATUS_LABEL[card.status]}
-                  </Badge>
-                  <Badge>{card.juniorAlias} 후배</Badge>
-                </div>
+                <div className="card__media">
+                  <Portrait
+                    seed={card.juniorAlias}
+                    size="42"
+                  />
 
-                <h3 className="card__title">{card.title}</h3>
+                  <VStack spacing={8}>
+                    <HStack
+                      spacing={4}
+                      align="center"
+                      wrap
+                    >
+                      <Badge tone={STATUS_TONE[card.status]}>
+                        {BALL_STATUS_LABEL[card.status]}
+                      </Badge>
+                      <Badge>새내기 {card.juniorAlias}</Badge>
+                    </HStack>
 
-                <dl className="kv">
-                  <dt>일정</dt>
-                  <dd>
-                    {card.slotStart && card.slotEnd
-                      ? `${formatWindow(card.slotStart, card.slotEnd)}${
-                          card.place ? ` · ${card.place}` : ''
-                        }`
-                      : '미정'}
-                  </dd>
-                  {card.status === 'wobbling' && (
-                    <>
-                      <dt>후기 기한</dt>
-                      <dd>
+                    <Text
+                      typo="15"
+                      bold
+                    >
+                      {card.title}
+                    </Text>
+
+                    <Text
+                      typo="13"
+                      color="text-neutral-light"
+                    >
+                      {card.slotStart && card.slotEnd
+                        ? `${formatWindow(card.slotStart, card.slotEnd)}${
+                            card.place ? ` · ${card.place}` : ''
+                          }`
+                        : '일정 미정'}
+                    </Text>
+
+                    {card.status === 'wobbling' && (
+                      <Text
+                        typo="13"
+                        color="text-neutral-lighter"
+                      >
+                        후기 기한{' '}
                         {card.reviewDueAt
                           ? formatDayTime(card.reviewDueAt)
-                          : '없음'}
-                      </dd>
-                      <dt>남은 재촉</dt>
-                      <dd>{card.remindersLeft}회</dd>
-                    </>
-                  )}
-                </dl>
+                          : '없음'}{' '}
+                        · 남은 재촉 {card.remindersLeft}회
+                      </Text>
+                    )}
 
-                <div className="card__foot">
-                  {card.status === 'thrown' && (
-                    <button
-                      className="btn"
-                      type="button"
-                      disabled={action.busy}
-                      onClick={() => void confirmMet(card)}
+                    <HStack
+                      spacing={6}
+                      align="center"
                     >
-                      만남 완료
-                    </button>
-                  )}
-                  {card.status === 'wobbling' && (
-                    <button
-                      className="btn"
-                      type="button"
-                      disabled={action.busy || card.remindersLeft <= 0}
-                      onClick={() => void remind(card)}
-                    >
-                      후기 재촉
-                    </button>
-                  )}
-                  {card.status === 'caught' && (
-                    <span className="card__done">도감에 등록됨</span>
-                  )}
+                      {card.status === 'thrown' && (
+                        <Button
+                          size="s"
+                          label="만남 완료"
+                          disabled={action.busy}
+                          onClick={() => void confirmMet(card)}
+                        />
+                      )}
+                      {card.status === 'wobbling' && (
+                        <Button
+                          size="s"
+                          variant="outlined"
+                          semantic="secondary"
+                          label="후기 재촉"
+                          disabled={action.busy || card.remindersLeft <= 0}
+                          onClick={() => void remind(card)}
+                        />
+                      )}
+                      {card.status === 'caught' && (
+                        <Text
+                          typo="13"
+                          color="text-accent-green"
+                        >
+                          도감에 등록됨
+                        </Text>
+                      )}
+                    </HStack>
+                  </VStack>
                 </div>
               </li>
             ))}

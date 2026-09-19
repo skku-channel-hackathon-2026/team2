@@ -9,6 +9,7 @@ import {
 import { EmptyState, InlineBanner } from '@channel.io/app-sdk-wam-ui'
 import { DEX_FUNCTIONS, type DexListOutput } from '@tutorial/shared'
 
+import Portrait from '../../components/Portrait'
 import { useAppFunction } from '../../hooks/useAppFunction'
 import { formatDay } from '../../utils/datetime'
 
@@ -82,12 +83,12 @@ function Dex({ appId }: DexProps) {
 
       {data && items.length === 0 && (
         <VStack spacing={8}>
-          <EmptyState title="아직 잡은 후배가 없어요" />
+          <EmptyState title="아직 잡은 새내기가 없어요" />
           <Text
             typo="13"
             color="text-neutral-light"
           >
-            /출현 에서 밥약을 수락하고 만남을 마치면, 후배가 후기를 남길 때
+            /출현 에서 밥약을 수락하고 만남을 마치면, 새내기가 후기를 남길 때
             도감에 등록돼요.
           </Text>
         </VStack>
@@ -103,6 +104,10 @@ function Dex({ appId }: DexProps) {
             spacing={6}
             align="center"
           >
+            <Portrait
+              seed={item.juniorAlias}
+              size="30"
+            />
             <Text
               typo="15"
               bold

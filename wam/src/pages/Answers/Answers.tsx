@@ -70,7 +70,7 @@ function Answers({ appId }: AnswersProps) {
                 size="s"
                 variant="green"
               >
-                후배 답 {withSelfAnswer.length}
+                새내기 답 {withSelfAnswer.length}
               </Tag>
             )}
           </>
@@ -84,7 +84,7 @@ function Answers({ appId }: AnswersProps) {
             typo="13"
             color="text-neutral-light"
           >
-            후배가 후기를 남기면 여기에서 볼 수 있어요.
+            새내기가 후기를 남기면 여기에서 볼 수 있어요.
           </Text>
         </VStack>
       )}
@@ -125,7 +125,7 @@ function Answers({ appId }: AnswersProps) {
                 typo="13"
                 bold
               >
-                후배가 남긴 답
+                새내기가 남긴 답
               </Text>
               <Text typo="13">{item.selfAnswer}</Text>
             </VStack>

@@ -1,5 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
+  Button,
+  Checkbox,
+  HStack,
+  Text,
+  TextArea,
+  VStack,
+} from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
+import {
   ENCOUNTER_FUNCTIONS,
   REVIEW_FUNCTIONS,
   type EncounterMineOutput,
@@ -10,7 +19,7 @@ import {
 
 import type { Session } from '../session'
 import { useAction, useFunctionData } from '../useFunction'
-import { Badge, Empty, List, Notice, Section } from '../ui'
+import { Badge, Empty, List, Notice, Portrait, Section } from '../ui'
 import { formatDayTime } from '../utils/datetime'
 
 const MIN_REVIEW_LENGTH = 20
@@ -96,23 +105,39 @@ function Review({ session, selected, onSelect, onSubmitted }: ReviewProps) {
               key={senior.seniorId}
               className="card"
             >
-              <h3 className="card__title">{senior.seniorAlias} 선배</h3>
-              <Badge tone="green">친밀도 Lv.{senior.level}</Badge>
+              <HStack
+                spacing={10}
+                align="center"
+              >
+                <Portrait
+                  seed={senior.seniorAlias}
+                  size="42"
+                />
+                <VStack spacing={2}>
+                  <Text
+                    typo="15"
+                    bold
+                  >
+                    {senior.seniorAlias} 선배
+                  </Text>
+                  <HStack>
+                    <Badge tone="green">친밀도 Lv.{senior.level}</Badge>
+                  </HStack>
+                </VStack>
+              </HStack>
             </li>
           ))}
         </ul>
-        <div className="card__foot">
-          <button
-            className="btn"
-            type="button"
+        <HStack>
+          <Button
+            size="m"
+            label="돌아가기"
             onClick={() => {
               setCaughtBy(null)
               onSelect(null)
             }}
-          >
-            돌아가기
-          </button>
-        </div>
+          />
+        </HStack>
       </Section>
     )
   }
@@ -120,74 +145,88 @@ function Review({ session, selected, onSelect, onSubmitted }: ReviewProps) {
   if (target) {
     return (
       <Section title="후기 남기기">
-        <p className="card__hint">{target.title}</p>
+        <Text
+          typo="15"
+          bold
+        >
+          {target.title}
+        </Text>
 
-        <div className="field">
-          <span>만족도</span>
-          <div className="chips">
+        <VStack spacing={6}>
+          <Text
+            typo="13"
+            color="text-neutral-light"
+          >
+            만족도
+          </Text>
+          <HStack spacing={4}>
             {[1, 2, 3, 4, 5].map((score) => (
-              <button
+              <Button
                 key={score}
-                type="button"
-                className={rating === score ? 'chip chip--on' : 'chip'}
+                size="s"
+                variant={rating === score ? 'filled' : 'outlined'}
+                semantic="secondary"
+                label={`${score}`}
                 onClick={() => setRating(score)}
-              >
-                {'★'.repeat(score)}
-              </button>
+              />
             ))}
-          </div>
-        </div>
+          </HStack>
+        </VStack>
 
-        <label className="field">
-          <span>어떤 만남이었나요? ({MIN_REVIEW_LENGTH}자 이상)</span>
-          <textarea
-            rows={4}
+        <VStack spacing={6}>
+          <Text
+            typo="13"
+            color="text-neutral-light"
+          >
+            어떤 만남이었나요? ({MIN_REVIEW_LENGTH}자 이상)
+          </Text>
+          <TextArea
             value={reviewText}
             maxLength={1000}
             onChange={(event) => setReviewText(event.target.value)}
           />
-        </label>
+        </VStack>
 
-        <label className="field">
-          <span>내가 찾은 답 (선택 · 확인을 거쳐 지식으로 쌓여요)</span>
-          <textarea
-            rows={3}
+        <VStack spacing={6}>
+          <Text
+            typo="13"
+            color="text-neutral-light"
+          >
+            내가 찾은 답 (선택 · 확인을 거쳐 지식으로 쌓여요)
+          </Text>
+          <TextArea
             value={selfAnswer}
             maxLength={1000}
             onChange={(event) => setSelfAnswer(event.target.value)}
           />
-        </label>
+        </VStack>
 
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={shareConsent}
-            onChange={(event) => setShareConsent(event.target.checked)}
-          />
-          <span>내 별명을 선배 도감과 답변에 보여줘도 괜찮아요</span>
-        </label>
+        <Checkbox
+          checked={shareConsent}
+          onCheckedChange={(checked) => setShareConsent(checked === true)}
+        >
+          내 별명을 선배 도감과 답변에 보여줘도 괜찮아요
+        </Checkbox>
 
         {(localError || action.error) && (
           <Notice tone="error">{localError || action.error}</Notice>
         )}
 
-        <div className="card__foot">
-          <button
-            className="btn"
-            type="button"
-            disabled={action.busy}
+        <HStack spacing={6}>
+          <Button
+            size="m"
+            label={action.busy ? '제출 중…' : '후기 제출'}
+            loading={action.busy}
             onClick={() => void submit()}
-          >
-            {action.busy ? '제출 중…' : '후기 제출'}
-          </button>
-          <button
-            className="btn btn--ghost"
-            type="button"
+          />
+          <Button
+            size="m"
+            variant="ghost"
+            semantic="secondary"
+            label="취소"
             onClick={() => onSelect(null)}
-          >
-            취소
-          </button>
-        </div>
+          />
+        </HStack>
       </Section>
     )
   }
@@ -196,14 +235,15 @@ function Review({ session, selected, onSelect, onSubmitted }: ReviewProps) {
     <Section
       title="후기 대기"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={mine.loading}
           onClick={() => void mine.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       <List
@@ -222,23 +262,31 @@ function Review({ session, selected, onSelect, onSubmitted }: ReviewProps) {
                 key={card.encounterId}
                 className="card"
               >
-                <h3 className="card__title">{card.title}</h3>
-                <p className="card__hint">
-                  {card.reviewDueAt
-                    ? `${formatDayTime(card.reviewDueAt)} 까지`
-                    : '기한 없음'}
-                  {card.seniors.length > 0 &&
-                    ` · ${card.seniors.map((senior) => senior.seniorAlias).join(', ')} 선배`}
-                </p>
-                <div className="card__foot">
-                  <button
-                    className="btn"
-                    type="button"
-                    onClick={() => onSelect(card.encounterId)}
+                <VStack spacing={8}>
+                  <Text
+                    typo="15"
+                    bold
                   >
-                    후기 쓰기
-                  </button>
-                </div>
+                    {card.title}
+                  </Text>
+                  <Text
+                    typo="13"
+                    color="text-neutral-light"
+                  >
+                    {card.reviewDueAt
+                      ? `${formatDayTime(card.reviewDueAt)} 까지`
+                      : '기한 없음'}
+                    {card.seniors.length > 0 &&
+                      ` · ${card.seniors.map((senior) => senior.seniorAlias).join(', ')} 선배`}
+                  </Text>
+                  <HStack>
+                    <Button
+                      size="s"
+                      label="후기 쓰기"
+                      onClick={() => onSelect(card.encounterId)}
+                    />
+                  </HStack>
+                </VStack>
               </li>
             ))}
           </ul>

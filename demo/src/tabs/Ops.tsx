@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react'
+import { Button, HStack, Text, VStack } from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
 import {
   FUNCTIONS,
   type UpgradeDecideOutput,
@@ -8,7 +10,7 @@ import {
 
 import type { Session } from '../session'
 import { useAction, useFunctionData } from '../useFunction'
-import { Badge, Empty, List, Notice, Section } from '../ui'
+import { Badge, Empty, List, Notice, Portrait, Section } from '../ui'
 import { formatDayTime } from '../utils/datetime'
 
 type UpgradeList = UpgradeListOutput
@@ -41,7 +43,7 @@ function Ops({ session }: OpsProps) {
 
         setResult(
           approve
-            ? `승인했어요. 연결 코드: ${decided.linkCode ?? '발급 실패'} (후배의 ‘내 정보’ 탭에서도 볼 수 있어요)`
+            ? `승인했어요. 연결 코드: ${decided.linkCode ?? '발급 실패'} (새내기의 ‘내 정보’ 탭에서도 볼 수 있어요)`
             : '반려했어요.'
         )
         await requests.reload()
@@ -56,14 +58,15 @@ function Ops({ session }: OpsProps) {
     <Section
       title="업그레이드 승인"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={requests.loading}
           onClick={() => void requests.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       {result && <Notice tone="success">{result}</Notice>}
@@ -74,7 +77,7 @@ function Ops({ session }: OpsProps) {
         empty={
           <Empty
             title="대기 중인 신청이 없어요"
-            hint="후배 화면의 ‘내 정보’ 탭에서 업그레이드를 신청하면 여기에 떠요."
+            hint="새내기 화면의 ‘내 정보’ 탭에서 업그레이드를 신청하면 여기에 떠요."
           />
         }
       >
@@ -85,32 +88,48 @@ function Ops({ session }: OpsProps) {
                 key={card.requestId}
                 className="card"
               >
-                <div className="card__head">
-                  <Badge tone="blue">{card.nickname}</Badge>
-                  {card.department && <Badge>{card.department}</Badge>}
-                  {card.cohortYear && <Badge>{card.cohortYear}학번</Badge>}
-                </div>
+                <div className="card__media">
+                  <Portrait
+                    seed={card.nickname}
+                    size="42"
+                  />
 
-                <p className="card__body">{card.intro}</p>
-                <p className="card__hint">{formatDayTime(card.createdAt)}</p>
+                  <VStack spacing={8}>
+                    <HStack
+                      spacing={4}
+                      align="center"
+                      wrap
+                    >
+                      <Badge tone="blue">{card.nickname}</Badge>
+                      {card.department && <Badge>{card.department}</Badge>}
+                      {card.cohortYear && <Badge>{card.cohortYear}학번</Badge>}
+                    </HStack>
 
-                <div className="card__foot">
-                  <button
-                    className="btn"
-                    type="button"
-                    disabled={action.busy}
-                    onClick={() => void decide(card.requestId, true)}
-                  >
-                    승인
-                  </button>
-                  <button
-                    className="btn btn--ghost"
-                    type="button"
-                    disabled={action.busy}
-                    onClick={() => void decide(card.requestId, false)}
-                  >
-                    반려
-                  </button>
+                    <Text typo="14">{card.intro}</Text>
+                    <Text
+                      typo="12"
+                      color="text-neutral-lighter"
+                    >
+                      {formatDayTime(card.createdAt)}
+                    </Text>
+
+                    <HStack spacing={6}>
+                      <Button
+                        size="s"
+                        label="승인"
+                        disabled={action.busy}
+                        onClick={() => void decide(card.requestId, true)}
+                      />
+                      <Button
+                        size="s"
+                        variant="outlined"
+                        semantic="destructive"
+                        label="반려"
+                        disabled={action.busy}
+                        onClick={() => void decide(card.requestId, false)}
+                      />
+                    </HStack>
+                  </VStack>
                 </div>
               </li>
             ))}

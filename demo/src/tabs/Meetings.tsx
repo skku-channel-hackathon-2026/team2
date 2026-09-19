@@ -1,3 +1,5 @@
+import { Button, HStack, Text, VStack } from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
 import {
   BALL_STATUS_LABEL,
   ENCOUNTER_FUNCTIONS,
@@ -10,13 +12,19 @@ import {
 
 import type { Session } from '../session'
 import { useFunctionData } from '../useFunction'
-import { Badge, Empty, List, Section, Stat } from '../ui'
+import {
+  Badge,
+  Empty,
+  List,
+  Portrait,
+  Section,
+  Stat,
+  type BadgeTone,
+} from '../ui'
+import { fieldTone } from '../fields'
 import { formatDayTime, formatWindow } from '../utils/datetime'
 
-const STATUS_TONE: Record<
-  EncounterStatus,
-  'blue' | 'teal' | 'orange' | 'green' | 'red' | 'default'
-> = {
+const STATUS_TONE: Record<EncounterStatus, BadgeTone> = {
   wild: 'blue',
   matched: 'teal',
   met: 'orange',
@@ -67,14 +75,15 @@ function Meetings({ session, onAsk, onReview }: MeetingsProps) {
     <Section
       title="내 밥약"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={mine.loading}
           onClick={() => void mine.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       <div className="stats">
@@ -108,81 +117,159 @@ function Meetings({ session, onAsk, onReview }: MeetingsProps) {
                 key={card.encounterId}
                 className="card"
               >
-                <div className="card__head">
-                  <Badge tone={STATUS_TONE[card.status]}>
-                    {ENCOUNTER_STATUS_LABEL[card.status]}
-                  </Badge>
-                  <Badge>{card.fieldLabel}</Badge>
-                  <Badge>{MEET_TYPE_LABEL[card.meetType]}</Badge>
-                  <Badge>
-                    선배 {card.seniorsJoined}/{card.maxSeniors}명
-                  </Badge>
-                </div>
+                <VStack spacing={10}>
+                  <HStack
+                    spacing={4}
+                    align="center"
+                    wrap
+                  >
+                    <Badge tone={STATUS_TONE[card.status]}>
+                      {ENCOUNTER_STATUS_LABEL[card.status]}
+                    </Badge>
+                    <Badge tone={fieldTone(card.fieldId)}>
+                      {card.fieldLabel}
+                    </Badge>
+                    <Badge>{MEET_TYPE_LABEL[card.meetType]}</Badge>
+                    <Badge>
+                      선배 {card.seniorsJoined}/{card.maxSeniors}명
+                    </Badge>
+                  </HStack>
 
-                <h3 className="card__title">{card.title}</h3>
+                  <Text
+                    typo="16"
+                    bold
+                  >
+                    {card.title}
+                  </Text>
 
-                <dl className="kv">
-                  <dt>확정 일정</dt>
-                  <dd>
-                    {card.slotStart && card.slotEnd
-                      ? `${formatWindow(card.slotStart, card.slotEnd)}${
-                          card.place ? ` · ${card.place}` : ''
-                        }`
-                      : '아직 미정'}
-                  </dd>
+                  <dl className="kv">
+                    <dt>
+                      <Text
+                        typo="13"
+                        color="text-neutral-lighter"
+                      >
+                        확정 일정
+                      </Text>
+                    </dt>
+                    <dd>
+                      <Text typo="13">
+                        {card.slotStart && card.slotEnd
+                          ? `${formatWindow(card.slotStart, card.slotEnd)}${
+                              card.place ? ` · ${card.place}` : ''
+                            }`
+                          : '아직 미정'}
+                      </Text>
+                    </dd>
 
-                  <dt>내가 낸 시간</dt>
-                  <dd>
-                    {card.windows.length === 0
-                      ? '없음'
-                      : card.windows
-                          .map((window) =>
-                            formatWindow(window.startAt, window.endAt)
-                          )
-                          .join(' · ')}
-                  </dd>
+                    <dt>
+                      <Text
+                        typo="13"
+                        color="text-neutral-lighter"
+                      >
+                        내가 낸 시간
+                      </Text>
+                    </dt>
+                    <dd>
+                      <Text typo="13">
+                        {card.windows.length === 0
+                          ? '없음'
+                          : card.windows
+                              .map((window) =>
+                                formatWindow(window.startAt, window.endAt)
+                              )
+                              .join(' · ')}
+                      </Text>
+                    </dd>
 
-                  <dt>수락한 선배</dt>
-                  <dd>
-                    {card.seniors.length === 0
-                      ? '아직 없음'
-                      : card.seniors
-                          .map(
-                            (senior) =>
-                              `${senior.seniorAlias} (${BALL_STATUS_LABEL[senior.ballStatus]})`
-                          )
-                          .join(', ')}
-                  </dd>
+                    <dt>
+                      <Text
+                        typo="13"
+                        color="text-neutral-lighter"
+                      >
+                        수락한 선배
+                      </Text>
+                    </dt>
+                    <dd>
+                      {card.seniors.length === 0 ? (
+                        <Text typo="13">아직 없음</Text>
+                      ) : (
+                        <HStack
+                          spacing={8}
+                          align="center"
+                          wrap
+                        >
+                          {card.seniors.map((senior) => (
+                            <HStack
+                              key={senior.seniorAlias}
+                              spacing={4}
+                              align="center"
+                            >
+                              <Portrait
+                                seed={senior.seniorAlias}
+                                size="24"
+                              />
+                              <Text typo="13">
+                                {senior.seniorAlias} (
+                                {BALL_STATUS_LABEL[senior.ballStatus]})
+                              </Text>
+                            </HStack>
+                          ))}
+                        </HStack>
+                      )}
+                    </dd>
 
-                  <dt>신청</dt>
-                  <dd>{formatDayTime(card.createdAt)}</dd>
-                </dl>
+                    <dt>
+                      <Text
+                        typo="13"
+                        color="text-neutral-lighter"
+                      >
+                        신청
+                      </Text>
+                    </dt>
+                    <dd>
+                      <Text typo="13">{formatDayTime(card.createdAt)}</Text>
+                    </dd>
+                  </dl>
 
-                {hint(card) && <p className="card__hint">{hint(card)}</p>}
-
-                <div className="card__foot">
-                  {card.status === 'met' && !card.hasReview && (
-                    <button
-                      className="btn"
-                      type="button"
-                      onClick={() => onReview(card.encounterId)}
+                  {hint(card) && (
+                    <Text
+                      typo="13"
+                      color="text-neutral-light"
                     >
-                      후기 남기기
-                    </button>
+                      {hint(card)}
+                    </Text>
                   )}
-                  {card.hasReview && (
-                    <span className="card__done">후기 제출 완료</span>
-                  )}
-                  {card.status === 'expired' && (
-                    <button
-                      className="btn btn--ghost"
-                      type="button"
-                      onClick={onAsk}
-                    >
-                      다시 신청하기
-                    </button>
-                  )}
-                </div>
+
+                  <HStack
+                    spacing={6}
+                    align="center"
+                  >
+                    {card.status === 'met' && !card.hasReview && (
+                      <Button
+                        size="s"
+                        label="후기 남기기"
+                        onClick={() => onReview(card.encounterId)}
+                      />
+                    )}
+                    {card.hasReview && (
+                      <Text
+                        typo="13"
+                        color="text-accent-green"
+                      >
+                        후기 제출 완료
+                      </Text>
+                    )}
+                    {card.status === 'expired' && (
+                      <Button
+                        size="s"
+                        variant="outlined"
+                        semantic="secondary"
+                        label="다시 신청하기"
+                        onClick={onAsk}
+                      />
+                    )}
+                  </HStack>
+                </VStack>
               </li>
             ))}
           </ul>

@@ -18,6 +18,12 @@ importers:
 
   demo:
     dependencies:
+      '@channel.io/bezier-icons':
+        specifier: 0.60.0
+        version: 0.60.0(react@18.3.1)
+      '@channel.io/bezier-react':
+        specifier: 4.0.0-next.14
+        version: 4.0.0-next.14(@channel.io/bezier-icons@0.60.0(react@18.3.1))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@channel.io/channel-web-sdk-loader':
         specifier: 2.0.2
         version: 2.0.2
@@ -30,6 +36,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+      styled-components:
+        specifier: ^6.4.3
+        version: 6.4.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@types/react':
         specifier: ^18.2.56

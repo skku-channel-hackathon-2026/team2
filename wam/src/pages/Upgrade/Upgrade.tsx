@@ -158,7 +158,7 @@ function Upgrade({ appId }: UpgradeProps) {
         typo="13"
         color="text-neutral-light"
       >
-        밥약으로 후배를 도와줄 선배를 모집해요. 신청하면 운영진이 확인해요.
+        밥약으로 새내기를 도와줄 선배를 모집해요. 신청하면 운영진이 확인해요.
       </Text>
 
       {notice && (

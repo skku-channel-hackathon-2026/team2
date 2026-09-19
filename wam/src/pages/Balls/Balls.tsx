@@ -18,6 +18,7 @@ import {
   type RemindOutput,
 } from '@tutorial/shared'
 
+import Portrait from '../../components/Portrait'
 import { useAppFunction } from '../../hooks/useAppFunction'
 import { formatDay, formatWindow } from '../../utils/datetime'
 
@@ -66,7 +67,7 @@ function Balls({ appId }: BallsProps) {
       if (!response) return
       setResult(
         response.reviewDueAt
-          ? `만남 완료! ${card.juniorAlias} 후배에게 후기를 요청했어요. (마감 ${formatDay(response.reviewDueAt)})`
+          ? `만남 완료! 새내기 ${card.juniorAlias}님에게 후기를 요청했어요. (마감 ${formatDay(response.reviewDueAt)})`
           : '만남 완료로 기록했어요.'
       )
       await refresh()
@@ -132,7 +133,7 @@ function Balls({ appId }: BallsProps) {
             typo="13"
             color="text-neutral-light"
           >
-            /출현 에서 후배의 밥약을 수락하면 여기에 쌓여요.
+            /출현 에서 새내기의 밥약을 수락하면 여기에 쌓여요.
           </Text>
         </VStack>
       )}
@@ -147,6 +148,10 @@ function Balls({ appId }: BallsProps) {
             spacing={4}
             align="center"
           >
+            <Portrait
+              seed={card.juniorAlias}
+              size="30"
+            />
             <Text
               typo="15"
               bold

@@ -24,7 +24,7 @@ interface MeResult {
 }
 
 const ROLE_LABEL: Record<Role, string> = {
-  junior: '후배',
+  junior: '새내기',
   senior: '선배',
   staff: '운영진',
 }
@@ -151,7 +151,7 @@ function Me({ appId }: MeProps) {
           역할:{' '}
           {me?.roles.length
             ? me.roles.map((role) => ROLE_LABEL[role]).join(', ')
-            : '후배'}
+            : '새내기'}
         </Text>
         <Text
           typo="13"

@@ -47,7 +47,7 @@ export async function listDex(seniorId: string): Promise<DexListOutput> {
   };
 }
 
-// review.service가 후기 제출마다 호출한다. 이미 잡은 적 있는 후배면 catch_count만
+// review.service가 후기 제출마다 호출한다. 이미 잡은 적 있는 새내기면 catch_count만
 // 늘리고, 처음이면 새 행을 만든다. 반환값(wasFirstCatch)으로 친밀도 종류를 정한다.
 export async function registerCatch(params: {
   seniorId: string;

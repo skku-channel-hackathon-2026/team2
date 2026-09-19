@@ -4,8 +4,8 @@
 --   corepack pnpm exec wrangler d1 execute DB --local --file=scripts/seed-demo.sql
 --
 -- T5 (이미 성사된 밥약, 만남 완료 대기): 선배 senior-1(m-senior-1)로 /balls,
--- /dex 실행, 후배 junior-1(u-junior-1)로 /review 실행.
--- T2 (아직 안 잡힌 출현): 후배 junior-2(u-junior-2)가 encounter-2를 신청했고,
+-- /dex 실행, 새내기 junior-1(u-junior-1)로 /review 실행.
+-- T2 (아직 안 잡힌 출현): 새내기 junior-2(u-junior-2)가 encounter-2를 신청했고,
 -- senior-1이 club 분야·겹치는 시간대를 가지고 있어 encounter_targets에
 -- 이미 들어 있다. senior-1로 /출현 → 수락하면 wild.accept를 확인할 수 있다.
 

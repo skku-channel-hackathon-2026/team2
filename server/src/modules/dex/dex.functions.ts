@@ -21,7 +21,7 @@ export class DexFunctions {
   constructor(private readonly accounts: AccountsService) {}
 
   @Func(DEX_FUNCTIONS.list)
-  @Description("내가 잡은 후배 목록")
+  @Description("내가 잡은 새내기 목록")
   @InputSchema(EmptyInputSchema)
   @OutputSchema(DexListOutputSchema)
   async list(

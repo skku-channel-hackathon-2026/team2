@@ -31,12 +31,12 @@ export async function listAnswers(
     seniorId,
   );
 
-  // 공유에 동의하지 않은 후배의 별명은 선배에게도 노출하지 않는다 (T5 규칙).
+  // 공유에 동의하지 않은 새내기의 별명은 선배에게도 노출하지 않는다 (T5 규칙).
   const items: AnswerCard[] = rows.map((row) => ({
     encounterId: row.encounter_id,
     title: row.title,
     fieldLabel: row.field_label ?? row.field_id,
-    juniorAlias: row.share_consent === 1 ? row.junior_nickname : "익명 후배",
+    juniorAlias: row.share_consent === 1 ? row.junior_nickname : "익명 새내기",
     rating: row.rating,
     reviewText: row.review_text,
     selfAnswer: row.self_answer,

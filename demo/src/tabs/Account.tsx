@@ -1,5 +1,14 @@
 import { useCallback, useState } from 'react'
 import {
+  Button,
+  Checkbox,
+  HStack,
+  Text,
+  TextArea,
+  VStack,
+} from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
+import {
   FUNCTIONS,
   type AccountMeOutput,
   type Role as AccountRole,
@@ -8,11 +17,8 @@ import {
 
 import type { Session } from '../session'
 import { useAction, useFunctionData } from '../useFunction'
-import { Badge, Notice, Section } from '../ui'
+import { Badge, Notice, Portrait, Section } from '../ui'
 import { formatDayTime } from '../utils/datetime'
-
-type AccountMe = AccountMeOutput
-type UpgradeStatus = UpgradeStatusOutput
 
 const STATUS_LABEL: Record<string, string> = {
   none: '신청 전',
@@ -30,8 +36,8 @@ interface AccountProps {
 }
 
 function Account({ session }: AccountProps) {
-  const me = useFunctionData<AccountMe>(FUNCTIONS.accountMe, {}, session)
-  const upgrade = useFunctionData<UpgradeStatus>(
+  const me = useFunctionData<AccountMeOutput>(FUNCTIONS.accountMe, {}, session)
+  const upgrade = useFunctionData<UpgradeStatusOutput>(
     FUNCTIONS.upgradeStatus,
     {},
     session
@@ -76,35 +82,63 @@ function Account({ session }: AccountProps) {
     <Section
       title="내 정보"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={me.loading}
           onClick={() => void me.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       {me.error && <Notice tone="error">{me.error}</Notice>}
 
       {me.data && (
-        <dl className="kv">
-          <dt>별명</dt>
-          <dd>{me.data.user.nickname}</dd>
-          <dt>학과</dt>
-          <dd>{me.data.user.department ?? '미등록'}</dd>
-          <dt>역할</dt>
-          <dd>
-            {me.data.roles.length === 0
-              ? '후배'
-              : me.data.roles.map((role: AccountRole) => (
-                  <Badge key={role}>{role}</Badge>
-                ))}
-          </dd>
-          <dt>업그레이드</dt>
-          <dd>{STATUS_LABEL[status] ?? status}</dd>
-        </dl>
+        <div className="card">
+          <HStack
+            spacing={12}
+            align="center"
+          >
+            <Portrait
+              seed={me.data.user.nickname}
+              size="48"
+            />
+            <VStack spacing={4}>
+              <Text
+                typo="16"
+                bold
+              >
+                {me.data.user.nickname}
+              </Text>
+              <Text
+                typo="13"
+                color="text-neutral-light"
+              >
+                {me.data.user.department ?? '학과 미등록'} ·{' '}
+                {STATUS_LABEL[status] ?? status}
+              </Text>
+              <HStack
+                spacing={4}
+                wrap
+              >
+                {me.data.roles.length === 0 ? (
+                  <Badge>새내기</Badge>
+                ) : (
+                  me.data.roles.map((role: AccountRole) => (
+                    <Badge
+                      key={role}
+                      tone={role === 'senior' ? 'green' : 'default'}
+                    >
+                      {role}
+                    </Badge>
+                  ))
+                )}
+              </HStack>
+            </VStack>
+          </HStack>
+        </div>
       )}
 
       {upgrade.data?.reason && (
@@ -113,50 +147,55 @@ function Account({ session }: AccountProps) {
 
       {status === 'approved' && upgrade.data?.linkCode && (
         <Notice tone="success">
-          연결 코드 <strong>{upgrade.data.linkCode}</strong>
+          연결 코드 {upgrade.data.linkCode}
           {upgrade.data.codeExpiresAt &&
             ` · ${formatDayTime(upgrade.data.codeExpiresAt)} 까지`}
-          <br />
-          선배 화면으로 바꾼 뒤 ‘선배 설정’ 탭에서 입력하면 연결돼요.
+          . 선배 화면으로 바꾼 뒤 ‘선배 설정’ 탭에서 입력하면 연결돼요.
         </Notice>
       )}
 
       {canApply && (
         <>
-          <h3 className="sub">선배로 업그레이드</h3>
-          <label className="field">
-            <span>어떤 후배를 돕고 싶나요? ({MIN_INTRO_LENGTH}자 이상)</span>
-            <textarea
-              rows={3}
+          <Text
+            typo="15"
+            bold
+          >
+            선배로 업그레이드
+          </Text>
+
+          <VStack spacing={6}>
+            <Text
+              typo="13"
+              color="text-neutral-light"
+            >
+              어떤 새내기를 돕고 싶나요? ({MIN_INTRO_LENGTH}자 이상)
+            </Text>
+            <TextArea
               value={intro}
               maxLength={300}
               onChange={(event) => setIntro(event.target.value)}
             />
-          </label>
+          </VStack>
 
-          <label className="check">
-            <input
-              type="checkbox"
-              checked={agree}
-              onChange={(event) => setAgree(event.target.checked)}
-            />
-            <span>약속한 밥약에 성실히 나가겠습니다</span>
-          </label>
+          <Checkbox
+            checked={agree}
+            onCheckedChange={(checked) => setAgree(checked === true)}
+          >
+            약속한 밥약에 성실히 나가겠습니다
+          </Checkbox>
 
           {(localError || action.error) && (
             <Notice tone="error">{localError || action.error}</Notice>
           )}
 
-          <div className="card__foot">
-            <button
-              className="btn"
-              type="button"
-              disabled={action.busy}
+          <HStack>
+            <Button
+              size="m"
+              label={action.busy ? '신청 중…' : '업그레이드 신청'}
+              loading={action.busy}
               onClick={() => void apply()}
-            >
-              {action.busy ? '신청 중…' : '업그레이드 신청'}
-            </button>
-          </div>
+            />
+          </HStack>
         </>
       )}
 

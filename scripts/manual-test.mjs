@@ -146,7 +146,7 @@ async function scenario2() {
   show("dex.list (senior-1)", dex);
   assert.ok(dex.ok);
   assert.ok(dex.data.items.some((item) => item.juniorAlias === "코딩초보"));
-  console.log("PASS: 후기 제출 후 두 선배 모두 도감에 후배가 등록됨");
+  console.log("PASS: 후기 제출 후 두 선배 모두 도감에 새내기가 등록됨");
 }
 
 /** 시나리오 3 — 재촉 한도. encounter-1/2와 겹치지 않는 encounter-3/ball-3를

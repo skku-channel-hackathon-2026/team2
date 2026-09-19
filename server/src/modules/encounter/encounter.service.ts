@@ -91,7 +91,7 @@ export async function createEncounter(
     const enqueued = await deps.notifications.enqueue({
       dedupeKey: `wild_appeared:${encounterId}`,
       kind: "wild_appeared",
-      text: `🌿 야생의 후배가 출현했다! [${field.label}] ${input.title}\n대상: ${names}\n/출현 에서 수락할 수 있어요.`,
+      text: `🌿 야생의 새내기가 출현했다! [${field.label}] ${input.title}\n대상: ${names}\n/출현 에서 수락할 수 있어요.`,
       targetType: "group",
       targetId: wildGroupId,
       urgent: true,

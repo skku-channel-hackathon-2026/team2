@@ -30,7 +30,7 @@ function kstWeekdayAndMinute(
 }
 
 /**
- * 후배가 제시한 시간대(window)와 선배의 주간 반복 가용 시간(slot)이 겹치는
+ * 새내기가 제시한 시간대(window)와 선배의 주간 반복 가용 시간(slot)이 겹치는
  * 분(minute) 수. window가 자정을 넘기지 않는다고 가정한다(WAM은 같은 날
  * 범위만 제시하도록 설계됨).
  */
@@ -113,7 +113,7 @@ const WEIGHTS = {
   fairness: 0.1,
 };
 
-/** 이 분야에서 잡아본 서로 다른 후배 수를 0~1로 스무딩(n/(n+3)). */
+/** 이 분야에서 잡아본 서로 다른 새내기 수를 0~1로 스무딩(n/(n+3)). */
 async function categoryExperienceScore(
   seniorId: string,
   fieldId: string,

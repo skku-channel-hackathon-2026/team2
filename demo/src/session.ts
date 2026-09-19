@@ -7,7 +7,7 @@ export interface Session {
 }
 
 export const ROLE_LABEL: Record<Role, string> = {
-  junior: '후배',
+  junior: '새내기',
   senior: '선배',
 }
 

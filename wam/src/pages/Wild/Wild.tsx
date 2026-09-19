@@ -19,6 +19,7 @@ import {
   type WildListOutput,
 } from '@tutorial/shared'
 
+import Portrait from '../../components/Portrait'
 import { useAppFunction } from '../../hooks/useAppFunction'
 import { formatWindow } from '../../utils/datetime'
 
@@ -153,12 +154,21 @@ function Wild({ appId }: WildProps) {
               {card.seniorsJoined}/{card.maxSeniors}명
             </Tag>
           </HStack>
-          <Text
-            typo="13"
-            color="text-neutral-light"
+          <HStack
+            spacing={6}
+            align="center"
           >
-            {card.juniorAlias} 후배
-          </Text>
+            <Portrait
+              seed={card.juniorAlias}
+              size="24"
+            />
+            <Text
+              typo="13"
+              color="text-neutral-light"
+            >
+              새내기 {card.juniorAlias}
+            </Text>
+          </HStack>
 
           {card.overlapWindows.length === 0 ? (
             <InlineBanner

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { NativeFunctionClient, TokenManager } from "@channel.io/app-sdk-server";
 
-const BOT_NAME = "후배Go";
+const BOT_NAME = "새내기Go";
 
 interface MessageResult {
   message?: { id?: string };

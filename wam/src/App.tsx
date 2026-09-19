@@ -77,7 +77,7 @@ function App() {
     <WamThemeProvider>
       <HeightSynchronizer maxHeight={560}>
         <WamHeader
-          title={data?.commandName ?? '후배 Go'}
+          title={data?.commandName ?? '새내기 Go'}
           onClose={close}
         />
         <div style={{ padding: isMobile() ? '0 16px 16px' : '0 24px 24px' }}>

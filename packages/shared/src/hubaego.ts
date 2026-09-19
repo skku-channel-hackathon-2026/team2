@@ -361,6 +361,47 @@ export const KnowledgeExportOutputSchema = z.object({
 });
 export type KnowledgeExportOutput = z.infer<typeof KnowledgeExportOutputSchema>;
 
+/**
+ * The character portraits in `assets/`, shown in place of a ball. Both the WAM
+ * and the demo page resolve a portrait through `characterFor`, so one person
+ * keeps the same face on every surface.
+ */
+export const CHARACTER_IDS = [
+  "0-0",
+  "0-1",
+  "0-2",
+  "0-3",
+  "0-4",
+  "0-5",
+  "0-6",
+  "0-7",
+  "1-0",
+  "1-1",
+  "1-2",
+  "1-3",
+  "1-4",
+  "1-5",
+  "1-6",
+  "1-7",
+] as const;
+export type CharacterId = (typeof CHARACTER_IDS)[number];
+
+/**
+ * FNV-1a over the seed. Deterministic rather than random: the seed is a stable
+ * identity (a nickname, a user id), so the same person always draws the same
+ * portrait and it survives reloads and re-renders. The two filename prefixes
+ * are deliberately pooled together — a name is not evidence of anything the
+ * two sets might be read as distinguishing.
+ */
+export function characterFor(seed: string): CharacterId {
+  let hash = 2166136261;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return CHARACTER_IDS[(hash >>> 0) % CHARACTER_IDS.length];
+}
+
 // 친밀도 레벨: Lv1 0-29 · Lv2 30-79 · Lv3 80-149 · Lv4 150+
 export function intimacyLevel(points: number): 1 | 2 | 3 | 4 {
   if (points >= 150) return 4;

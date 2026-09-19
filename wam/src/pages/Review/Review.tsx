@@ -224,7 +224,7 @@ function Review({ appId }: ReviewProps) {
       </Text>
 
       <TextArea
-        placeholder="같은 고민을 하는 후배에게 남길 내 답 (선택)"
+        placeholder="같은 고민을 하는 새내기에게 남길 내 답 (선택)"
         value={selfAnswer}
         minRows={3}
         maxRows={6}

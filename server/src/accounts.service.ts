@@ -27,7 +27,7 @@ const SELECT_USER =
 function nicknameFromContext(ctx: Context): string {
   const profile = ctx.user?.profile as Record<string, unknown> | undefined;
   const name = typeof profile?.name === "string" ? profile.name.trim() : "";
-  return name.slice(0, 20) || "후배";
+  return name.slice(0, 20) || "새내기";
 }
 
 @Injectable()
@@ -62,7 +62,7 @@ export class AccountsService {
   async resolveJunior(ctx: Context): Promise<UserRow> {
     if (ctx.caller.type !== "user" || !ctx.caller.id) {
       throw badRequest(
-        "이 기능은 채널톡 메신저에서 후배만 사용할 수 있어요.",
+        "이 기능은 채널톡 메신저에서 새내기만 사용할 수 있어요.",
         ERROR_CODES.notJunior,
       );
     }

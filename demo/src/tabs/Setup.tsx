@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  Button,
+  HStack,
+  Text,
+  TextInput,
+  VStack,
+} from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
+import {
   FUNCTIONS,
   GRID_END_HOUR,
   GRID_START_HOUR,
@@ -11,7 +19,7 @@ import {
 
 import type { Session } from '../session'
 import { useAction, useFunctionData } from '../useFunction'
-import { Notice, Section, Stat } from '../ui'
+import { Loading, Notice, Section, Stat } from '../ui'
 
 type SeniorProfileResult = SeniorGetProfileOutput
 type AvailabilityResult = AvailabilityGetOutput
@@ -162,7 +170,7 @@ function Setup({ session, onLinked }: SetupProps) {
   if (profile.loading && !profile.data) {
     return (
       <Section title="선배 설정">
-        <p className="loading">불러오는 중…</p>
+        <Loading />
       </Section>
     )
   }
@@ -171,34 +179,39 @@ function Setup({ session, onLinked }: SetupProps) {
     return (
       <Section title="선배 계정 연결">
         <Notice>
-          이 데모 계정은 아직 선배로 연결되지 않았어요. 후배 화면에서 선배
+          이 데모 계정은 아직 선배로 연결되지 않았어요. 새내기 화면에서 선배
           업그레이드를 신청하고 운영진이 승인하면 받는 연결 코드를 여기에 입력해
           주세요.
         </Notice>
 
-        <label className="field">
-          <span>연결 코드</span>
-          <input
+        <VStack spacing={6}>
+          <Text
+            typo="13"
+            color="text-neutral-light"
+          >
+            연결 코드
+          </Text>
+          <TextInput
+            size="m"
             value={code}
             maxLength={12}
             placeholder="ABCD1234"
             onChange={(event) => setCode(event.target.value.toUpperCase())}
           />
-        </label>
+        </VStack>
 
         {action.error && <Notice tone="error">{action.error}</Notice>}
         {result && <Notice tone="success">{result}</Notice>}
 
-        <div className="card__foot">
-          <button
-            className="btn"
-            type="button"
-            disabled={action.busy || code.trim().length < 4}
+        <HStack>
+          <Button
+            size="m"
+            label={action.busy ? '연결 중…' : '연결하기'}
+            loading={action.busy}
+            disabled={code.trim().length < 4}
             onClick={() => void link()}
-          >
-            {action.busy ? '연결 중…' : '연결하기'}
-          </button>
-        </div>
+          />
+        </HStack>
       </Section>
     )
   }
@@ -207,14 +220,15 @@ function Setup({ session, onLinked }: SetupProps) {
     <Section
       title="선배 설정"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={profile.loading}
           onClick={() => void profile.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       <div className="stats">
@@ -236,26 +250,42 @@ function Setup({ session, onLinked }: SetupProps) {
         />
       </div>
 
-      <label className="field">
-        <span>한 줄 소개</span>
-        <input
+      <VStack spacing={6}>
+        <Text
+          typo="13"
+          color="text-neutral-light"
+        >
+          한 줄 소개
+        </Text>
+        <TextInput
+          size="m"
           value={headline}
           maxLength={60}
           placeholder="백엔드 3년차, 동아리 회장 출신"
           onChange={(event) => setHeadline(event.target.value)}
         />
-      </label>
+      </VStack>
 
-      <div className="field">
-        <span>도와줄 수 있는 분야</span>
-        <div className="chips">
+      <VStack spacing={6}>
+        <Text
+          typo="13"
+          color="text-neutral-light"
+        >
+          도와줄 수 있는 분야
+        </Text>
+        <HStack
+          spacing={4}
+          wrap
+        >
           {(profile.data?.fields ?? []).map((field: FieldOption) => {
             const on = fieldIds.includes(field.id)
             return (
-              <button
+              <Button
                 key={field.id}
-                type="button"
-                className={on ? 'chip chip--on' : 'chip'}
+                size="s"
+                variant={on ? 'filled' : 'outlined'}
+                semantic="secondary"
+                label={field.label}
                 onClick={() =>
                   setFieldIds((previous) =>
                     on
@@ -263,33 +293,43 @@ function Setup({ session, onLinked }: SetupProps) {
                       : [...previous, field.id]
                   )
                 }
-              >
-                {field.label}
-              </button>
+              />
             )
           })}
-        </div>
-      </div>
+        </HStack>
+      </VStack>
 
-      <label className="field">
-        <span>주간 상한</span>
-        <select
-          value={weeklyLimit}
-          onChange={(event) => setWeeklyLimit(Number(event.target.value))}
+      <VStack spacing={6}>
+        <Text
+          typo="13"
+          color="text-neutral-light"
+        >
+          주간 상한
+        </Text>
+        <HStack
+          spacing={4}
+          wrap
         >
           {[60, 120, 180, 300, 600].map((value) => (
-            <option
+            <Button
               key={value}
-              value={value}
-            >
-              {value / 60}시간
-            </option>
+              size="s"
+              variant={weeklyLimit === value ? 'filled' : 'outlined'}
+              semantic="secondary"
+              label={`${value / 60}시간`}
+              onClick={() => setWeeklyLimit(value)}
+            />
           ))}
-        </select>
-      </label>
+        </HStack>
+      </VStack>
 
-      <div className="field">
-        <span>주간 가능 시간표 (월요일부터)</span>
+      <VStack spacing={6}>
+        <Text
+          typo="13"
+          color="text-neutral-light"
+        >
+          주간 가능 시간표 (월요일부터)
+        </Text>
         <div className="grid">
           <div className="grid__row grid__row--head">
             <span className="grid__hour" />
@@ -324,21 +364,19 @@ function Setup({ session, onLinked }: SetupProps) {
             </div>
           ))}
         </div>
-      </div>
+      </VStack>
 
       {action.error && <Notice tone="error">{action.error}</Notice>}
       {result && <Notice tone="success">{result}</Notice>}
 
-      <div className="card__foot">
-        <button
-          className="btn"
-          type="button"
-          disabled={action.busy}
+      <HStack>
+        <Button
+          size="m"
+          label={action.busy ? '저장 중…' : '저장'}
+          loading={action.busy}
           onClick={() => void save()}
-        >
-          {action.busy ? '저장 중…' : '저장'}
-        </button>
-      </div>
+        />
+      </HStack>
     </Section>
   )
 }

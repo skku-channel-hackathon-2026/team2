@@ -1,5 +1,13 @@
 import { useCallback, useState } from 'react'
 import {
+  Button,
+  HStack,
+  TextInput,
+  Text,
+  VStack,
+} from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
+import {
   MEET_TYPE_LABEL,
   WILD_FUNCTIONS,
   type WildAcceptOutput,
@@ -9,7 +17,8 @@ import {
 
 import type { Session } from '../session'
 import { useAction, useFunctionData } from '../useFunction'
-import { Badge, Empty, List, Notice, Section } from '../ui'
+import { Badge, Empty, List, Notice, Portrait, Section } from '../ui'
+import { fieldTone } from '../fields'
 import { formatWindow } from '../utils/datetime'
 
 interface WildProps {
@@ -61,16 +70,17 @@ function Wild({ session, onAccepted }: WildProps) {
 
   return (
     <Section
-      title="야생의 후배"
+      title="야생의 새내기"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={wild.loading}
           onClick={() => void wild.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       {result && <Notice tone="success">{result}</Notice>}
@@ -92,101 +102,117 @@ function Wild({ session, onAccepted }: WildProps) {
                 key={card.encounterId}
                 className="card"
               >
-                <div className="card__head">
-                  <Badge tone="blue">{card.fieldLabel}</Badge>
-                  <Badge>{MEET_TYPE_LABEL[card.meetType]}</Badge>
-                  <Badge>
-                    선배 {card.seniorsJoined}/{card.maxSeniors}명
-                  </Badge>
-                </div>
+                <div className="card__media">
+                  <Portrait
+                    seed={card.juniorAlias}
+                    size="42"
+                  />
 
-                <h3 className="card__title">{card.title}</h3>
-                <p className="card__hint">{card.juniorAlias} 후배</p>
-
-                <dl className="kv">
-                  <dt>겹치는 시간</dt>
-                  <dd>
-                    {card.overlapWindows.length === 0
-                      ? '겹치는 시간이 없어요'
-                      : card.overlapWindows
-                          .map((window) =>
-                            formatWindow(window.startAt, window.endAt)
-                          )
-                          .join(' · ')}
-                  </dd>
-                </dl>
-
-                {openId === card.encounterId ? (
-                  <>
-                    <div className="field">
-                      <span>만날 시간 고르기</span>
-                      <div className="chips">
-                        {card.overlapWindows.map((window) => {
-                          const key = `${window.startAt}|${window.endAt}`
-                          return (
-                            <button
-                              key={key}
-                              type="button"
-                              className={
-                                slotKey === key ? 'chip chip--on' : 'chip'
-                              }
-                              onClick={() => setSlotKey(key)}
-                            >
-                              {formatWindow(window.startAt, window.endAt)}
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-
-                    <label className="field">
-                      <span>장소 (선택)</span>
-                      <input
-                        value={place}
-                        maxLength={100}
-                        placeholder="학생회관 학식"
-                        onChange={(event) => setPlace(event.target.value)}
-                      />
-                    </label>
-
-                    <div className="card__foot">
-                      <button
-                        className="btn"
-                        type="button"
-                        disabled={action.busy}
-                        onClick={() => void accept(card)}
-                      >
-                        {action.busy ? '수락 중…' : '수락하기'}
-                      </button>
-                      <button
-                        className="btn btn--ghost"
-                        type="button"
-                        onClick={() => setOpenId(null)}
-                      >
-                        닫기
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="card__foot">
-                    <button
-                      className="btn"
-                      type="button"
-                      onClick={() => {
-                        setResult(null)
-                        action.clearError()
-                        setOpenId(card.encounterId)
-                        setSlotKey(
-                          card.overlapWindows[0]
-                            ? `${card.overlapWindows[0].startAt}|${card.overlapWindows[0].endAt}`
-                            : ''
-                        )
-                      }}
+                  <VStack spacing={8}>
+                    <HStack
+                      spacing={4}
+                      align="center"
+                      wrap
                     >
-                      수락하기
-                    </button>
-                  </div>
-                )}
+                      <Badge tone={fieldTone(card.fieldId)}>
+                        {card.fieldLabel}
+                      </Badge>
+                      <Badge>{MEET_TYPE_LABEL[card.meetType]}</Badge>
+                      <Badge>
+                        선배 {card.seniorsJoined}/{card.maxSeniors}명
+                      </Badge>
+                    </HStack>
+
+                    <Text
+                      typo="15"
+                      bold
+                    >
+                      {card.title}
+                    </Text>
+                    <Text
+                      typo="13"
+                      color="text-neutral-light"
+                    >
+                      새내기 {card.juniorAlias} · 겹치는 시간{' '}
+                      {card.overlapWindows.length === 0
+                        ? '없음'
+                        : card.overlapWindows
+                            .map((window) =>
+                              formatWindow(window.startAt, window.endAt)
+                            )
+                            .join(' · ')}
+                    </Text>
+
+                    {openId === card.encounterId ? (
+                      <VStack spacing={8}>
+                        <HStack
+                          spacing={4}
+                          wrap
+                        >
+                          {card.overlapWindows.map((window) => {
+                            const key = `${window.startAt}|${window.endAt}`
+                            return (
+                              <Button
+                                key={key}
+                                size="xs"
+                                variant={
+                                  slotKey === key ? 'filled' : 'outlined'
+                                }
+                                semantic="secondary"
+                                label={formatWindow(
+                                  window.startAt,
+                                  window.endAt
+                                )}
+                                onClick={() => setSlotKey(key)}
+                              />
+                            )
+                          })}
+                        </HStack>
+
+                        <TextInput
+                          size="m"
+                          value={place}
+                          maxLength={100}
+                          placeholder="장소 (선택) — 학생회관 학식"
+                          onChange={(event) => setPlace(event.target.value)}
+                        />
+
+                        <HStack spacing={6}>
+                          <Button
+                            size="s"
+                            label={action.busy ? '수락 중…' : '수락하기'}
+                            loading={action.busy}
+                            onClick={() => void accept(card)}
+                          />
+                          <Button
+                            size="s"
+                            variant="ghost"
+                            semantic="secondary"
+                            label="닫기"
+                            onClick={() => setOpenId(null)}
+                          />
+                        </HStack>
+                      </VStack>
+                    ) : (
+                      <HStack>
+                        <Button
+                          size="s"
+                          label="수락하기"
+                          onClick={() => {
+                            setResult(null)
+                            action.clearError()
+                            setOpenId(card.encounterId)
+                            setSlotKey(
+                              card.overlapWindows[0]
+                                ? `${card.overlapWindows[0].startAt}|${card.overlapWindows[0].endAt}`
+                                : ''
+                            )
+                          }}
+                        />
+                      </HStack>
+                    )}
+                  </VStack>
+                </div>
               </li>
             ))}
           </ul>

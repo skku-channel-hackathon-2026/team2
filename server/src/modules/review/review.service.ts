@@ -75,7 +75,7 @@ export async function submitReview(
     input.encounterId,
   );
 
-  // 후배가 자기 답을 남기면 지식 초안이 된다 — 선배 확인(knowledge.review)을
+  // 새내기가 자기 답을 남기면 지식 초안이 된다 — 선배 확인(knowledge.review)을
   // 거쳐야 published(검색 가능)된다. 발행 전이라 PII 검사는 review 시점에 한다.
   if (input.selfAnswer) {
     await execute(

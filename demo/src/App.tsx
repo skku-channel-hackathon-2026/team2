@@ -1,4 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+  TabItem,
+  TabList,
+  Tabs,
+  Text,
+} from '@channel.io/bezier-react/beta'
 
 import Login from './Login'
 import { bootAs, fetchIdentity, shutdown, type BootState } from './channel'
@@ -11,6 +19,7 @@ import {
   type Session,
 } from './session'
 import Account from './tabs/Account'
+import Home from './tabs/Home'
 import Answers from './tabs/Answers'
 import Ask from './tabs/Ask'
 import Balls from './tabs/Balls'
@@ -20,6 +29,7 @@ import Ops from './tabs/Ops'
 import Review from './tabs/Review'
 import Setup from './tabs/Setup'
 import Wild from './tabs/Wild'
+import { Notice } from './ui'
 
 interface TabSpec {
   id: string
@@ -27,6 +37,7 @@ interface TabSpec {
 }
 
 const JUNIOR_TABS: TabSpec[] = [
+  { id: 'home', label: '문의' },
   { id: 'meetings', label: '내 밥약' },
   { id: 'ask', label: '질문하기' },
   { id: 'review', label: '후기' },
@@ -62,7 +73,7 @@ function App() {
   const role = session?.role ?? 'junior'
   const tabs = TABS[role]
 
-  // Only the 후배 surface is a customer surface; the messenger has no place on
+  // Only the 새내기 surface is a customer surface; the messenger has no place on
   // the desk-side view.
   useEffect(() => {
     if (!session) return
@@ -127,6 +138,13 @@ function App() {
   const panel = useMemo(() => {
     if (!session) return null
     switch (tab) {
+      case 'home':
+        return (
+          <Home
+            session={session}
+            ready={state.status === 'booted'}
+          />
+        )
       case 'meetings':
         return (
           <Meetings
@@ -183,7 +201,7 @@ function App() {
       default:
         return null
     }
-  }, [openReview, refreshAll, reviewTarget, session, tab])
+  }, [openReview, refreshAll, reviewTarget, session, state.status, tab])
 
   if (!session) {
     return (
@@ -200,48 +218,68 @@ function App() {
       <header className="bar">
         <div className="brand">
           <span className="brand__mark">GO</span>
-          <span className="brand__name">후배 Go</span>
+          <Text
+            typo="16"
+            bold
+          >
+            새내기 Go
+          </Text>
         </div>
 
-        <div className="who">
-          <div className="roles">
+        <div className="bar__roles">
+          {/* Defaults to width 100%, which in a header row claims space the
+              name and sign-out need. */}
+          <SegmentedControl
+            width="max-content"
+            value={role}
+            onValueChange={(value) => switchRole(value as Role)}
+          >
             {(['junior', 'senior'] as Role[]).map((value) => (
-              <button
+              <SegmentedControlItem
                 key={value}
-                type="button"
-                className={role === value ? 'role role--on' : 'role'}
-                onClick={() => switchRole(value)}
+                value={value}
               >
                 {ROLE_LABEL[value]}
-              </button>
+              </SegmentedControlItem>
             ))}
-          </div>
-          {role === 'junior' && <span className={`dot dot--${state.status}`} />}
-          <span className="who__name">
-            {session.name} · {session.studentId.slice(0, 4)}학번
-          </span>
-          <button
-            className="who__out"
-            type="button"
-            onClick={signOut}
-          >
-            로그아웃
-          </button>
+          </SegmentedControl>
         </div>
+
+        <span className="who__name">
+          <Text
+            typo="13"
+            color="text-neutral-light"
+          >
+            {session.name} · {session.studentId.slice(0, 4)}학번
+          </Text>
+        </span>
+
+        <button
+          className="who__out"
+          type="button"
+          onClick={signOut}
+        >
+          로그아웃
+        </button>
       </header>
 
       <nav className="tabs">
         <div className="tabs__inner">
-          {tabs.map((spec) => (
-            <button
-              key={spec.id}
-              type="button"
-              className={tab === spec.id ? 'tab tab--on' : 'tab'}
-              onClick={() => setTab(spec.id)}
-            >
-              {spec.label}
-            </button>
-          ))}
+          <Tabs
+            value={tab}
+            onValueChange={setTab}
+          >
+            <TabList>
+              {tabs.map((spec) => (
+                <TabItem
+                  key={spec.id}
+                  value={spec.id}
+                >
+                  {spec.label}
+                </TabItem>
+              ))}
+            </TabList>
+          </Tabs>
         </div>
       </nav>
 
@@ -250,10 +288,10 @@ function App() {
           <div key={`${role}-${tab}-${revision}`}>{panel}</div>
 
           {role === 'junior' && state.status === 'failed' && (
-            <p className="notice notice--error">
+            <Notice tone="error">
               메신저 연결 실패: {state.error ?? '알 수 없는 오류'}. 탭 기능은
               그대로 쓸 수 있어요.
-            </p>
+            </Notice>
           )}
         </main>
       </div>

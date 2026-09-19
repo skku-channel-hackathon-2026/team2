@@ -165,7 +165,7 @@ export async function acceptWild(
   );
   const seniorsJoined = joined?.count ?? 1;
 
-  // 후배 채팅방 알림. writeUserChatMessage 권한이 없으면 notifications.runDue가
+  // 새내기 채팅방 알림. writeUserChatMessage 권한이 없으면 notifications.runDue가
   // 조용히 실패로 남기고, 응답에는 영향 없다 (§upgrade.functions.ts와 동일 패턴).
   await deps.notifications.enqueue({
     dedupeKey: `accepted:${input.encounterId}:${seniorId}`,

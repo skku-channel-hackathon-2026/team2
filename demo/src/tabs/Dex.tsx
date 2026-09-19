@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { Button, HStack, Text, VStack } from '@channel.io/bezier-react/beta'
+import { RefreshIcon } from '@channel.io/bezier-icons'
 import {
   DEX_FUNCTIONS,
   INTIMACY_POINTS,
@@ -8,30 +10,19 @@ import {
 
 import type { Session } from '../session'
 import { useFunctionData } from '../useFunction'
-import { Badge, Empty, List, Section, Stat } from '../ui'
+import { Badge, Empty, List, Meter, Portrait, Section, Stat } from '../ui'
+import { fieldTone } from '../fields'
 import { formatDay } from '../utils/datetime'
 
 /** Lv1 0-29 · Lv2 30-79 · Lv3 80-149 · Lv4 150+ (shared `intimacyLevel`). */
 const LEVEL_FLOOR = [0, 0, 30, 80, 150]
-const LEVEL_TONE: Record<number, 'default' | 'blue' | 'teal' | 'green'> = {
-  1: 'default',
-  2: 'blue',
-  3: 'teal',
-  4: 'green',
-}
 
-function progress(entry: DexEntry): { percent: number; caption: string } {
-  if (entry.level >= 4) {
-    return { percent: 100, caption: '최고 레벨' }
-  }
+function progress(entry: DexEntry): { value: number; caption: string } {
+  if (entry.level >= 4) return { value: 1, caption: '최고 레벨' }
   const floor = LEVEL_FLOOR[entry.level]
   const ceiling = LEVEL_FLOOR[entry.level + 1]
-  const percent = Math.min(
-    100,
-    Math.round(((entry.intimacy - floor) / (ceiling - floor)) * 100)
-  )
   return {
-    percent,
+    value: Math.min(1, (entry.intimacy - floor) / (ceiling - floor)),
     caption: `다음 레벨까지 ${ceiling - entry.intimacy}점`,
   }
 }
@@ -60,19 +51,20 @@ function Dex({ session }: DexProps) {
     <Section
       title="도감"
       action={
-        <button
-          className="btn btn--ghost"
-          type="button"
+        <Button
+          size="s"
+          variant="ghost"
+          semantic="secondary"
+          leadingContent={RefreshIcon}
+          label="새로고침"
           disabled={dex.loading}
           onClick={() => void dex.reload()}
-        >
-          새로고침
-        </button>
+        />
       }
     >
       <div className="stats">
         <Stat
-          label="등록한 후배"
+          label="등록한 새내기"
           value={dex.data?.total ?? 0}
         />
         <Stat
@@ -86,25 +78,28 @@ function Dex({ session }: DexProps) {
       </div>
 
       {types.length > 1 && (
-        <div className="chips">
-          <button
-            type="button"
-            className={typeFilter === '' ? 'chip chip--on' : 'chip'}
+        <HStack
+          spacing={4}
+          wrap
+        >
+          <Button
+            size="xs"
+            variant={typeFilter === '' ? 'filled' : 'outlined'}
+            semantic="secondary"
+            label="전체"
             onClick={() => setTypeFilter('')}
-          >
-            전체
-          </button>
+          />
           {types.map(([id, label]) => (
-            <button
+            <Button
               key={id}
-              type="button"
-              className={typeFilter === id ? 'chip chip--on' : 'chip'}
+              size="xs"
+              variant={typeFilter === id ? 'filled' : 'outlined'}
+              semantic="secondary"
+              label={label}
               onClick={() => setTypeFilter(id)}
-            >
-              {label}
-            </button>
+            />
           ))}
-        </div>
+        </HStack>
       )}
 
       <List
@@ -112,7 +107,7 @@ function Dex({ session }: DexProps) {
         empty={
           <Empty
             title="도감이 비어 있어요"
-            hint="후배가 후기를 제출하면 그 후배가 도감에 등록돼요."
+            hint="새내기가 후기를 제출하면 그 새내기가 도감에 등록돼요."
           />
         }
       >
@@ -125,29 +120,49 @@ function Dex({ session }: DexProps) {
                   key={`${entry.typeFieldId}-${entry.juniorAlias}-${entry.firstCaughtAt}`}
                   className="dex__card"
                 >
-                  <div className="dex__top">
-                    <span className="dex__name">{entry.juniorAlias}</span>
-                    <Badge tone={LEVEL_TONE[entry.level]}>
-                      Lv.{entry.level}
-                    </Badge>
-                    {entry.evolved && <Badge tone="green">진화</Badge>}
-                  </div>
+                  <VStack spacing={10}>
+                    <HStack
+                      spacing={10}
+                      align="center"
+                    >
+                      <Portrait
+                        seed={entry.juniorAlias}
+                        size="48"
+                      />
+                      <VStack spacing={2}>
+                        <Text
+                          typo="16"
+                          bold
+                        >
+                          {entry.juniorAlias}
+                        </Text>
+                        <HStack spacing={4}>
+                          <Badge tone={fieldTone(entry.typeFieldId)}>
+                            {entry.typeLabel}
+                          </Badge>
+                          <Badge tone="cobalt">Lv.{entry.level}</Badge>
+                          {entry.evolved && <Badge tone="green">진화</Badge>}
+                        </HStack>
+                      </VStack>
+                    </HStack>
 
-                  <Badge tone="blue">{entry.typeLabel}</Badge>
-
-                  <div className="bar">
-                    <div
-                      className="bar__fill"
-                      style={{ width: `${bar.percent}%` }}
-                    />
-                  </div>
-                  <p className="dex__meta">
-                    친밀도 {entry.intimacy} · {bar.caption}
-                  </p>
-                  <p className="dex__meta">
-                    {entry.catchCount}번 만남 · 첫 만남{' '}
-                    {formatDay(entry.firstCaughtAt)}
-                  </p>
+                    <VStack spacing={4}>
+                      <Meter value={bar.value} />
+                      <Text
+                        typo="12"
+                        color="text-neutral-light"
+                      >
+                        친밀도 {entry.intimacy} · {bar.caption}
+                      </Text>
+                      <Text
+                        typo="12"
+                        color="text-neutral-lighter"
+                      >
+                        {entry.catchCount}번 만남 · 첫 만남{' '}
+                        {formatDay(entry.firstCaughtAt)}
+                      </Text>
+                    </VStack>
+                  </VStack>
                 </li>
               )
             })}
@@ -155,12 +170,15 @@ function Dex({ session }: DexProps) {
         )}
       </List>
 
-      <p className="foot">
+      <Text
+        typo="12"
+        color="text-neutral-lighter"
+      >
         친밀도: 첫 잡기 {INTIMACY_POINTS.first_catch} · 다시 잡기{' '}
         {INTIMACY_POINTS.repeat_catch} · 별 5개 {INTIMACY_POINTS.five_star} ·
-        후배의 자기 답 {INTIMACY_POINTS.self_answer} · 진화{' '}
+        새내기의 자기 답 {INTIMACY_POINTS.self_answer} · 진화{' '}
         {INTIMACY_POINTS.evolution}
-      </p>
+      </Text>
     </Section>
   )
 }

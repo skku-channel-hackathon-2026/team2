@@ -1,5 +1,14 @@
 import { useCallback, useMemo, useState } from 'react'
 import {
+  Button,
+  HStack,
+  SegmentedControl,
+  SegmentedControlItem,
+  Text,
+  TextArea,
+  VStack,
+} from '@channel.io/bezier-react/beta'
+import {
   ENCOUNTER_FUNCTIONS,
   KNOWLEDGE_FUNCTIONS,
   MEET_TYPE_LABEL,
@@ -13,6 +22,7 @@ import {
 import type { Session } from '../session'
 import { useAction, useFunctionData } from '../useFunction'
 import { Badge, Empty, Loading, Notice, Section } from '../ui'
+import { fieldTone } from '../fields'
 import {
   MAX_WINDOWS,
   buildWindowDays,
@@ -149,18 +159,19 @@ function Ask({ session, onCreated }: AskProps) {
             ? `조건이 맞는 선배 ${notified}명에게 출현 알림을 보냈어요.`
             : '지금은 조건이 맞는 선배가 없어요. 잠시 후 다음 웨이브에서 다시 찾아볼게요.'}
         </Notice>
-        <p className="card__hint">
+        <Text
+          typo="14"
+          color="text-neutral-light"
+        >
           진행 상황은 ‘내 밥약’ 탭에서 확인할 수 있어요.
-        </p>
-        <div className="card__foot">
-          <button
-            className="btn"
-            type="button"
+        </Text>
+        <HStack>
+          <Button
+            size="m"
+            label="다른 질문 하기"
             onClick={reset}
-          >
-            다른 질문 하기
-          </button>
-        </div>
+          />
+        </HStack>
       </Section>
     )
   }
@@ -170,164 +181,212 @@ function Ask({ session, onCreated }: AskProps) {
       {fields.loading && <Loading />}
       {fields.error && <Notice tone="error">{fields.error}</Notice>}
 
-      <label className="field">
-        <span>무엇이 궁금한가요?</span>
-        <textarea
-          rows={3}
+      <VStack spacing={6}>
+        <Text
+          typo="13"
+          color="text-neutral-light"
+        >
+          무엇이 궁금한가요?
+        </Text>
+        <TextArea
           value={title}
           maxLength={200}
           placeholder="예: 백엔드 동아리와 학회 중 1학년은 뭐가 나아요?"
           disabled={step !== 'ask'}
           onChange={(event) => setTitle(event.target.value)}
         />
-      </label>
+      </VStack>
 
-      <label className="field">
-        <span>분야</span>
-        <select
-          value={chosenField}
-          disabled={step !== 'ask'}
-          onChange={(event) => setFieldId(event.target.value)}
+      <VStack spacing={6}>
+        <Text
+          typo="13"
+          color="text-neutral-light"
+        >
+          분야
+        </Text>
+        <HStack
+          spacing={4}
+          wrap
         >
           {options.map((option) => (
-            <option
+            <Button
               key={option.id}
-              value={option.id}
-            >
-              {option.label}
-            </option>
+              size="s"
+              variant={chosenField === option.id ? 'filled' : 'outlined'}
+              semantic="secondary"
+              label={option.label}
+              disabled={step !== 'ask'}
+              onClick={() => setFieldId(option.id)}
+            />
           ))}
-        </select>
-      </label>
+        </HStack>
+      </VStack>
 
       {step === 'ask' && (
-        <div className="card__foot">
-          <button
-            className="btn"
-            type="button"
-            disabled={action.busy || options.length === 0}
+        <HStack>
+          <Button
+            size="m"
+            label={action.busy ? '찾는 중…' : '비슷한 답 먼저 찾아보기'}
+            loading={action.busy}
+            disabled={options.length === 0}
             onClick={() => void handleAsk()}
-          >
-            {action.busy ? '찾는 중…' : '비슷한 답 먼저 찾아보기'}
-          </button>
-        </div>
+          />
+        </HStack>
       )}
 
       {step === 'similar' && (
         <>
-          <h3 className="sub">이미 나온 답이 있어요</h3>
+          <Text
+            typo="15"
+            bold
+          >
+            이미 나온 답이 있어요
+          </Text>
           <ul className="cards">
             {similar.map((card) => (
               <li
                 key={card.knowledgeId}
                 className="card"
               >
-                <h4 className="card__title">{card.questionTitle}</h4>
-                <p className="card__body">{card.answerText}</p>
-                {card.confirmedBySeniorAlias && (
-                  <Badge tone="green">
-                    {card.confirmedBySeniorAlias} 선배 확인
-                  </Badge>
-                )}
+                <VStack spacing={8}>
+                  <Text
+                    typo="15"
+                    bold
+                  >
+                    {card.questionTitle}
+                  </Text>
+                  <Text typo="14">{card.answerText}</Text>
+                  {card.confirmedBySeniorAlias && (
+                    <HStack>
+                      <Badge tone="green">
+                        {card.confirmedBySeniorAlias} 선배 확인
+                      </Badge>
+                    </HStack>
+                  )}
+                </VStack>
               </li>
             ))}
           </ul>
-          <div className="card__foot">
-            <button
-              className="btn"
-              type="button"
+          <HStack spacing={6}>
+            <Button
+              size="m"
+              label="그래도 선배를 만나고 싶어요"
               onClick={() => setStep('request')}
-            >
-              그래도 선배를 만나고 싶어요
-            </button>
-            <button
-              className="btn btn--ghost"
-              type="button"
+            />
+            <Button
+              size="m"
+              variant="ghost"
+              semantic="secondary"
+              label="해결됐어요"
               onClick={reset}
-            >
-              해결됐어요
-            </button>
-          </div>
+            />
+          </HStack>
         </>
       )}
 
       {step === 'request' && (
         <>
-          <h3 className="sub">어떻게 만날까요?</h3>
-          <div className="chips">
-            {MEET_TYPES.map((type) => (
-              <button
-                key={type}
-                type="button"
-                className={meetType === type ? 'chip chip--on' : 'chip'}
-                onClick={() => setMeetType(type)}
-              >
-                {MEET_TYPE_LABEL[type]}
-              </button>
-            ))}
-          </div>
+          <VStack spacing={6}>
+            <Text
+              typo="13"
+              color="text-neutral-light"
+            >
+              어떻게 만날까요?
+            </Text>
+            <HStack
+              spacing={4}
+              wrap
+            >
+              {MEET_TYPES.map((type) => (
+                <Button
+                  key={type}
+                  size="s"
+                  variant={meetType === type ? 'filled' : 'outlined'}
+                  semantic="secondary"
+                  label={MEET_TYPE_LABEL[type]}
+                  onClick={() => setMeetType(type)}
+                />
+              ))}
+            </HStack>
+          </VStack>
 
-          <label className="field">
-            <span>만날 선배 수</span>
-            <select
-              value={maxSeniors}
-              onChange={(event) => setMaxSeniors(Number(event.target.value))}
+          <VStack spacing={6}>
+            <Text
+              typo="13"
+              color="text-neutral-light"
+            >
+              만날 선배 수
+            </Text>
+            <SegmentedControl
+              value={String(maxSeniors)}
+              onValueChange={(value) => setMaxSeniors(Number(value))}
             >
               {[1, 2, 3].map((count) => (
-                <option
+                <SegmentedControlItem
                   key={count}
-                  value={count}
+                  value={String(count)}
                 >
-                  {count}명
-                </option>
+                  {`${count}명`}
+                </SegmentedControlItem>
               ))}
-            </select>
-          </label>
+            </SegmentedControl>
+          </VStack>
 
-          <h3 className="sub">
-            가능한 시간 (최대 {MAX_WINDOWS}개 · {picked.length}개 선택)
-          </h3>
-          {days.map((day) => (
-            <div
-              key={day.key}
-              className="slots"
+          <VStack spacing={8}>
+            <Text
+              typo="13"
+              color="text-neutral-light"
             >
-              <span className="slots__day">{day.label}</span>
-              <div className="chips">
-                {day.options.map((option) => {
-                  const on = picked.includes(option.key)
-                  return (
-                    <button
-                      key={option.key}
-                      type="button"
-                      className={on ? 'chip chip--on' : 'chip'}
-                      onClick={() => toggleWindow(option.key, !on)}
-                    >
-                      {option.label}
-                    </button>
-                  )
-                })}
+              가능한 시간 (최대 {MAX_WINDOWS}개 · {picked.length}개 선택)
+            </Text>
+            {days.map((day) => (
+              <div
+                key={day.key}
+                className="slots"
+              >
+                <Text
+                  typo="12"
+                  color="text-neutral-lighter"
+                >
+                  {day.label}
+                </Text>
+                <HStack
+                  spacing={4}
+                  wrap
+                >
+                  {day.options.map((option) => {
+                    const on = picked.includes(option.key)
+                    return (
+                      <Button
+                        key={option.key}
+                        size="xs"
+                        variant={on ? 'filled' : 'outlined'}
+                        semantic="secondary"
+                        label={option.label}
+                        onClick={() => toggleWindow(option.key, !on)}
+                      />
+                    )
+                  })}
+                </HStack>
               </div>
-            </div>
-          ))}
+            ))}
+          </VStack>
 
-          <div className="card__foot">
-            <button
-              className="btn"
-              type="button"
-              disabled={action.busy}
+          <HStack spacing={6}>
+            <Button
+              size="m"
+              label={action.busy ? '신청 중…' : '밥약 신청하기'}
+              loading={action.busy}
               onClick={() => void handleCreate()}
-            >
-              {action.busy ? '신청 중…' : '밥약 신청하기'}
-            </button>
-            <button
-              className="btn btn--ghost"
-              type="button"
+            />
+            <Button
+              size="m"
+              variant="ghost"
+              semantic="secondary"
+              label="처음부터"
               onClick={reset}
-            >
-              처음부터
-            </button>
-          </div>
+            />
+          </HStack>
         </>
       )}
 
@@ -340,6 +399,16 @@ function Ask({ session, onCreated }: AskProps) {
           title="분야를 불러오지 못했어요"
           hint="앱 서버(wrangler dev)가 떠 있는지 확인해 주세요."
         />
+      )}
+
+      {/* Keeps the field-colour legend honest with the rest of the app. */}
+      {step !== 'ask' && chosenField && (
+        <HStack>
+          <Badge tone={fieldTone(chosenField)}>
+            {options.find((option) => option.id === chosenField)?.label ??
+              chosenField}
+          </Badge>
+        </HStack>
       )}
     </Section>
   )
