@@ -31,6 +31,11 @@ export const DEX_FUNCTIONS = {
 export const ENCOUNTER_FUNCTIONS = {
   create: "encounter.create",
   mine: "encounter.mine",
+  fields: "encounter.fields",
+} as const;
+
+export const ANSWERS_FUNCTIONS = {
+  list: "answers.list",
 } as const;
 
 export const WILD_FUNCTIONS = {
@@ -80,6 +85,16 @@ export const EncounterStatusSchema = z.enum([
   "cancelled",
 ]);
 export type EncounterStatus = z.infer<typeof EncounterStatusSchema>;
+
+export const ENCOUNTER_STATUS_LABEL: Record<EncounterStatus, string> = {
+  wild: "선배 기다리는 중",
+  matched: "만남 확정",
+  met: "후기 대기",
+  caught: "완료",
+  escaped: "후기 없이 종료",
+  expired: "기간 만료",
+  cancelled: "취소",
+};
 
 export const ConfirmMetInputSchema = z.object({
   ballId: z.string().min(1),
@@ -231,8 +246,37 @@ export const WildAcceptOutputSchema = z.object({
 });
 export type WildAcceptOutput = z.infer<typeof WildAcceptOutputSchema>;
 
+export const FieldOptionSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+});
+export type FieldOption = z.infer<typeof FieldOptionSchema>;
+
+export const EncounterFieldsOutputSchema = z.object({
+  fields: z.array(FieldOptionSchema),
+});
+export type EncounterFieldsOutput = z.infer<typeof EncounterFieldsOutputSchema>;
+
+export const AnswerCardSchema = z.object({
+  encounterId: z.string(),
+  title: z.string(),
+  fieldLabel: z.string(),
+  juniorAlias: z.string(),
+  rating: z.number().int().min(1).max(5),
+  reviewText: z.string(),
+  selfAnswer: z.string().nullable(),
+  createdAt: z.string(),
+});
+export type AnswerCard = z.infer<typeof AnswerCardSchema>;
+
+export const AnswersListOutputSchema = z.object({
+  items: z.array(AnswerCardSchema),
+});
+export type AnswersListOutput = z.infer<typeof AnswersListOutputSchema>;
+
 export const KNOWLEDGE_FUNCTIONS = {
   searchSimilar: "question.searchSimilar",
+  listDrafts: "knowledge.listDrafts",
   review: "knowledge.review",
   export: "knowledge.export",
 } as const;
@@ -262,6 +306,23 @@ export const KnowledgeStatusSchema = z.enum([
   "expired",
   "rejected",
 ]);
+
+export const KnowledgeDraftSchema = z.object({
+  knowledgeId: z.string(),
+  questionTitle: z.string(),
+  answerText: z.string(),
+  fieldLabel: z.string(),
+  authorAlias: z.string().nullable(),
+  createdAt: z.string(),
+});
+export type KnowledgeDraft = z.infer<typeof KnowledgeDraftSchema>;
+
+export const KnowledgeDraftListOutputSchema = z.object({
+  items: z.array(KnowledgeDraftSchema),
+});
+export type KnowledgeDraftListOutput = z.infer<
+  typeof KnowledgeDraftListOutputSchema
+>;
 
 export const KnowledgeReviewInputSchema = z.object({
   knowledgeId: z.string().min(1),

@@ -1,5 +1,6 @@
 import { ERROR_CODES } from "@tutorial/shared";
 import type {
+  KnowledgeDraftListOutput,
   KnowledgeExportInput,
   KnowledgeExportOutput,
   KnowledgeReviewInput,
@@ -75,6 +76,39 @@ export async function searchSimilar(
     }));
 
   return { items };
+}
+
+interface DraftRow {
+  id: string;
+  question_title: string;
+  answer_text: string;
+  field_id: string;
+  field_label: string | null;
+  author_nickname: string | null;
+  created_at: string;
+}
+
+export async function listDrafts(): Promise<KnowledgeDraftListOutput> {
+  const rows = await queryAll<DraftRow>(
+    `SELECT k.id, k.question_title, k.answer_text, k.field_id,
+            f.label AS field_label, u.nickname AS author_nickname, k.created_at
+     FROM knowledge_entries k
+     LEFT JOIN fields f ON f.id = k.field_id
+     LEFT JOIN users u ON u.id = k.author_id
+     WHERE k.status = 'draft'
+     ORDER BY k.created_at ASC`,
+  );
+
+  return {
+    items: rows.map((row) => ({
+      knowledgeId: row.id,
+      questionTitle: row.question_title,
+      answerText: row.answer_text,
+      fieldLabel: row.field_label ?? row.field_id,
+      authorAlias: row.author_nickname,
+      createdAt: row.created_at,
+    })),
+  };
 }
 
 export async function reviewKnowledge(

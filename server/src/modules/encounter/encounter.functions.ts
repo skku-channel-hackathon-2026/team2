@@ -4,6 +4,7 @@ import {
   ENCOUNTER_FUNCTIONS,
   EncounterCreateInputSchema,
   EncounterCreateOutputSchema,
+  EncounterFieldsOutputSchema,
   EncounterMineOutputSchema,
   EmptyInputSchema,
 } from "@tutorial/shared";
@@ -19,7 +20,7 @@ import {
 import { AccountsService } from "../../accounts.service.js";
 import { NotificationsService } from "../../notifications.service.js";
 import { SettingsService } from "../../settings.service.js";
-import { createEncounter, listMine } from "./encounter.service.js";
+import { createEncounter, listFields, listMine } from "./encounter.service.js";
 
 @Injectable()
 export class EncounterFunctions {
@@ -28,6 +29,14 @@ export class EncounterFunctions {
     private readonly notifications: NotificationsService,
     private readonly settings: SettingsService,
   ) {}
+
+  @Func(ENCOUNTER_FUNCTIONS.fields)
+  @Description("질문에 고를 수 있는 분야 목록")
+  @InputSchema(EmptyInputSchema)
+  @OutputSchema(EncounterFieldsOutputSchema)
+  async fields(): Promise<z.infer<typeof EncounterFieldsOutputSchema>> {
+    return listFields();
+  }
 
   @Func(ENCOUNTER_FUNCTIONS.create)
   @Description("질문을 밥약 신청(출현)으로 만든다")

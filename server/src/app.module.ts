@@ -19,6 +19,7 @@ import { ReviewFunctions } from "./modules/review/review.functions.js";
 import { DexFunctions } from "./modules/dex/dex.functions.js";
 import { EncounterFunctions } from "./modules/encounter/encounter.functions.js";
 import { WildFunctions } from "./modules/wild/wild.functions.js";
+import { AnswersFunctions } from "./modules/answers/answers.functions.js";
 import { KnowledgeFunctions } from "./modules/knowledge/knowledge.functions.js";
 
 @Module({
@@ -42,6 +43,7 @@ import { KnowledgeFunctions } from "./modules/knowledge/knowledge.functions.js";
     DexFunctions,
     EncounterFunctions,
     WildFunctions,
+    AnswersFunctions,
     KnowledgeFunctions,
     {
       provide: APP_GUARD,

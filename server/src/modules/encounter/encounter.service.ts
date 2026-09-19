@@ -2,6 +2,7 @@ import { ERROR_CODES } from "@tutorial/shared";
 import type {
   EncounterCreateInput,
   EncounterCreateOutput,
+  EncounterFieldsOutput,
   EncounterMineOutput,
   EncounterStatus,
 } from "@tutorial/shared";
@@ -12,6 +13,13 @@ import { NotificationsService } from "../../notifications.service.js";
 import { SettingsService } from "../../settings.service.js";
 import { findCandidates } from "../matching/matching.service.js";
 
+export async function listFields(): Promise<EncounterFieldsOutput> {
+  const fields = await queryAll<{ id: string; label: string }>(
+    "SELECT id, label FROM fields WHERE active = 1 ORDER BY sort_order",
+  );
+  return { fields };
+}
+
 export async function createEncounter(
   juniorId: string,
   input: EncounterCreateInput,
@@ -21,8 +29,8 @@ export async function createEncounter(
     channelId: string;
   },
 ): Promise<EncounterCreateOutput> {
-  const field = await queryOne(
-    "SELECT id FROM fields WHERE id = ? AND active = 1",
+  const field = await queryOne<{ id: string; label: string }>(
+    "SELECT id, label FROM fields WHERE id = ? AND active = 1",
     input.fieldId,
   );
   if (!field) {
@@ -80,7 +88,7 @@ export async function createEncounter(
     const enqueued = await deps.notifications.enqueue({
       dedupeKey: `wild_appeared:${encounterId}`,
       kind: "wild_appeared",
-      text: `🌿 야생의 후배가 출현했다! [${input.fieldId}] ${input.title}\n대상: ${names}\n/출현 에서 수락할 수 있어요.`,
+      text: `🌿 야생의 후배가 출현했다! [${field.label}] ${input.title}\n대상: ${names}\n/출현 에서 수락할 수 있어요.`,
       targetType: "group",
       targetId: wildGroupId,
       urgent: true,

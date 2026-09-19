@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { z } from "zod";
 import {
+  EmptyInputSchema,
   KNOWLEDGE_FUNCTIONS,
+  KnowledgeDraftListOutputSchema,
   KnowledgeExportInputSchema,
   KnowledgeExportOutputSchema,
   KnowledgeReviewInputSchema,
@@ -21,6 +23,7 @@ import {
 import { AccountsService } from "../../accounts.service.js";
 import {
   exportKnowledge,
+  listDrafts,
   reviewKnowledge,
   searchSimilar,
 } from "./knowledge.service.js";
@@ -37,6 +40,17 @@ export class KnowledgeFunctions {
     @Input() input: z.infer<typeof SearchSimilarInputSchema>,
   ): Promise<z.infer<typeof SearchSimilarOutputSchema>> {
     return searchSimilar(input);
+  }
+
+  @Func(KNOWLEDGE_FUNCTIONS.listDrafts)
+  @Description("검수 대기 중인 지식 초안 목록 (운영진)")
+  @InputSchema(EmptyInputSchema)
+  @OutputSchema(KnowledgeDraftListOutputSchema)
+  async listDrafts(
+    @Ctx() ctx: Context,
+  ): Promise<z.infer<typeof KnowledgeDraftListOutputSchema>> {
+    await this.accounts.requireStaff(ctx);
+    return listDrafts();
   }
 
   @Func(KNOWLEDGE_FUNCTIONS.review)
