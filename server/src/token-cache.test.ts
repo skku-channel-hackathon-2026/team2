@@ -106,3 +106,40 @@ test("falls back to memory when D1 is unavailable", async () => {
   const restored = await cache.get("app");
   assert.equal(restored?.token.accessToken, "access-token");
 });
+
+/** Reproduces an unapplied migration: the binding works, the table does not. */
+class MissingTableDatabase implements AppDatabase {
+  calls = 0;
+
+  prepare(): AppStatement {
+    const fail = () => {
+      this.calls += 1;
+      return Promise.reject(
+        new Error("D1_ERROR: no such table: app_tokens: SQLITE_ERROR"),
+      );
+    };
+    const statement: AppStatement = {
+      bind: () => statement,
+      run: fail,
+      first: fail,
+      all: fail,
+    };
+    return statement;
+  }
+
+  async batch(): Promise<never[]> {
+    return [];
+  }
+}
+
+test("a missing app_tokens table degrades to memory instead of throwing", async () => {
+  const database = new MissingTableDatabase();
+  const cache = new D1TokenCache();
+
+  await withDatabase(database, async () => {
+    await cache.set("app", { ...cached(60_000), key: "app" });
+    const restored = await cache.get("app");
+    assert.equal(restored?.token.accessToken, "access-token");
+    assert.equal(database.calls, 1, "D1 must not be retried once degraded");
+  });
+});
