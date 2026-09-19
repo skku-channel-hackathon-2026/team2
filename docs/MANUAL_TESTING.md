@@ -17,7 +17,10 @@
 ```json
 {
   "method": "ball.confirmMet",
-  "context": { "caller": { "type": "manager", "id": "m-senior-1" }, "channel": { "id": "test-channel" } },
+  "context": {
+    "caller": { "type": "manager", "id": "m-senior-1" },
+    "channel": { "id": "test-channel" }
+  },
   "params": { "ballId": "ball-1" }
 }
 ```
@@ -43,11 +46,11 @@ corepack pnpm exec wrangler d1 execute DB --local --file=scripts/seed-demo.sql
 
 시드 데이터 요약 (`scripts/seed-demo.sql`):
 
-| id | 역할 | 설명 |
-| --- | --- | --- |
-| `senior-1` (`m-senior-1`) / `senior-2` (`m-senior-2`) | 선배 | `club` 분야, 월 11-15시 / 월 12-13시 가용 |
-| `junior-1` (`u-junior-1`) | 후배 | `encounter-1`(이미 matched), `encounter-3`(matched) 신청자 |
-| `junior-2` (`u-junior-2`) | 후배 | `encounter-2`(아직 wild, 미수락) 신청자 |
+| id                                                    | 역할 | 설명                                                       |
+| ----------------------------------------------------- | ---- | ---------------------------------------------------------- |
+| `senior-1` (`m-senior-1`) / `senior-2` (`m-senior-2`) | 선배 | `club` 분야, 월 11-15시 / 월 12-13시 가용                  |
+| `junior-1` (`u-junior-1`)                             | 후배 | `encounter-1`(이미 matched), `encounter-3`(matched) 신청자 |
+| `junior-2` (`u-junior-2`)                             | 후배 | `encounter-2`(아직 wild, 미수락) 신청자                    |
 
 ## 3. 서버 실행
 
@@ -97,10 +100,14 @@ T5 잡기 파이프라인 전체(상태 전이 + 도감 등록 + 친밀도)와, 
 
 `ball.confirmMet`으로 `ball-3`를 `wobbling`으로 만든 뒤, 같은 볼에
 `ball.remind`를 3번 호출한다. 1·2번째는 성공(`remindersSent: 1`, `2`), 3번째는
-`400 REMINDER_LIMIT`으로 거절돼야 한다. 응답의 `delivered` 필드가 `"auto"`면
+`REMINDER_LIMIT` 에러로 거절돼야 한다. 응답의 `delivered` 필드가 `"auto"`면
 `writeUserChatMessage` 권한이 실제로 동작한다는 뜻이고, `"manual_copy"`면 권한이
-없어 안전하게 폴백한 것이다 — **이 필드로 T3 권한 질문(§HUBAE_GO_PLAN.md T3)에
-바로 답할 수 있다.**
+없어 안전하게 폴백한 것이다.
+
+> **로컬에서는 항상 `"manual_copy"`가 나온다.** `.dev.vars`의 앱 자격증명이
+> 가짜라 실제 채널톡 API를 호출할 수 없기 때문이다. `delivered: "auto"`를
+> 실제로 보려면 **실 Desk 환경**에서 같은 시나리오를 실행해야 한다 — 이 필드가
+> T3 권한 질문(§HUBAE_GO_PLAN.md T3)에 대한 실제 답이 된다.
 
 ## 6. 다시 돌리고 싶을 때
 
